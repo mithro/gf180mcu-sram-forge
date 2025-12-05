@@ -16,6 +16,7 @@ from sram_forge.db.loader import load_srams, load_slots, load_chip_config
 from sram_forge.calc.fit import calculate_fit
 from sram_forge.generate.verilog.engine import VerilogEngine
 from sram_forge.generate.librelane.engine import LibreLaneEngine
+from sram_forge.generate.testbench.engine import TestbenchEngine
 
 
 def get_bundled_data_dir() -> Path:
@@ -171,7 +172,7 @@ def check(config: str):
 @main.command()
 @click.argument("config", type=click.Path(exists=True))
 @click.option("--output", "-o", default="./output", help="Output directory")
-@click.option("--only", type=click.Choice(["verilog", "librelane", "testbench", "docs"]))
+@click.option("--only", type=click.Choice(["verilog", "librelane", "testbench", "docs"]), help="Generate only specific output type")
 def gen(config: str, output: str, only: str | None):
     """Generate outputs from chip configuration."""
     data_dir = get_bundled_data_dir()
@@ -252,6 +253,26 @@ def gen(config: str, output: str, only: str | None):
             sdc = librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)
             (output_path / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
             generated.append(f"{chip_config.chip.name}_top.sdc")
+
+        if only is None or only == "testbench":
+            testbench_engine = TestbenchEngine()
+            tb_dir = output_path / "cocotb"
+            tb_dir.mkdir(exist_ok=True)
+
+            # cocotb test
+            test_py = testbench_engine.generate_cocotb_test(chip_config, sram_spec, fit_result)
+            (tb_dir / "test_sram.py").write_text(test_py)
+            generated.append("cocotb/test_sram.py")
+
+            # Makefile
+            makefile = testbench_engine.generate_makefile(chip_config)
+            (tb_dir / "Makefile").write_text(makefile)
+            generated.append("cocotb/Makefile")
+
+            # Behavioral model
+            model_py = testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
+            (tb_dir / "sram_model.py").write_text(model_py)
+            generated.append("cocotb/sram_model.py")
 
         click.echo(f"Generated {len(generated)} files to {output_path}:")
         for f in generated:
