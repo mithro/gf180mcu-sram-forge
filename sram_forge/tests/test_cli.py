@@ -124,3 +124,18 @@ def test_cli_calc_invalid_slot(runner):
     result = runner.invoke(main, ["calc", "--slot", "invalid_slot", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
 
     assert result.exit_code != 0 or "error" in result.output.lower() or "not found" in result.output.lower()
+
+
+def test_cli_gen_subcommand(runner):
+    """CLI has gen subcommand."""
+    result = runner.invoke(main, ["gen", "--help"])
+
+    assert result.exit_code == 0
+    assert "output" in result.output.lower()
+
+
+def test_cli_check_subcommand(runner):
+    """CLI has check subcommand."""
+    result = runner.invoke(main, ["check", "--help"])
+
+    assert result.exit_code == 0

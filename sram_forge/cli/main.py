@@ -12,8 +12,10 @@ except ImportError:
     sys.path.insert(0, str(Path(__file__).parent.parent))
     from __init__ import __version__
 
-from sram_forge.db.loader import load_srams, load_slots
+from sram_forge.db.loader import load_srams, load_slots, load_chip_config
 from sram_forge.calc.fit import calculate_fit
+from sram_forge.generate.verilog.engine import VerilogEngine
+from sram_forge.generate.librelane.engine import LibreLaneEngine
 
 
 def get_bundled_data_dir() -> Path:
@@ -121,8 +123,49 @@ def calc(slot: str, sram: str, halo: float):
 @click.argument("config", type=click.Path(exists=True))
 def check(config: str):
     """Validate a chip configuration file."""
-    click.echo(f"Checking {config}...")
-    # TODO: Implement validation
+    data_dir = get_bundled_data_dir()
+
+    try:
+        # Load and validate chip config
+        chip_config = load_chip_config(Path(config))
+        click.echo(f"Loaded chip config: {chip_config.chip.name}")
+
+        # Load databases
+        srams = load_srams(data_dir / "srams.yaml")
+        slots = load_slots(data_dir / "slots.yaml")
+
+        # Validate references
+        if chip_config.memory.macro not in srams:
+            click.echo(f"Error: SRAM '{chip_config.memory.macro}' not found.", err=True)
+            raise SystemExit(1)
+
+        if chip_config.slot not in slots:
+            click.echo(f"Error: Slot '{chip_config.slot}' not found.", err=True)
+            raise SystemExit(1)
+
+        sram_spec = srams[chip_config.memory.macro]
+        slot_spec = slots[chip_config.slot]
+
+        # Calculate fit
+        fit_result = calculate_fit(slot_spec, sram_spec)
+
+        # Determine actual count
+        if chip_config.memory.count == "auto":
+            count = fit_result.count
+        else:
+            count = chip_config.memory.count
+            if count > fit_result.count:
+                click.echo(f"Warning: Requested {count} SRAMs but only {fit_result.count} fit.", err=True)
+
+        click.echo(f"Valid configuration:")
+        click.echo(f"  Slot: {chip_config.slot}")
+        click.echo(f"  SRAM: {chip_config.memory.macro}")
+        click.echo(f"  Count: {count}")
+        click.echo(f"  Interface: {chip_config.interface.scheme}")
+
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
 
 
 @main.command()
@@ -131,10 +174,92 @@ def check(config: str):
 @click.option("--only", type=click.Choice(["verilog", "librelane", "testbench", "docs"]))
 def gen(config: str, output: str, only: str | None):
     """Generate outputs from chip configuration."""
-    click.echo(f"Generating from {config} to {output}...")
-    if only:
-        click.echo(f"Only generating: {only}")
-    # TODO: Implement generation
+    data_dir = get_bundled_data_dir()
+    output_path = Path(output)
+
+    try:
+        # Load chip config
+        chip_config = load_chip_config(Path(config))
+        click.echo(f"Generating outputs for: {chip_config.chip.name}")
+
+        # Load databases
+        srams = load_srams(data_dir / "srams.yaml")
+        slots = load_slots(data_dir / "slots.yaml")
+
+        # Validate references
+        if chip_config.memory.macro not in srams:
+            click.echo(f"Error: SRAM '{chip_config.memory.macro}' not found.", err=True)
+            raise SystemExit(1)
+
+        if chip_config.slot not in slots:
+            click.echo(f"Error: Slot '{chip_config.slot}' not found.", err=True)
+            raise SystemExit(1)
+
+        sram_spec = srams[chip_config.memory.macro]
+        slot_spec = slots[chip_config.slot]
+
+        # Calculate fit
+        fit_result = calculate_fit(slot_spec, sram_spec)
+
+        # Override count if specified
+        if chip_config.memory.count != "auto":
+            fit_result.count = chip_config.memory.count
+            fit_result.total_words = fit_result.count * sram_spec.size
+            fit_result.total_bits = fit_result.total_words * sram_spec.width
+            import math
+            fit_result.address_bits = math.ceil(math.log2(fit_result.total_words))
+
+        # Create output directory
+        output_path.mkdir(parents=True, exist_ok=True)
+
+        # Generate outputs
+        generated = []
+
+        if only is None or only == "verilog":
+            verilog_engine = VerilogEngine()
+            verilog_dir = output_path / "src"
+            verilog_dir.mkdir(exist_ok=True)
+
+            # SRAM array
+            sram_array = verilog_engine.generate_sram_array(chip_config, sram_spec, fit_result)
+            (verilog_dir / f"{chip_config.chip.name}_sram_array.sv").write_text(sram_array)
+            generated.append(f"src/{chip_config.chip.name}_sram_array.sv")
+
+            # Chip core
+            chip_core = verilog_engine.generate_chip_core(chip_config, sram_spec, fit_result)
+            (verilog_dir / f"{chip_config.chip.name}_core.sv").write_text(chip_core)
+            generated.append(f"src/{chip_config.chip.name}_core.sv")
+
+            # Chip top
+            chip_top = verilog_engine.generate_chip_top(chip_config, sram_spec, fit_result)
+            (verilog_dir / f"{chip_config.chip.name}_top.sv").write_text(chip_top)
+            generated.append(f"src/{chip_config.chip.name}_top.sv")
+
+        if only is None or only == "librelane":
+            librelane_engine = LibreLaneEngine()
+
+            # Config
+            ll_config = librelane_engine.generate_config(chip_config, sram_spec, slot_spec, fit_result)
+            (output_path / "config.yaml").write_text(ll_config)
+            generated.append("config.yaml")
+
+            # PDN
+            pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, fit_result)
+            (output_path / "pdn_cfg.tcl").write_text(pdn_cfg)
+            generated.append("pdn_cfg.tcl")
+
+            # SDC
+            sdc = librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)
+            (output_path / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
+            generated.append(f"{chip_config.chip.name}_top.sdc")
+
+        click.echo(f"Generated {len(generated)} files to {output_path}:")
+        for f in generated:
+            click.echo(f"  {f}")
+
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
 
 
 @main.command()
