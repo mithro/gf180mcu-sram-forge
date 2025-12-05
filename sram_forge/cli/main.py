@@ -1,5 +1,7 @@
 """Main CLI entry point for sram-forge."""
 
+from pathlib import Path
+
 import click
 
 try:
@@ -7,9 +9,15 @@ try:
 except ImportError:
     # Fallback for when running directly
     import sys
-    from pathlib import Path
     sys.path.insert(0, str(Path(__file__).parent.parent))
     from __init__ import __version__
+
+from sram_forge.db.loader import load_srams, load_slots
+
+
+def get_bundled_data_dir() -> Path:
+    """Get path to bundled data directory."""
+    return Path(__file__).parent.parent / "db" / "data"
 
 
 @click.group()
@@ -19,12 +27,39 @@ def main():
     pass
 
 
-@main.command()
+@main.command("list")
 @click.argument("what", type=click.Choice(["srams", "slots"]))
-def list(what: str):
+def list_cmd(what: str):
     """List available SRAMs or slots."""
-    click.echo(f"Listing {what}...")
-    # TODO: Implement actual listing
+    data_dir = get_bundled_data_dir()
+
+    if what == "srams":
+        srams = load_srams(data_dir / "srams.yaml")
+        click.echo("Available SRAMs:")
+        click.echo("-" * 70)
+        for name, spec in sorted(srams.items()):
+            bits = spec.size * spec.width
+            click.echo(
+                f"  {name}\n"
+                f"    Capacity: {spec.size} x {spec.width}-bit = {bits} bits ({bits // 8} bytes)\n"
+                f"    Size: {spec.dimensions_um.width:.2f} x {spec.dimensions_um.height:.2f} um\n"
+                f"    Source: {spec.source}"
+            )
+            click.echo()
+    else:
+        slots = load_slots(data_dir / "slots.yaml")
+        click.echo("Available Slots:")
+        click.echo("-" * 70)
+        for name, spec in sorted(slots.items()):
+            die_area, core_area = spec.to_librelane_areas()
+            click.echo(
+                f"  {name}\n"
+                f"    Die: {spec.die.width:.0f} x {spec.die.height:.0f} um\n"
+                f"    Core: {spec.core_width:.0f} x {spec.core_height:.0f} um\n"
+                f"    Core Area: {spec.core_area_um2 / 1e6:.3f} mm^2\n"
+                f"    IO Budget: {spec.io_budget.bidir} bidir, {spec.io_budget.input} input"
+            )
+            click.echo()
 
 
 @main.command()

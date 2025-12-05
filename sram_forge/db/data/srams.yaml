@@ -1,0 +1,152 @@
+# SRAM macro specifications for sram-forge
+# Port model follows Yosys $mem_v2 conventions
+# See: https://yosyshq.readthedocs.io/projects/yosys/en/0.46/yosys_internals/formats/cell_library.html
+
+srams:
+  gf180mcu_fd_ip_sram__sram64x8m8wm1:
+    source: pdk
+    size: 64
+    width: 8
+    abits: 6
+    dimensions_um:
+      width: 431.86
+      height: 232.88
+    ports:
+      - name: port0
+        type: rw
+        clk_enable: true
+        clk_polarity: rising
+        pins:
+          clk: CLK
+          en_n: CEN
+          we_n: GWEN
+          wem_n: WEN[7:0]
+          addr: A[5:0]
+          din: D[7:0]
+          dout: Q[7:0]
+    timing_ns:
+      min_cycle: 5.75
+      clk_to_q: 4.48
+      setup:
+        addr: 0.68
+        din: 0.39
+        en: 0.35
+      hold:
+        addr: 0.54
+        din: 0.56
+    files:
+      gds: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/gf180mcu_fd_ip_sram__sram64x8m8wm1.gds
+      lef: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lef/gf180mcu_fd_ip_sram__sram64x8m8wm1.lef
+      lib: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/gf180mcu_fd_ip_sram__sram64x8m8wm1__tt_025C_5v00.lib
+      verilog: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/verilog/gf180mcu_fd_ip_sram__sram64x8m8wm1.v
+
+  gf180mcu_fd_ip_sram__sram128x8m8wm1:
+    source: pdk
+    size: 128
+    width: 8
+    abits: 7
+    dimensions_um:
+      width: 431.86
+      height: 296.88
+    ports:
+      - name: port0
+        type: rw
+        clk_enable: true
+        clk_polarity: rising
+        pins:
+          clk: CLK
+          en_n: CEN
+          we_n: GWEN
+          wem_n: WEN[7:0]
+          addr: A[6:0]
+          din: D[7:0]
+          dout: Q[7:0]
+    timing_ns:
+      min_cycle: 5.908
+      clk_to_q: 4.638
+      setup:
+        addr: 0.778
+        din: 0.398
+        en: 0.358
+      hold:
+        addr: 0.538
+        din: 0.598
+    files:
+      gds: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/gf180mcu_fd_ip_sram__sram128x8m8wm1.gds
+      lef: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lef/gf180mcu_fd_ip_sram__sram128x8m8wm1.lef
+      lib: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/gf180mcu_fd_ip_sram__sram128x8m8wm1__tt_025C_5v00.lib
+      verilog: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/verilog/gf180mcu_fd_ip_sram__sram128x8m8wm1.v
+
+  gf180mcu_fd_ip_sram__sram256x8m8wm1:
+    source: pdk
+    size: 256
+    width: 8
+    abits: 8
+    dimensions_um:
+      width: 431.86
+      height: 360.88
+    ports:
+      - name: port0
+        type: rw
+        clk_enable: true
+        clk_polarity: rising
+        pins:
+          clk: CLK
+          en_n: CEN
+          we_n: GWEN
+          wem_n: WEN[7:0]
+          addr: A[7:0]
+          din: D[7:0]
+          dout: Q[7:0]
+    timing_ns:
+      min_cycle: 5.97
+      clk_to_q: 4.798
+      setup:
+        addr: 0.873
+        din: 0.428
+        en: 0.378
+      hold:
+        addr: 0.543
+        din: 0.638
+    files:
+      gds: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/gf180mcu_fd_ip_sram__sram256x8m8wm1.gds
+      lef: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lef/gf180mcu_fd_ip_sram__sram256x8m8wm1.lef
+      lib: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/gf180mcu_fd_ip_sram__sram256x8m8wm1__tt_025C_5v00.lib
+      verilog: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/verilog/gf180mcu_fd_ip_sram__sram256x8m8wm1.v
+
+  gf180mcu_fd_ip_sram__sram512x8m8wm1:
+    source: pdk
+    size: 512
+    width: 8
+    abits: 9
+    dimensions_um:
+      width: 431.86
+      height: 484.88
+    ports:
+      - name: port0
+        type: rw
+        clk_enable: true
+        clk_polarity: rising
+        pins:
+          clk: CLK
+          en_n: CEN
+          we_n: GWEN
+          wem_n: WEN[7:0]
+          addr: A[8:0]
+          din: D[7:0]
+          dout: Q[7:0]
+    timing_ns:
+      min_cycle: 6.077
+      clk_to_q: 5.008
+      setup:
+        addr: 0.947
+        din: 0.458
+        en: 0.406
+      hold:
+        addr: 0.549
+        din: 0.674
+    files:
+      gds: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/gf180mcu_fd_ip_sram__sram512x8m8wm1.gds
+      lef: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lef/gf180mcu_fd_ip_sram__sram512x8m8wm1.lef
+      lib: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/gf180mcu_fd_ip_sram__sram512x8m8wm1__tt_025C_5v00.lib
+      verilog: pdk_dir::libs.ref/gf180mcu_fd_ip_sram/verilog/gf180mcu_fd_ip_sram__sram512x8m8wm1.v
