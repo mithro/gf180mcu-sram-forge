@@ -13,6 +13,7 @@ except ImportError:
     from __init__ import __version__
 
 from sram_forge.db.loader import load_srams, load_slots
+from sram_forge.calc.fit import calculate_fit
 
 
 def get_bundled_data_dir() -> Path:
@@ -65,10 +66,55 @@ def list_cmd(what: str):
 @main.command()
 @click.option("--slot", required=True, help="Slot name (e.g., 1x1)")
 @click.option("--sram", required=True, help="SRAM macro name")
-def calc(slot: str, sram: str):
+@click.option("--halo", default=10.0, help="Routing halo in microns (default: 10)")
+def calc(slot: str, sram: str, halo: float):
     """Calculate SRAM capacity for a slot."""
-    click.echo(f"Calculating fit for {sram} in slot {slot}...")
-    # TODO: Implement actual calculation
+    data_dir = get_bundled_data_dir()
+
+    # Load databases
+    try:
+        srams = load_srams(data_dir / "srams.yaml")
+        slots = load_slots(data_dir / "slots.yaml")
+    except FileNotFoundError as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
+
+    # Validate SRAM name
+    if sram not in srams:
+        click.echo(f"Error: SRAM '{sram}' not found.", err=True)
+        click.echo(f"Available SRAMs: {', '.join(sorted(srams.keys()))}", err=True)
+        raise SystemExit(1)
+
+    # Validate slot name
+    if slot not in slots:
+        click.echo(f"Error: Slot '{slot}' not found.", err=True)
+        click.echo(f"Available slots: {', '.join(sorted(slots.keys()))}", err=True)
+        raise SystemExit(1)
+
+    sram_spec = srams[sram]
+    slot_spec = slots[slot]
+
+    # Calculate fit
+    result = calculate_fit(slot_spec, sram_spec, halo_um=halo)
+
+    # Display results
+    click.echo(f"SRAM Fit Calculation")
+    click.echo("=" * 60)
+    click.echo(f"Slot: {slot}")
+    click.echo(f"SRAM: {sram}")
+    click.echo(f"Halo: {halo} um")
+    click.echo()
+    click.echo("Results:")
+    click.echo("-" * 60)
+    click.echo(f"  Grid: {result.cols} columns x {result.rows} rows")
+    click.echo(f"  Total SRAMs: {result.count}")
+    click.echo()
+    click.echo(f"  Total Words: {result.total_words:,}")
+    click.echo(f"  Total Bits: {result.total_bits:,}")
+    click.echo(f"  Total Bytes: {result.total_bits // 8:,}")
+    click.echo()
+    click.echo(f"  Address Bits: {result.address_bits}")
+    click.echo(f"  Core Utilization: {result.utilization * 100:.1f}%")
 
 
 @main.command()

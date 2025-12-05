@@ -82,3 +82,45 @@ def test_cli_list_slots_shows_dimensions(runner):
     # Should show die dimensions
     assert "3932" in result.output  # 1x1 width
     assert "5122" in result.output  # 1x1 height
+
+
+def test_cli_calc_basic(runner):
+    """Calc command calculates SRAM fit."""
+    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+
+    assert result.exit_code == 0
+    # Should show fit results
+    assert "col" in result.output.lower() or "row" in result.output.lower()
+    assert "total" in result.output.lower() or "count" in result.output.lower()
+
+
+def test_cli_calc_shows_capacity(runner):
+    """Calc command shows total capacity."""
+    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+
+    assert result.exit_code == 0
+    # Should show capacity information
+    assert "word" in result.output.lower() or "bit" in result.output.lower() or "byte" in result.output.lower()
+
+
+def test_cli_calc_shows_address_bits(runner):
+    """Calc command shows address bits needed."""
+    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+
+    assert result.exit_code == 0
+    # Should show address bits
+    assert "address" in result.output.lower()
+
+
+def test_cli_calc_invalid_sram(runner):
+    """Calc command reports error for invalid SRAM."""
+    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "nonexistent_sram"])
+
+    assert result.exit_code != 0 or "error" in result.output.lower() or "not found" in result.output.lower()
+
+
+def test_cli_calc_invalid_slot(runner):
+    """Calc command reports error for invalid slot."""
+    result = runner.invoke(main, ["calc", "--slot", "invalid_slot", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+
+    assert result.exit_code != 0 or "error" in result.output.lower() or "not found" in result.output.lower()
