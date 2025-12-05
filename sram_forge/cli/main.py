@@ -18,6 +18,7 @@ from sram_forge.generate.verilog.engine import VerilogEngine
 from sram_forge.generate.librelane.engine import LibreLaneEngine
 from sram_forge.generate.testbench.engine import TestbenchEngine
 from sram_forge.generate.docs.engine import DocumentationEngine
+from sram_forge.generate.package.engine import PackageEngine
 
 
 def get_bundled_data_dir() -> Path:
@@ -310,8 +311,64 @@ def gen(config: str, output: str, only: str | None):
 @click.option("--output", "-o", default=".", help="Output directory")
 def package(config: str, name: str, output: str):
     """Create a complete asset package."""
-    click.echo(f"Creating package '{name}' from {config}...")
-    # TODO: Implement package generation
+    import math
+
+    data_dir = get_bundled_data_dir()
+    output_path = Path(output)
+
+    try:
+        # Load chip config
+        chip_config = load_chip_config(Path(config))
+        click.echo(f"Creating package '{name}' for: {chip_config.chip.name}")
+
+        # Load databases
+        srams = load_srams(data_dir / "srams.yaml")
+        slots = load_slots(data_dir / "slots.yaml")
+
+        # Validate references
+        if chip_config.memory.macro not in srams:
+            click.echo(f"Error: SRAM '{chip_config.memory.macro}' not found.", err=True)
+            raise SystemExit(1)
+
+        if chip_config.slot not in slots:
+            click.echo(f"Error: Slot '{chip_config.slot}' not found.", err=True)
+            raise SystemExit(1)
+
+        sram_spec = srams[chip_config.memory.macro]
+        slot_spec = slots[chip_config.slot]
+
+        # Calculate fit
+        fit_result = calculate_fit(slot_spec, sram_spec)
+
+        # Override count if specified
+        if chip_config.memory.count != "auto":
+            fit_result.count = chip_config.memory.count
+            fit_result.total_words = fit_result.count * sram_spec.size
+            fit_result.total_bits = fit_result.total_words * sram_spec.width
+            fit_result.address_bits = math.ceil(math.log2(fit_result.total_words))
+
+        # Create package
+        package_engine = PackageEngine()
+        archive_path = package_engine.create_package(
+            chip_config,
+            sram_spec,
+            slot_spec,
+            fit_result,
+            name,
+            output_path,
+        )
+
+        click.echo(f"Created package: {archive_path}")
+        click.echo(f"Contents:")
+        click.echo(f"  - Verilog sources (src/)")
+        click.echo(f"  - LibreLane config (config.yaml, pdn_cfg.tcl, *.sdc)")
+        click.echo(f"  - Testbench (cocotb/)")
+        click.echo(f"  - Documentation (docs/)")
+        click.echo(f"  - Manifest (manifest.yaml)")
+
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
