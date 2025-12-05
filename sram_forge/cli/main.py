@@ -17,6 +17,7 @@ from sram_forge.calc.fit import calculate_fit
 from sram_forge.generate.verilog.engine import VerilogEngine
 from sram_forge.generate.librelane.engine import LibreLaneEngine
 from sram_forge.generate.testbench.engine import TestbenchEngine
+from sram_forge.generate.docs.engine import DocumentationEngine
 
 
 def get_bundled_data_dir() -> Path:
@@ -273,6 +274,26 @@ def gen(config: str, output: str, only: str | None):
             model_py = testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
             (tb_dir / "sram_model.py").write_text(model_py)
             generated.append("cocotb/sram_model.py")
+
+        if only is None or only == "docs":
+            docs_engine = DocumentationEngine()
+            docs_dir = output_path / "docs"
+            docs_dir.mkdir(exist_ok=True)
+
+            # README
+            readme = docs_engine.generate_readme(chip_config, sram_spec, fit_result)
+            (docs_dir / "README.md").write_text(readme)
+            generated.append("docs/README.md")
+
+            # Datasheet
+            datasheet = docs_engine.generate_datasheet(chip_config, sram_spec, fit_result)
+            (docs_dir / "datasheet.md").write_text(datasheet)
+            generated.append("docs/datasheet.md")
+
+            # Memory map
+            memory_map = docs_engine.generate_memory_map(chip_config, sram_spec, fit_result)
+            (docs_dir / "memory_map.md").write_text(memory_map)
+            generated.append("docs/memory_map.md")
 
         click.echo(f"Generated {len(generated)} files to {output_path}:")
         for f in generated:

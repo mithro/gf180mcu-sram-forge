@@ -1,0 +1,141 @@
+# {{ chip.name }} Datasheet
+
+{% if chip.description %}{{ chip.description }}{% endif %}
+
+## General Description
+
+{{ chip.name }} is an SRAM-based memory chip designed for the GF180MCU process.
+It provides {{ total_words }} words of {{ data_width }}-bit storage using {{ sram_count }}
+embedded SRAM macros.
+
+## Features
+
+- {{ total_bytes }} bytes ({{ total_bits }} bits) total capacity
+- {{ addr_bits }}-bit address bus
+- {{ data_width }}-bit data bus
+- Synchronous single-port interface
+- Active-low control signals
+{% if write_mask %}- Byte/bit-level write masking{% endif %}
+
+## Absolute Maximum Ratings
+
+| Parameter | Value |
+|-----------|-------|
+| Supply Voltage | 3.3V nominal |
+| Operating Temperature | -40C to 125C |
+| Storage Temperature | -55C to 150C |
+
+## Electrical Characteristics
+
+### Operating Conditions
+
+| Parameter | Symbol | Min | Typ | Max | Unit |
+|-----------|--------|-----|-----|-----|------|
+| Supply Voltage | VDD | 3.0 | 3.3 | 3.6 | V |
+{% if sram.timing_ns %}| Clock Frequency | fCLK | DC | - | {{ '%.1f' | format(1000 / sram.timing_ns.min_cycle) }} | MHz |{% endif %}
+
+## Timing Parameters
+
+{% if sram.timing_ns %}
+| Parameter | Symbol | Min | Typ | Max | Unit |
+|-----------|--------|-----|-----|-----|------|
+| Clock Period | tCLK | {{ '%.1f' | format(sram.timing_ns.min_cycle) }} | - | - | ns |
+| Clock to Output | tCO | - | {{ '%.1f' | format(sram.timing_ns.clk_to_q) }} | - | ns |
+| Address Setup Time | tAS | {{ '%.1f' | format(sram.timing_ns.setup.addr) }} | - | - | ns |
+| Address Hold Time | tAH | {{ '%.1f' | format(sram.timing_ns.hold.addr) }} | - | - | ns |
+| Data Setup Time | tDS | {{ '%.1f' | format(sram.timing_ns.setup.din) }} | - | - | ns |
+| Data Hold Time | tDH | {{ '%.1f' | format(sram.timing_ns.hold.din) }} | - | - | ns |
+| Enable Setup Time | tES | {{ '%.1f' | format(sram.timing_ns.setup.en) }} | - | - | ns |
+{% else %}
+| Parameter | Symbol | Min | Typ | Max | Unit |
+|-----------|--------|-----|-----|-----|------|
+| Clock Period | tCLK | 40 | - | - | ns |
+| Address Setup Time | tAS | 5 | - | - | ns |
+| Address Hold Time | tAH | 2 | - | - | ns |
+| Data Setup Time | tDS | 5 | - | - | ns |
+| Data Hold Time | tDH | 2 | - | - | ns |
+{% endif %}
+
+## Pinout
+
+| Signal | Direction | Width | I/O Type | Description |
+|--------|-----------|-------|----------|-------------|
+| clk | Input | 1 | CMOS | System clock input |
+| rst_n | Input | 1 | CMOS | Active-low asynchronous reset |
+| ce_n | Input | 1 | CMOS | Active-low chip enable |
+| we_n | Input | 1 | CMOS | Active-low write enable |
+| addr[{{ addr_bits - 1 }}:0] | Input | {{ addr_bits }} | CMOS | Address bus |
+| din[{{ data_width - 1 }}:0] | Input | {{ data_width }} | CMOS | Write data bus |
+| dout[{{ data_width - 1 }}:0] | Output | {{ data_width }} | CMOS | Read data bus |
+{% if write_mask %}| wem_n[{{ data_width - 1 }}:0] | Input | {{ data_width }} | CMOS | Active-low write enable mask |{% endif %}
+
+## Functional Description
+
+### Memory Organization
+
+The memory is organized as {{ total_words }} words of {{ data_width }} bits each.
+The address space spans from 0x0000 to 0x{{ '%04X' | format(total_words - 1) }}.
+
+Internal organization:
+- {{ sram_count }} SRAM macros ({{ sram.source }})
+- Each macro: {{ sram.size }} x {{ sram.width }}-bit
+- Grid: {{ fit.cols }} columns x {{ fit.rows }} rows
+- Address decoding selects appropriate macro
+
+### Write Operation
+
+A write cycle is initiated when both CE_n and WE_n are low on the rising
+edge of CLK. Data on DIN is written to the location specified by ADDR.
+
+Timing Requirements:
+- Address must be stable tAS before clock edge
+- Data must be stable tDS before clock edge
+- Address must be held tAH after clock edge
+- Data must be held tDH after clock edge
+
+### Read Operation
+
+A read cycle is initiated when CE_n is low and WE_n is high on the rising
+edge of CLK. Data from the location specified by ADDR appears on DOUT
+after the clock-to-output delay tCO.
+
+{% if write_mask %}
+### Write Masking
+
+The WEM_n signal provides bit-level write masking. Each bit of WEM_n
+controls whether the corresponding data bit is written:
+- WEM_n[i] = 0: DIN[i] is written to memory
+- WEM_n[i] = 1: Memory bit is preserved
+{% endif %}
+
+## Application Information
+
+### Power Supply Decoupling
+
+Place 100nF decoupling capacitors close to VDD pins. Use 10uF bulk
+capacitors per power domain.
+
+### Clock Requirements
+
+Provide a clean clock signal with rise/fall times < 2ns. Avoid clock
+glitches during active operation.
+
+## Physical Characteristics
+
+| Parameter | Value |
+|-----------|-------|
+| SRAM Source | {{ sram.source }} |
+| Macro Dimensions | {{ '%.2f' | format(sram.dimensions_um.width) }} x {{ '%.2f' | format(sram.dimensions_um.height) }} um |
+| Technology | GF180MCU |
+| Core Utilization | {{ '%.1f' | format(fit.utilization * 100) }}% |
+
+## Ordering Information
+
+Generated configuration: {{ chip.name }}
+- Slot: {{ config.slot }}
+- SRAM count: {{ sram_count }}
+- Interface: {{ config.interface.scheme }}
+
+---
+
+*Generated by sram-forge*
