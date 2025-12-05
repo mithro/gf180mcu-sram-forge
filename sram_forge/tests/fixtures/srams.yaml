@@ -1,0 +1,67 @@
+# Test SRAM specifications
+srams:
+  test_sram_64x8:
+    source: pdk
+    size: 64
+    width: 8
+    abits: 6
+    dimensions_um:
+      width: 431.86
+      height: 232.88
+    ports:
+      - name: port0
+        type: rw
+        clk_enable: true
+        clk_polarity: rising
+        pins:
+          clk: CLK
+          en_n: CEN
+          we_n: GWEN
+          addr: A[5:0]
+          din: D[7:0]
+          dout: Q[7:0]
+    timing_ns:
+      min_cycle: 5.75
+      clk_to_q: 4.48
+      setup:
+        addr: 0.68
+      hold:
+        addr: 0.54
+    files:
+      gds: pdk_dir::test.gds
+      lef: pdk_dir::test.lef
+
+  test_sram_512x8:
+    source: pdk
+    size: 512
+    width: 8
+    abits: 9
+    dimensions_um:
+      width: 431.86
+      height: 484.88
+    ports:
+      - name: port0
+        type: rw
+        clk_enable: true
+        clk_polarity: rising
+        pins:
+          clk: CLK
+          en_n: CEN
+          we_n: GWEN
+          wem_n: WEN[7:0]
+          addr: A[8:0]
+          din: D[7:0]
+          dout: Q[7:0]
+    timing_ns:
+      min_cycle: 6.077
+      clk_to_q: 5.008
+      setup:
+        addr: 0.947
+        din: 0.458
+        en: 0.406
+      hold:
+        addr: 0.549
+        din: 0.674
+    files:
+      gds: pdk_dir::sram512.gds
+      lef: pdk_dir::sram512.lef

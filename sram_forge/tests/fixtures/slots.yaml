@@ -1,0 +1,37 @@
+# Test slot specifications
+slots:
+  1x1:
+    die:
+      width: 3932
+      height: 5122
+    core:
+      inset:
+        left: 442
+        bottom: 442
+        right: 442
+        top: 442
+    io_budget:
+      dvdd: 8
+      dvss: 10
+      input: 12
+      bidir: 40
+      analog: 2
+    reserved_area_um2: 50000
+
+  0p5x0p5:
+    die:
+      width: 1936
+      height: 2531
+    core:
+      inset:
+        left: 442
+        bottom: 442
+        right: 442
+        top: 442
+    io_budget:
+      dvdd: 4
+      dvss: 4
+      input: 4
+      bidir: 38
+      analog: 4
+    reserved_area_um2: 30000
