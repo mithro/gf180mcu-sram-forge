@@ -240,21 +240,23 @@ def gen(config: str, output: str, only: str | None):
 
         if only is None or only == "librelane":
             librelane_engine = LibreLaneEngine()
+            librelane_dir = output_path / "librelane"
+            librelane_dir.mkdir(exist_ok=True)
 
             # Config
             ll_config = librelane_engine.generate_config(chip_config, sram_spec, slot_spec, fit_result)
-            (output_path / "config.yaml").write_text(ll_config)
-            generated.append("config.yaml")
+            (librelane_dir / "config.yaml").write_text(ll_config)
+            generated.append("librelane/config.yaml")
 
             # PDN
             pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, slot_spec, fit_result)
-            (output_path / "pdn_cfg.tcl").write_text(pdn_cfg)
-            generated.append("pdn_cfg.tcl")
+            (librelane_dir / "pdn_cfg.tcl").write_text(pdn_cfg)
+            generated.append("librelane/pdn_cfg.tcl")
 
             # SDC
             sdc = librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)
-            (output_path / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
-            generated.append(f"{chip_config.chip.name}_top.sdc")
+            (librelane_dir / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
+            generated.append(f"librelane/{chip_config.chip.name}_top.sdc")
 
         if only is None or only == "testbench":
             testbench_engine = TestbenchEngine()
