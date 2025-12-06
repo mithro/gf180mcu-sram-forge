@@ -9,9 +9,8 @@ meta:
 
 DESIGN_NAME: {{ chip.name }}_top
 
-# Die and core areas [x_min, y_min, x_max, y_max] in microns
-DIE_AREA: {{ die_area }}
-CORE_AREA: {{ core_area }}
+# Die and core areas are specified in the slot file (e.g., slot_1x1.yaml)
+# Do not specify DIE_AREA/CORE_AREA here to avoid floating-point precision issues
 
 VERILOG_FILES:
   - dir::../src/slot_defines.svh
