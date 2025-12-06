@@ -338,7 +338,7 @@ class PackageEngine:
         )
         (librelane_dir / "config.yaml").write_text(ll_config)
 
-        pdn_cfg = self.librelane_engine.generate_pdn(chip_config, sram_spec, fit_result)
+        pdn_cfg = self.librelane_engine.generate_pdn(chip_config, sram_spec, slot_spec, fit_result)
         (librelane_dir / "pdn_cfg.tcl").write_text(pdn_cfg)
 
         sdc = self.librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)

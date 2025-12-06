@@ -141,6 +141,7 @@ class LibreLaneEngine:
         self,
         chip_config: ChipConfig,
         sram_spec: SramSpec,
+        slot_spec: SlotSpec,
         fit_result: FitResult,
     ) -> str:
         """Generate PDN configuration TCL.
@@ -148,6 +149,7 @@ class LibreLaneEngine:
         Args:
             chip_config: Chip configuration.
             sram_spec: SRAM macro specification.
+            slot_spec: Slot specification.
             fit_result: Fit calculation result.
 
         Returns:
@@ -155,12 +157,16 @@ class LibreLaneEngine:
         """
         template = self.get_template("pdn_cfg.tcl.j2")
 
+        # Generate SRAM placement coordinates
+        placements = self._generate_placements(sram_spec, slot_spec, fit_result)
+
         return template.render(
             chip=chip_config.chip,
             config=chip_config,
             sram=sram_spec,
             fit=fit_result,
             macro_name=chip_config.memory.macro,
+            placements=placements,
         )
 
     def generate_sdc(

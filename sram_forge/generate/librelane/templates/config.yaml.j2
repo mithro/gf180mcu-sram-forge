@@ -3,80 +3,183 @@
 # Chip: {{ chip.name }}
 {% if chip.description %}# {{ chip.description }}{% endif %}
 
-DESIGN_NAME: "{{ chip.name }}_top"
+meta:
+  version: 3
+  flow: Chip
 
-# Clock configuration
-CLOCK_PORT: "clk_pad"
-CLOCK_PERIOD: {{ clock_period_ns }}
+DESIGN_NAME: {{ chip.name }}_top
 
 # Die and core areas [x_min, y_min, x_max, y_max] in microns
-DIE_AREA: [{{ die_area | join(', ') }}]
-CORE_AREA: [{{ core_area | join(', ') }}]
+DIE_AREA: {{ die_area }}
+CORE_AREA: {{ core_area }}
 
-# PDK configuration
-PDK: "gf180mcuD"
-STD_CELL_LIBRARY: "gf180mcu_fd_sc_mcu7t5v0"
+VERILOG_FILES:
+  - dir::../src/{{ chip.name }}_top.sv
+  - dir::../src/{{ chip.name }}_core.sv
+  - dir::../src/{{ chip.name }}_sram_array.sv
 
-# SRAM Macro configuration
+# Use klayout for smaller GDS files
+PRIMARY_GDSII_STREAMOUT_TOOL: klayout
+
+# SDC files
+PNR_SDC_FILE: dir::{{ chip.name }}_top.sdc
+SIGNOFF_SDC_FILE: dir::{{ chip.name }}_top.sdc
+FALLBACK_SDC: dir::{{ chip.name }}_top.sdc
+
+# Power / ground nets
+VDD_NETS:
+  - VDD
+GND_NETS:
+  - VSS
+
+# Ignore disconnected modules (IO pads with unused outputs)
+IGNORE_DISCONNECTED_MODULES:
+  - gf180mcu_fd_io__bi_24t
+  - gf180mcu_ws_ip__id
+  - gf180mcu_ws_ip__logo
+
+# Clock configuration
+CLOCK_PORT: clk_PAD
+CLOCK_NET: clk_pad/Y
+CLOCK_PERIOD: {{ clock_period_ns }}  # {{ config.clock.frequency_mhz }} MHz
+
+# Fix hold violations
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.35
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.3
+
+# Placement density - lower for more macros
+PL_TARGET_DENSITY_PCT: 25
+GRT_ALLOW_CONGESTION: true
+
+# Fix antenna violations after DRT
+DRT_ANTENNA_REPAIR_ITERS: 10
+DRT_ANTENNA_MARGIN: 10
+
+# PDN - Straps
+PDN_VWIDTH: 5
+PDN_HWIDTH: 5
+PDN_VSPACING: 1
+PDN_HSPACING: 1
+PDN_VPITCH: 75
+PDN_HPITCH: 75
+
+# PDN - Core ring
+PDN_CORE_RING: true
+PDN_CORE_RING_VWIDTH: 25
+PDN_CORE_RING_HWIDTH: 25
+PDN_CORE_RING_CONNECT_TO_PADS: true
+PDN_ENABLE_PINS: false
+PDN_CORE_VERTICAL_LAYER: Metal2
+PDN_CORE_HORIZONTAL_LAYER: Metal3
+
+# Prevent false positive DRC errors in I/O cells and SRAMs
+MAGIC_GDS_FLATGLOB:
+  - "*_CDNS_*"
+  - "COMP_fill_cell"
+  - "Poly2_fill_cell"
+  - "*$$*"
+  - "M1_N*"
+  - "M1_P*"
+  - "M2_M1*"
+  - "M3_M2*"
+  - "nmos_5p0*"
+  - "nmos_1p2*"
+  - "pmos_5p0*"
+  - "pmos_1p2*"
+  - "via1_*"
+  - "ypass_gate*"
+  - "G_ring_*"
+  - "dcap_103*"
+  - "din_*"
+  - "mux821_*"
+  - "rdummy_*"
+  - "pmoscap_*"
+  - "xdec_*"
+  - "ypredec*"
+  - "xpredec*"
+  - "prexdec_*"
+  - "xdec8_*"
+  - "xdec16_*"
+  - "xdec32_*"
+  - "sa_*"
+
+# Multiple power pads for one power domain
+MAGIC_EXT_UNIQUE: notopports
+
+# Macro definitions
 MACROS:
+  gf180mcu_ws_ip__id:
+    gds:
+      - dir::../ip/gf180mcu_ws_ip__id/gds/gf180mcu_ws_ip__id.gds
+    lef:
+      - dir::../ip/gf180mcu_ws_ip__id/lef/gf180mcu_ws_ip__id.lef
+    vh:
+      - dir::../ip/gf180mcu_ws_ip__id/vh/gf180mcu_ws_ip__id.v
+    lib:
+      "*":
+        - dir::../ip/gf180mcu_ws_ip__id/lib/gf180mcu_ws_ip__id.lib
+    instances:
+      chip_id:
+        location: [26, 26]
+        orientation: N
+
+  gf180mcu_ws_ip__logo:
+    gds:
+      - dir::../ip/gf180mcu_ws_ip__logo/gds/gf180mcu_ws_ip__logo.gds
+    lef:
+      - dir::../ip/gf180mcu_ws_ip__logo/lef/gf180mcu_ws_ip__logo.lef
+    vh:
+      - dir::../ip/gf180mcu_ws_ip__logo/vh/gf180mcu_ws_ip__logo.v
+    lib:
+      "*":
+        - dir::../ip/gf180mcu_ws_ip__logo/lib/gf180mcu_ws_ip__logo.lib
+    instances:
+      wafer_space_logo:
+        location: ["expr::$DIE_AREA[2] + -169.25", "expr::$DIE_AREA[3] + -169.25"]
+        orientation: N
+
   {{ macro_name }}:
     gds:
-      - "pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/{{ macro_name }}.gds"
+      - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/{{ macro_name }}.gds
     lef:
-      - "pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lef/{{ macro_name }}.lef"
+      - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lef/{{ macro_name }}.lef
+    vh:
+      - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/verilog/{{ macro_name }}__blackbox.v
     lib:
-      typical:
-        - "pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/{{ macro_name }}__tt_025C_5v00.lib"
-    verilog:
-      - "pdk_dir::libs.ref/gf180mcu_fd_ip_sram/verilog/{{ macro_name }}.v"
-
-# Macro placements
-# {{ fit.count }} SRAMs in {{ fit.cols }}x{{ fit.rows }} arrangement
-MACRO_PLACEMENT:
+      "*_tt_025C_5v00":
+        - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/{{ macro_name }}__tt_025C_5v00.lib
+      "*_ff_n40C_5v50":
+        - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/{{ macro_name }}__ff_n40C_5v50.lib
+      "*_ss_125C_4v50":
+        - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/{{ macro_name }}__ss_125C_4v50.lib
+    instances:
+      # {{ fit.count }} SRAMs in {{ fit.cols }}x{{ fit.rows }} arrangement
 {% for p in placements %}
-  {{ p.name }}:
-    macro: "{{ macro_name }}"
-    x: {{ p.x }}
-    y: {{ p.y }}
-    orientation: {{ p.orientation }}
+      i_chip_core.{{ p.name }}:
+        location: [{{ p.x }}, {{ p.y }}]
+        orientation: {{ p.orientation }}
 {% endfor %}
 
-# Verilog sources
-VERILOG_FILES:
-  - "src/{{ chip.name }}_sram_array.sv"
-  - "src/{{ chip.name }}_core.sv"
-  - "src/{{ chip.name }}_top.sv"
+# Power connections for SRAM macros
+PDN_MACRO_CONNECTIONS:
+{% for p in placements %}
+  - "i_chip_core.{{ p.name }} VDD VSS VDD VSS"
+{% endfor %}
 
-# Synthesis settings
-SYNTH_STRATEGY: "AREA 0"
-SYNTH_FLATTEN_DESIGN: false
+# Halo size around macros
+FP_MACRO_HORIZONTAL_HALO: 10
+FP_MACRO_VERTICAL_HALO: 10
+FP_PDN_HORIZONTAL_HALO: 5
+FP_PDN_VERTICAL_HALO: 5
 
-# Floor planning
-FP_SIZING: "absolute"
-FP_PIN_ORDER_CFG: "pin_order.cfg"
+PDN_CFG: dir::pdn_cfg.tcl
 
-# Placement
-PL_TARGET_DENSITY: 0.55
-PL_ROUTABILITY_DRIVEN: true
+# Netgen LVS settings
+LVS_FLATTEN_CELLS:
+  - gf180mcu_ws_ip__id
+  - gf180mcu_ws_ip__logo
 
-# CTS (Clock Tree Synthesis)
-CTS_CLK_BUFFER_LIST: "gf180mcu_fd_sc_mcu7t5v0__clkbuf_16 gf180mcu_fd_sc_mcu7t5v0__clkbuf_8"
-CTS_ROOT_BUFFER: "gf180mcu_fd_sc_mcu7t5v0__clkbuf_16"
-
-# Routing
-GRT_ADJUSTMENT: 0.3
-GRT_ALLOW_CONGESTION: true
-RT_MIN_LAYER: "Metal2"
-RT_MAX_LAYER: "Metal5"
-
-# Power grid
-FP_PDN_ENABLE_RAILS: true
-PDN_CFG: "pdn_cfg.tcl"
-
-# DRC/LVS
-RUN_DRC: true
-RUN_LVS: true
-RUN_ANTENNA_CHECK: true
-
-# Output
-PRIMARY_GDSII_STREAMOUT_ARGS: "-units 1000 -merge_files"
+# Abstract cells in layout
+MAGIC_EXT_ABSTRACT_CELLS:
+  - gf180mcu_ws_ip__id
+  - gf180mcu_ws_ip__logo

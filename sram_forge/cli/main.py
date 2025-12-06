@@ -247,7 +247,7 @@ def gen(config: str, output: str, only: str | None):
             generated.append("config.yaml")
 
             # PDN
-            pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, fit_result)
+            pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, slot_spec, fit_result)
             (output_path / "pdn_cfg.tcl").write_text(pdn_cfg)
             generated.append("pdn_cfg.tcl")
 

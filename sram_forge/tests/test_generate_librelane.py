@@ -94,6 +94,7 @@ def test_generate_pdn_tcl(librelane_engine, chip_config, sram_spec, slot_spec):
     result = librelane_engine.generate_pdn(
         chip_config=chip_config,
         sram_spec=sram_spec,
+        slot_spec=slot_spec,
         fit_result=fit_result,
     )
 
