@@ -74,6 +74,9 @@ class LibreLaneEngine:
         # Generate SRAM placement coordinates
         placements = self._generate_placements(sram_spec, slot_spec, fit_result)
 
+        # Convert slot name to define format (e.g., "1x1" -> "1X1", "0p5x1" -> "0P5X1")
+        slot_define = chip_config.slot.upper().replace(".", "P").replace("X", "X")
+
         return template.render(
             chip=chip_config.chip,
             config=chip_config,
@@ -85,6 +88,7 @@ class LibreLaneEngine:
             clock_period_ns=clock_period_ns,
             macro_name=chip_config.memory.macro,
             placements=placements,
+            slot_define=slot_define,
         )
 
     def _generate_placements(

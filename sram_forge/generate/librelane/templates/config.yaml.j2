@@ -14,9 +14,15 @@ DIE_AREA: {{ die_area }}
 CORE_AREA: {{ core_area }}
 
 VERILOG_FILES:
+  - dir::../src/slot_defines.svh
   - dir::../src/{{ chip.name }}_top.sv
   - dir::../src/{{ chip.name }}_core.sv
   - dir::../src/{{ chip.name }}_sram_array.sv
+
+# Verilog defines
+VERILOG_DEFINES:
+  - USE_POWER_PINS
+  - SLOT_{{ slot_define }}
 
 # Use klayout for smaller GDS files
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
@@ -37,8 +43,8 @@ IGNORE_DISCONNECTED_MODULES:
   - gf180mcu_fd_io__bi_24t
 
 # Clock configuration
-CLOCK_PORT: clk_pad
-CLOCK_NET: clk_pad_inst/Y
+CLOCK_PORT: clk_PAD
+CLOCK_NET: clk_pad/Y
 CLOCK_PERIOD: {{ clock_period_ns }}  # {{ config.clock.frequency_mhz }} MHz
 
 # Fix hold violations
@@ -106,6 +112,24 @@ MAGIC_EXT_UNIQUE: notopports
 
 # Macro definitions
 MACROS:
+  gf180mcu_ws_ip__id:
+    gds:
+      - pdk_dir::libs.ref/gf180mcu_ws_ip/gds/gf180mcu_ws_ip__id.gds
+    lef:
+      - pdk_dir::libs.ref/gf180mcu_ws_ip/lef/gf180mcu_ws_ip__id.lef
+    instances:
+      chip_id:
+        location: [660, 660]
+        orientation: N
+  gf180mcu_ws_ip__logo:
+    gds:
+      - pdk_dir::libs.ref/gf180mcu_ws_ip/gds/gf180mcu_ws_ip__logo.gds
+    lef:
+      - pdk_dir::libs.ref/gf180mcu_ws_ip/lef/gf180mcu_ws_ip__logo.lef
+    instances:
+      wafer_space_logo:
+        location: [660, 1160]
+        orientation: N
   {{ macro_name }}:
     gds:
       - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/{{ macro_name }}.gds
