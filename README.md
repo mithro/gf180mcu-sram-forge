@@ -1,128 +1,111 @@
-# gf180mcu Project Template
+# sram-forge
 
-Project template for wafer.space MPW runs using the gf180mcu PDK.
+A Python framework for generating SRAM-based chip designs for GF180MCU.
 
-## Prerequisites
+sram-forge produces:
+- **Verilog RTL** - Fully expanded SRAM arrays with address decoding
+- **LibreLane configs** - config.yaml, pdn_cfg.tcl, timing constraints
+- **cocotb testbenches** - Verification tests with behavioral models
+- **Documentation** - README, datasheet, memory maps
+- **Complete project packages** - Ready-to-build projects from template
 
-We use a custom fork of the [gf180mcuD PDK variant](https://github.com/wafer-space/gf180mcu) until all changes have been upstreamed.
+## Installation
 
-To clone the latest PDK version, simply run `make clone-pdk`.
+```bash
+# Using uv (recommended)
+uv pip install -e .
 
-In the next step, install LibreLane by following the Nix-based installation instructions: https://librelane.readthedocs.io/en/latest/installation/nix_installation/index.html
-
-## Implement the Design
-
-This repository contains a Nix flake that provides a shell with the [`leo/gf180mcu`](https://github.com/librelane/librelane/tree/leo/gf180mcu) branch of LibreLane.
-
-Simply run `nix-shell` in the root of this repository.
-
-> [!NOTE]
-> Since we are working on a branch of LibreLane, OpenROAD needs to be compiled locally. This will be done automatically by Nix, and the binary will be cached locally. 
-
-With this shell enabled, run the implementation:
-
-```
-make librelane
+# Or using pip
+pip install -e .
 ```
 
-## View the Design
+## Quick Start
 
-After completion, you can view the design using the OpenROAD GUI:
+```bash
+# List available SRAM macros and slots
+sram-forge list srams
+sram-forge list slots
 
-```
-make librelane-openroad
-```
+# Calculate how many SRAMs fit in a slot
+sram-forge calc --slot 1x1 --sram gf180mcu_fd_ip_sram__sram512x8m8wm1
 
-Or using KLayout:
+# Validate a chip configuration
+sram-forge check examples/sram_8k_8bit.yaml
 
-```
-make librelane-klayout
-```
+# Generate all outputs
+sram-forge gen examples/sram_8k_8bit.yaml -o output/
 
-## Copying the Design to the Final Folder
-
-To copy your latest run to the `final/` folder in the root directory of the repository, run the following command:
-
-```
-make copy-final
+# Create a complete buildable project
+sram-forge package examples/sram_8k_8bit.yaml --name my_sram_chip -o projects/
 ```
 
-This will only work if the last run was completed without errors.
+## Chip Configuration
 
-## Verification and Simulation
+Create a YAML file to define your chip:
 
-We use [cocotb](https://www.cocotb.org/), a Python-based testbench environment, for the verification of the chip.
-The underlying simulator is Icarus Verilog (https://github.com/steveicarus/iverilog).
+```yaml
+chip:
+  name: my_sram_chip
+  description: "Custom SRAM chip"
 
-The testbench is located in `cocotb/chip_top_tb.py`. To run the RTL simulation, run the following command:
+slot: 1x1  # Die size (1x1, 0p5x1, 1x0p5, 0p5x0p5)
 
-```
-make sim
-```
+memory:
+  macro: gf180mcu_fd_ip_sram__sram512x8m8wm1
+  count: auto  # or specific number
 
-To run the GL (gate-level) simulation, run the following command:
-
-```
-make sim-gl
-```
-
-> [!NOTE]
-> You need to have the latest implementation of your design in the `final/` folder. After implementing the design, execute 'make copy-final' to copy all necessary files.
-
-In both cases, a waveform file will be generated under `cocotb/sim_build/chip_top.fst`.
-You can view it using a waveform viewer, for example, [GTKWave](https://gtkwave.github.io/gtkwave/).
-
-```
-make sim-view
+interface:
+  scheme: unified_bus
 ```
 
-You can now update the testbench according to your design.
+## Available SRAM Macros
 
-## Implementing Your Own Design
+| Macro | Size | Width | Dimensions |
+|-------|------|-------|------------|
+| sram64x8m8wm1 | 64 | 8 | 203.58 x 114.24 um |
+| sram128x8m8wm1 | 128 | 8 | 203.58 x 156.24 um |
+| sram256x8m8wm1 | 256 | 8 | 286.62 x 198.24 um |
+| sram512x8m8wm1 | 512 | 8 | 369.66 x 282.24 um |
 
-The source files for this template can be found in the `src/` directory. `chip_top.sv` defines the top-level ports and instantiates `chip_core`, chip ID (QR code) and the wafer.space logo. To allow for the default bonding setup, do not change the number of pads in order to keep the original bondpad positions. To be compatible with the default breakout PCB, do not change any of the power or ground pads. However, you can change the type of the signal pads, e.g. to bidirectional, input-only or e.g. analog pads. The template provides the `NUM_INPUT` and `NUM_BIDIR` parameters for this purpose.
+## Available Slots
 
-The actual pad positions are defined in the LibreLane configuration file under `librelane/config.yaml`. The variables `PAD_SOUTH`/`PAD_EAST`/`PAD_NORTH`/`PAD_WEST` determine the respective pad placement. The LibreLane configuration also allows you to customize the flow (enable or disable steps), specify the source files, set various variables for the steps, and instantiate macros. For more information about the configuration, please refer to the LibreLane documentation: https://librelane.readthedocs.io/en/latest/
+| Slot | Die Size | Core Area |
+|------|----------|-----------|
+| 1x1 | 3932 x 5122 um | ~13 mm² |
+| 0p5x1 | 1966 x 5122 um | ~6.5 mm² |
+| 1x0p5 | 3932 x 2561 um | ~6.5 mm² |
+| 0p5x0p5 | 1966 x 2561 um | ~3.2 mm² |
 
-To implement your own design, simply edit `chip_core.sv`. The `chip_core` module receives the clock and reset, as well as the signals from the pads defined in `chip_top`. As an example, a 42-bit wide counter is implemented.
-
-> [!NOTE]
-> For more comprehensive SystemVerilog support, enable the `USE_SLANG` variable in the LibreLane configuration.
-
-## Choosing a Different Slot Size
-
-The template supports the following slot sizes: `1x1`, `0p5x1`, `1x0p5`, `0p5x0p5`.
-By default, the design is implemented using the `1x1` slot definition.
-
-To select a different slot size, simply set the `SLOT` environment variable.
-This can be done when invoking a make target:
-
-```
-SLOT=0p5x0p5 make librelane
-```
-
-Alternatively, you can export the slot size:
+## Project Structure
 
 ```
-export SLOT=0p5x0p5
+sram_forge/
+├── models/          # Pydantic data models
+├── db/              # Database loaders and bundled data
+├── calc/            # Fit calculation
+├── generate/        # Code generators
+│   ├── verilog/     # Verilog RTL templates
+│   ├── librelane/   # LibreLane config templates
+│   ├── testbench/   # cocotb templates
+│   ├── docs/        # Documentation templates
+│   └── package/     # Project package generator
+├── cli/             # Click CLI
+└── tests/           # pytest tests
 ```
 
-You can change the slot that is selected by default in the Makefile by editing the value of `DEFAULT_SLOT`.
+## Development
 
-## Building a Standalone Padring for Analog Design
+```bash
+# Install development dependencies
+uv sync
 
-To build just the padring without any standard cell rows, digital routing or filler cells, run the following command:
+# Run tests
+uv run pytest
 
-```
-make librelane-padring
-```
-
-It is also possible to build the padring for other slot sizes:
-
-```
-SLOT=0p5x0p5 make librelane-padring
+# Run with coverage
+uv run pytest --cov=sram_forge
 ```
 
-## Precheck
+## License
 
-To check whether your design is suitable for manufacturing, run the [gf180mcu-precheck](https://github.com/wafer-space/gf180mcu-precheck) with your layout.
+Apache 2.0 - See [LICENSE](LICENSE) file.
