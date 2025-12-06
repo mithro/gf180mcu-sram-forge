@@ -56,7 +56,11 @@ module {{ chip.name }}_top (
         .PAD(clk_pad),
         .PU(1'b0),
         .PD(1'b0),
-        .Y(clk_core)
+        .Y(clk_core),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 
     // Reset input pad
@@ -64,7 +68,11 @@ module {{ chip.name }}_top (
         .PAD(rst_n_pad),
         .PU(1'b1),
         .PD(1'b0),
-        .Y(rst_n_core)
+        .Y(rst_n_core),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 
     // Chip enable input pad
@@ -72,7 +80,11 @@ module {{ chip.name }}_top (
         .PAD(ce_n_pad),
         .PU(1'b1),
         .PD(1'b0),
-        .Y(ce_n_core)
+        .Y(ce_n_core),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 
     // Write enable input pad
@@ -80,7 +92,11 @@ module {{ chip.name }}_top (
         .PAD(we_n_pad),
         .PU(1'b1),
         .PD(1'b0),
-        .Y(we_n_core)
+        .Y(we_n_core),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 
     // Address input pads
@@ -89,7 +105,11 @@ module {{ chip.name }}_top (
         .PAD(addr_pad_{{ i }}),
         .PU(1'b0),
         .PD(1'b1),
-        .Y(addr_core[{{ i }}])
+        .Y(addr_core[{{ i }}]),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 {% endfor %}
 
@@ -105,7 +125,11 @@ module {{ chip.name }}_top (
         .SL(1'b0),
         .IE(1'b1),
         .OE(!we_n_core && !ce_n_core),
-        .Y(din_core[{{ i }}])
+        .Y(din_core[{{ i }}]),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 {% endfor %}
 
@@ -116,7 +140,11 @@ module {{ chip.name }}_top (
         .PAD(wem_n_pad_{{ i }}),
         .PU(1'b0),
         .PD(1'b0),
-        .Y(wem_n_core[{{ i }}])
+        .Y(wem_n_core[{{ i }}]),
+        .DVDD(VDD),
+        .DVSS(VSS),
+        .VDD(VDD),
+        .VSS(VSS)
     );
 {% endfor %}
 {% endif %}
