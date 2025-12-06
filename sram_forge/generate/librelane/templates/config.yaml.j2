@@ -38,9 +38,11 @@ VDD_NETS:
 GND_NETS:
   - VSS
 
-# Ignore disconnected modules (IO pads with unused outputs)
+# Ignore disconnected modules (IO pads with unused outputs, wafer.space IP)
 IGNORE_DISCONNECTED_MODULES:
   - gf180mcu_fd_io__bi_24t
+  - gf180mcu_ws_ip__id
+  - gf180mcu_ws_ip__logo
 
 # Clock configuration
 CLOCK_PORT: clk_PAD
@@ -114,18 +116,28 @@ MAGIC_EXT_UNIQUE: notopports
 MACROS:
   gf180mcu_ws_ip__id:
     gds:
-      - pdk_dir::libs.ref/gf180mcu_ws_ip/gds/gf180mcu_ws_ip__id.gds
+      - dir::../ip/gf180mcu_ws_ip__id/gds/gf180mcu_ws_ip__id.gds
     lef:
-      - pdk_dir::libs.ref/gf180mcu_ws_ip/lef/gf180mcu_ws_ip__id.lef
+      - dir::../ip/gf180mcu_ws_ip__id/lef/gf180mcu_ws_ip__id.lef
+    vh:
+      - dir::../ip/gf180mcu_ws_ip__id/vh/gf180mcu_ws_ip__id.v
+    lib:
+      "*":
+        - dir::../ip/gf180mcu_ws_ip__id/lib/gf180mcu_ws_ip__id.lib
     instances:
       chip_id:
         location: [660, 660]
         orientation: N
   gf180mcu_ws_ip__logo:
     gds:
-      - pdk_dir::libs.ref/gf180mcu_ws_ip/gds/gf180mcu_ws_ip__logo.gds
+      - dir::../ip/gf180mcu_ws_ip__logo/gds/gf180mcu_ws_ip__logo.gds
     lef:
-      - pdk_dir::libs.ref/gf180mcu_ws_ip/lef/gf180mcu_ws_ip__logo.lef
+      - dir::../ip/gf180mcu_ws_ip__logo/lef/gf180mcu_ws_ip__logo.lef
+    vh:
+      - dir::../ip/gf180mcu_ws_ip__logo/vh/gf180mcu_ws_ip__logo.v
+    lib:
+      "*":
+        - dir::../ip/gf180mcu_ws_ip__logo/lib/gf180mcu_ws_ip__logo.lib
     instances:
       wafer_space_logo:
         location: [660, 1160]
@@ -165,3 +177,13 @@ PDN_HORIZONTAL_HALO: 5
 PDN_VERTICAL_HALO: 5
 
 PDN_CFG: dir::pdn_cfg.tcl
+
+# LVS - flatten wafer.space IP cells
+LVS_FLATTEN_CELLS:
+  - gf180mcu_ws_ip__id
+  - gf180mcu_ws_ip__logo
+
+# wafer.space IP has no ports and components - make abstract cells
+MAGIC_EXT_ABSTRACT_CELLS:
+  - gf180mcu_ws_ip__id
+  - gf180mcu_ws_ip__logo
