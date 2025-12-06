@@ -118,13 +118,12 @@ module {{ chip.name }}_top (
     gf180mcu_fd_io__bi_t data_pad_{{ i }}_inst (
         .PAD(data_pad_{{ i }}),
         .A(dout_core[{{ i }}]),
-        .EN(!we_n_core && !ce_n_core),  // Output enable on read
         .PU(1'b0),
         .PD(1'b0),
         .CS(1'b0),
         .SL(1'b0),
         .IE(1'b1),
-        .OE(!we_n_core && !ce_n_core),
+        .OE(!we_n_core && !ce_n_core),  // Output enable on read
         .Y(din_core[{{ i }}]),
         .PDRV0(1'b0),
         .PDRV1(1'b1),
