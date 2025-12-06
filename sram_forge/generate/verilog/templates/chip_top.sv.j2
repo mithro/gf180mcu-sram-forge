@@ -126,6 +126,8 @@ module {{ chip.name }}_top (
         .IE(1'b1),
         .OE(!we_n_core && !ce_n_core),
         .Y(din_core[{{ i }}]),
+        .PDRV0(1'b0),
+        .PDRV1(1'b1),
         .DVDD(VDD),
         .DVSS(VSS),
         .VDD(VDD),
@@ -150,7 +152,9 @@ module {{ chip.name }}_top (
 {% endif %}
 
     // Core instantiation
-    {{ chip.name }}_core u_core (
+    {{ chip.name }}_core i_chip_core (
+        .VDD(VDD),
+        .VSS(VSS),
         .clk(clk_core),
         .rst_n(rst_n_core),
         .ce_n(ce_n_core),

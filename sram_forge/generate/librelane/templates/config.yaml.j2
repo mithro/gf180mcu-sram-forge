@@ -155,7 +155,7 @@ MACROS:
     instances:
       # {{ fit.count }} SRAMs in {{ fit.cols }}x{{ fit.rows }} arrangement
 {% for p in placements %}
-      i_chip_core.{{ p.name }}:
+      i_chip_core.u_sram_array.{{ p.name }}:
         location: [{{ p.x }}, {{ p.y }}]
         orientation: {{ p.orientation }}
 {% endfor %}
@@ -163,7 +163,7 @@ MACROS:
 # Power connections for SRAM macros
 PDN_MACRO_CONNECTIONS:
 {% for p in placements %}
-  - "i_chip_core.{{ p.name }} VDD VSS VDD VSS"
+  - "i_chip_core.u_sram_array.{{ p.name }} VDD VSS VDD VSS"
 {% endfor %}
 
 # Halo size around macros

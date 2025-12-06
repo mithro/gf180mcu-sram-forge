@@ -12,6 +12,10 @@
 //   Output Routing: {{ output_routing }}
 
 module {{ chip.name }}_sram_array (
+    // Power supplies (directly connected to SRAM macros)
+    inout  wire                    VDD,
+    inout  wire                    VSS,
+    // Functional signals
     input  wire                    clk,
     input  wire                    rst_n,
     input  wire                    ce_n,      // Chip enable (active low)
@@ -46,6 +50,8 @@ module {{ chip.name }}_sram_array (
     // SRAM macro instantiations
 {% for i in range(sram_count) %}
     {{ macro_name }} sram_{{ i }} (
+        .VDD(VDD),
+        .VSS(VSS),
         .CLK(clk),
         .CEN(sram_ce_n[{{ i }}]),
         .GWEN(we_n),

@@ -7,6 +7,10 @@
 // Connect this to IO pads via chip_top module
 
 module {{ chip.name }}_core (
+    // Power supplies (directly connected to SRAM macros)
+    inout  wire                    VDD,
+    inout  wire                    VSS,
+    // Functional signals
     input  wire                    clk,
     input  wire                    rst_n,
     input  wire                    ce_n,      // Chip enable (active low)
@@ -21,6 +25,8 @@ module {{ chip.name }}_core (
 
     // Instantiate SRAM array
     {{ chip.name }}_sram_array u_sram_array (
+        .VDD(VDD),
+        .VSS(VSS),
         .clk(clk),
         .rst_n(rst_n),
         .ce_n(ce_n),
