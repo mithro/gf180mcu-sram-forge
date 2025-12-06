@@ -1,0 +1,77 @@
+name: Update Downstream Repos
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force update even if no changes'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  update-0p5x0p5:
+    name: Update 0.5x0.5 Test Chip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sram-forge
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.x"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install sram-forge
+        run: uv pip install -e .
+
+      - name: Clone downstream repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.DOWNSTREAM_TOKEN }}
+        run: |
+          git clone https://x-access-token:${GITHUB_TOKEN}@github.com/mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k.git downstream
+
+      - name: Generate updated files
+        run: |
+          uv run sram-forge gen examples/sram_0p5x0p5_u8b3k.yaml -o downstream
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          cd downstream
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git diff --cached --stat
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changed == 'true' || github.event.inputs.force == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.DOWNSTREAM_TOKEN }}
+        run: |
+          cd downstream
+          git config user.name "sram-forge bot"
+          git config user.email "sram-forge-bot@users.noreply.github.com"
+          git commit -m "chore: update generated files from sram-forge
+
+          Source commit: ${{ github.sha }}
+          Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git push
+
+      - name: Trigger downstream build
+        if: steps.check_changes.outputs.changed == 'true' || github.event.inputs.force == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.DOWNSTREAM_TOKEN }}
+        run: |
+          # Dispatch workflow in downstream repo if it exists
+          gh workflow run build.yml --repo mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k 2>/dev/null || echo "No build workflow to trigger"

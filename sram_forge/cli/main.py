@@ -381,5 +381,228 @@ def package(config: str, name: str, output: str, no_git: bool):
         raise SystemExit(1)
 
 
+@main.command("create-repo")
+@click.argument("config", type=click.Path(exists=True))
+@click.option("--owner", default="mithro", help="GitHub owner/organization")
+@click.option("--template", default="wafer-space/gf180mcu-project-template", help="Template repository")
+@click.option("--clone-dir", default=None, help="Local directory to clone into (default: current dir)")
+@click.option("--public/--private", default=True, help="Repository visibility")
+@click.option("--push/--no-push", default=True, help="Push generated files after creation")
+def create_repo(config: str, owner: str, template: str, clone_dir: str | None, public: bool, push: bool):
+    """Create a GitHub repository from template and populate with generated files.
+
+    This command:
+    1. Creates a new GitHub repo from the gf180mcu-project-template
+    2. Clones it locally
+    3. Generates SRAM chip files using sram-forge
+    4. Commits and pushes the generated files
+    """
+    import math
+    import subprocess
+    import shutil
+
+    data_dir = get_bundled_data_dir()
+
+    try:
+        # Load chip config
+        chip_config = load_chip_config(Path(config))
+        click.echo(f"Creating repository for: {chip_config.chip.name}")
+
+        # Load databases
+        srams = load_srams(data_dir / "srams.yaml")
+        slots = load_slots(data_dir / "slots.yaml")
+
+        # Validate references
+        if chip_config.memory.macro not in srams:
+            click.echo(f"Error: SRAM '{chip_config.memory.macro}' not found.", err=True)
+            raise SystemExit(1)
+
+        if chip_config.slot not in slots:
+            click.echo(f"Error: Slot '{chip_config.slot}' not found.", err=True)
+            raise SystemExit(1)
+
+        sram_spec = srams[chip_config.memory.macro]
+        slot_spec = slots[chip_config.slot]
+
+        # Calculate fit
+        fit_result = calculate_fit(slot_spec, sram_spec)
+
+        # Override count if specified
+        if chip_config.memory.count != "auto":
+            fit_result.count = chip_config.memory.count
+            fit_result.total_words = fit_result.count * sram_spec.size
+            fit_result.total_bits = fit_result.total_words * sram_spec.width
+            fit_result.address_bits = math.ceil(math.log2(fit_result.total_words))
+
+        # Derive repo name from chip name (replace underscores with dashes)
+        repo_name = chip_config.chip.name.replace("_", "-")
+        full_repo = f"{owner}/{repo_name}"
+
+        # Check if repo already exists
+        result = subprocess.run(
+            ["gh", "repo", "view", full_repo],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            click.echo(f"Repository {full_repo} already exists.", err=True)
+            raise SystemExit(1)
+
+        click.echo(f"Creating repository: {full_repo}")
+        click.echo(f"  Template: {template}")
+        click.echo(f"  Visibility: {'public' if public else 'private'}")
+
+        # Create repo from template
+        visibility = "--public" if public else "--private"
+        result = subprocess.run(
+            ["gh", "repo", "create", full_repo, "--template", template, visibility, "--clone=false"],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode != 0:
+            click.echo(f"Error creating repository: {result.stderr}", err=True)
+            raise SystemExit(1)
+
+        click.echo(f"Created repository: https://github.com/{full_repo}")
+
+        # Determine clone directory
+        if clone_dir:
+            clone_path = Path(clone_dir) / repo_name
+        else:
+            clone_path = Path.cwd() / repo_name
+
+        # Clone the repository
+        click.echo(f"Cloning to: {clone_path}")
+        result = subprocess.run(
+            ["gh", "repo", "clone", full_repo, str(clone_path)],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode != 0:
+            click.echo(f"Error cloning repository: {result.stderr}", err=True)
+            raise SystemExit(1)
+
+        # Generate files into the cloned repo
+        click.echo("Generating SRAM files...")
+
+        # Clean up template placeholder files
+        for placeholder in ["src/.gitkeep", "librelane/.gitkeep", "cocotb/.gitkeep"]:
+            placeholder_path = clone_path / placeholder
+            if placeholder_path.exists():
+                placeholder_path.unlink()
+
+        # Generate Verilog
+        verilog_engine = VerilogEngine()
+        verilog_dir = clone_path / "src"
+        verilog_dir.mkdir(exist_ok=True)
+
+        sram_array = verilog_engine.generate_sram_array(chip_config, sram_spec, fit_result)
+        (verilog_dir / f"{chip_config.chip.name}_sram_array.sv").write_text(sram_array)
+
+        chip_core = verilog_engine.generate_chip_core(chip_config, sram_spec, fit_result)
+        (verilog_dir / f"{chip_config.chip.name}_core.sv").write_text(chip_core)
+
+        chip_top = verilog_engine.generate_chip_top(chip_config, sram_spec, fit_result)
+        (verilog_dir / f"{chip_config.chip.name}_top.sv").write_text(chip_top)
+
+        # Generate LibreLane config
+        librelane_engine = LibreLaneEngine()
+        librelane_dir = clone_path / "librelane"
+        librelane_dir.mkdir(exist_ok=True)
+
+        ll_config = librelane_engine.generate_config(chip_config, sram_spec, slot_spec, fit_result)
+        (librelane_dir / "config.yaml").write_text(ll_config)
+
+        pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, slot_spec, fit_result)
+        (librelane_dir / "pdn_cfg.tcl").write_text(pdn_cfg)
+
+        sdc = librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)
+        (librelane_dir / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
+
+        # Generate testbench
+        testbench_engine = TestbenchEngine()
+        tb_dir = clone_path / "cocotb"
+        tb_dir.mkdir(exist_ok=True)
+
+        test_py = testbench_engine.generate_cocotb_test(chip_config, sram_spec, fit_result)
+        (tb_dir / "test_sram.py").write_text(test_py)
+
+        makefile = testbench_engine.generate_makefile(chip_config)
+        (tb_dir / "Makefile").write_text(makefile)
+
+        model_py = testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
+        (tb_dir / "sram_model.py").write_text(model_py)
+
+        # Generate docs
+        docs_engine = DocumentationEngine()
+        docs_dir = clone_path / "docs"
+        docs_dir.mkdir(exist_ok=True)
+
+        readme = docs_engine.generate_readme(chip_config, sram_spec, fit_result)
+        (docs_dir / "README.md").write_text(readme)
+
+        datasheet = docs_engine.generate_datasheet(chip_config, sram_spec, fit_result)
+        (docs_dir / "datasheet.md").write_text(datasheet)
+
+        memory_map = docs_engine.generate_memory_map(chip_config, sram_spec, fit_result)
+        (docs_dir / "memory_map.md").write_text(memory_map)
+
+        # Store the config file
+        config_path = Path(config)
+        shutil.copy(config_path, clone_path / "chip_config.yaml")
+
+        click.echo("Generated files:")
+        for subdir in ["src", "librelane", "cocotb", "docs"]:
+            subdir_path = clone_path / subdir
+            if subdir_path.exists():
+                for f in subdir_path.iterdir():
+                    if f.is_file():
+                        click.echo(f"  {subdir}/{f.name}")
+
+        if push:
+            click.echo("Committing and pushing generated files...")
+
+            # Git add all
+            subprocess.run(["git", "add", "-A"], cwd=clone_path, check=True)
+
+            # Git commit
+            commit_msg = f"""feat: add generated SRAM chip files
+
+Chip: {chip_config.chip.name}
+Slot: {chip_config.slot}
+SRAMs: {fit_result.count} x {chip_config.memory.macro}
+Capacity: {fit_result.total_bits // 8:,} bytes
+
+Generated by sram-forge"""
+
+            subprocess.run(
+                ["git", "commit", "-m", commit_msg],
+                cwd=clone_path,
+                check=True
+            )
+
+            # Git push
+            subprocess.run(["git", "push"], cwd=clone_path, check=True)
+
+            click.echo(f"Pushed to: https://github.com/{full_repo}")
+
+        click.echo()
+        click.echo("Repository created successfully!")
+        click.echo(f"  URL: https://github.com/{full_repo}")
+        click.echo(f"  Local: {clone_path}")
+        click.echo()
+        click.echo("To build:")
+        click.echo(f"  cd {clone_path}")
+        click.echo("  nix-shell")
+        click.echo("  make librelane")
+
+    except subprocess.CalledProcessError as e:
+        click.echo(f"Error running command: {e}", err=True)
+        raise SystemExit(1)
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
+
+
 if __name__ == "__main__":
     main()

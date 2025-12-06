@@ -1,0 +1,29 @@
+# GF180MCU 0.5x0.5 SRAM Chip Configuration
+# 6 SRAMs = 3KB total (3072 words x 8 bits)
+# For wafer.space MPW runs - smallest/fastest test chip
+
+chip:
+  name: gf180mcu_ic_0p5x0p5_sram_u8b3k
+  description: "GF180MCU 0.5x0.5 SRAM Test Chip - 3KB unified 8-bit bus"
+
+slot: 0p5x0p5
+
+memory:
+  macro: gf180mcu_fd_ip_sram__sram512x8m8wm1
+  count: auto
+  arrangement:
+    prefer: rows
+    orientation: N
+
+interface:
+  scheme: unified_bus
+  unified_bus:
+    data_width: 8
+    output_routing: mux
+    write_mask: false
+
+clock:
+  frequency_mhz: 10
+
+power:
+  core_voltage: 5.0

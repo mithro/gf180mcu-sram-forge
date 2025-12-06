@@ -7,3 +7,4 @@ sim_build/
 final/
 img/
 *.lyrdb
+.claude/settings.local.json
