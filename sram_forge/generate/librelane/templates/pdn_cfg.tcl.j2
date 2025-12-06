@@ -176,7 +176,7 @@ define_pdn_grid \
     -macro \
     -instances {
 {%- for p in placements %}
- i_chip_core.{{ p.name }}{% endfor %}} \
+ i_chip_core.u_sram_array.{{ p.name }}{% endfor %}} \
     -name sram_macros \
     -starts_with POWER \
     -halo "$::env(PDN_HORIZONTAL_HALO) $::env(PDN_VERTICAL_HALO)"
