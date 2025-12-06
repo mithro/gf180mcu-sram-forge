@@ -1,0 +1,28 @@
+# sram-forge chip configuration
+# 9KB SRAM chip for 1x0.5 slot
+
+chip:
+  name: gf180mcu_ic_1x0p5_sram_u8b9k
+  description: "9KB SRAM (8-bit x 9K) for 1x0.5 wafer.space slot"
+
+slot: 1x0p5
+
+memory:
+  macro: gf180mcu_fd_ip_sram__sram512x8m8wm1
+  count: 18
+  arrangement:
+    prefer: rows
+    orientation: N
+
+interface:
+  scheme: unified_bus
+  unified_bus:
+    data_width: 8
+    output_routing: mux
+    write_mask: false
+
+clock:
+  frequency_mhz: 25
+
+power:
+  core_voltage: 5.0
