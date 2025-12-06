@@ -1,0 +1,28 @@
+# sram-forge chip configuration
+# 24KB SRAM chip for 1x1 slot
+
+chip:
+  name: gf180mcu_ic_1x1_sram_u8b24k
+  description: "24KB SRAM (8-bit x 24K) for 1x1 wafer.space slot"
+
+slot: 1x1
+
+memory:
+  macro: gf180mcu_fd_ip_sram__sram512x8m8wm1
+  count: 48
+  arrangement:
+    prefer: rows
+    orientation: N
+
+interface:
+  scheme: unified_bus
+  unified_bus:
+    data_width: 8
+    output_routing: mux
+    write_mask: false
+
+clock:
+  frequency_mhz: 25
+
+power:
+  core_voltage: 5.0
