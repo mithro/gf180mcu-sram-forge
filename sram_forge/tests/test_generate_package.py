@@ -1,14 +1,12 @@
 """Tests for package generator."""
 
 import pytest
-import tarfile
 from pathlib import Path
 import tempfile
-import shutil
 
 from sram_forge.models import ChipConfig, SramSpec, SlotSpec
 from sram_forge.calc.fit import calculate_fit
-from sram_forge.generate.package.engine import PackageEngine
+from sram_forge.generate.package.engine import PackageEngine, get_template_dir
 
 
 @pytest.fixture
@@ -59,6 +57,15 @@ class TestPackageEngine:
     def test_engine_instantiation(self, package_engine):
         """Test engine can be instantiated."""
         assert package_engine is not None
+        assert package_engine.template_dir.exists()
+
+    def test_template_dir_detection(self):
+        """Test template directory is correctly detected."""
+        template_dir = get_template_dir()
+        assert template_dir.exists()
+        # Should have key template files
+        assert (template_dir / "flake.nix").exists()
+        assert (template_dir / "Makefile").exists()
 
     def test_generate_manifest(
         self, package_engine, chip_config, sram_spec, fit_result
@@ -74,18 +81,29 @@ class TestPackageEngine:
         assert "test_pkg" in result
         assert "files:" in result
 
-    def test_manifest_includes_checksums(
+    def test_manifest_includes_file_paths(
         self, package_engine, chip_config, sram_spec, fit_result
     ):
-        """Test manifest includes file information."""
+        """Test manifest includes file paths."""
         result = package_engine.generate_manifest(
             chip_config, sram_spec, fit_result, "test_pkg_v1"
         )
 
-        # Should list expected files
+        # Should list expected files with correct paths
+        assert "src/" in result
         assert "sram_array.sv" in result
-        assert "config.yaml" in result
-        assert "README.md" in result
+        assert "librelane/config.yaml" in result
+        assert "docs/README.md" in result
+
+    def test_generate_readme(
+        self, package_engine, chip_config, sram_spec, fit_result
+    ):
+        """Test README generation."""
+        result = package_engine.generate_readme(chip_config, sram_spec, fit_result)
+
+        assert "# test_pkg" in result
+        assert "nix-shell" in result
+        assert "make librelane" in result
 
     def test_create_package(
         self, package_engine, chip_config, sram_spec, slot_spec, fit_result
@@ -93,25 +111,25 @@ class TestPackageEngine:
         """Test full package creation."""
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir)
-            archive_path = package_engine.create_package(
+            package_dir = package_engine.create_package(
                 chip_config,
                 sram_spec,
                 slot_spec,
                 fit_result,
                 "test_pkg_v1",
                 output_path,
+                init_git=False,  # Skip git init in tests
             )
 
-            # Archive should exist
-            assert archive_path.exists()
-            assert archive_path.suffix == ".gz"
+            # Package directory should exist
+            assert package_dir.exists()
+            assert package_dir.name == "test_pkg_v1"
 
-            # Archive should contain expected files
-            with tarfile.open(archive_path, "r:gz") as tar:
-                names = tar.getnames()
-                assert any("manifest.yaml" in n for n in names)
-                assert any("sram_array.sv" in n for n in names)
-                assert any("README.md" in n for n in names)
+            # Should have manifest
+            assert (package_dir / "manifest.yaml").exists()
+
+            # Should have README
+            assert (package_dir / "README.md").exists()
 
     def test_package_has_correct_structure(
         self, package_engine, chip_config, sram_spec, slot_spec, fit_result
@@ -119,18 +137,69 @@ class TestPackageEngine:
         """Test package directory structure."""
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir)
-            archive_path = package_engine.create_package(
+            package_dir = package_engine.create_package(
                 chip_config,
                 sram_spec,
                 slot_spec,
                 fit_result,
                 "test_pkg_v1",
                 output_path,
+                init_git=False,
             )
 
-            with tarfile.open(archive_path, "r:gz") as tar:
-                names = tar.getnames()
-                # Check directory structure
-                assert any("src/" in n for n in names)
-                assert any("docs/" in n for n in names)
-                assert any("cocotb/" in n for n in names)
+            # Check directory structure
+            assert (package_dir / "src").is_dir()
+            assert (package_dir / "librelane").is_dir()
+            assert (package_dir / "cocotb").is_dir()
+            assert (package_dir / "docs").is_dir()
+
+            # Check generated files
+            assert (package_dir / "src" / "test_pkg_sram_array.sv").exists()
+            assert (package_dir / "src" / "test_pkg_core.sv").exists()
+            assert (package_dir / "src" / "test_pkg_top.sv").exists()
+            assert (package_dir / "librelane" / "config.yaml").exists()
+            assert (package_dir / "librelane" / "pdn_cfg.tcl").exists()
+            assert (package_dir / "cocotb" / "test_sram.py").exists()
+            assert (package_dir / "docs" / "README.md").exists()
+
+    def test_package_copies_infrastructure(
+        self, package_engine, chip_config, sram_spec, slot_spec, fit_result
+    ):
+        """Test that infrastructure files are copied from template."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir)
+            package_dir = package_engine.create_package(
+                chip_config,
+                sram_spec,
+                slot_spec,
+                fit_result,
+                "test_pkg_v1",
+                output_path,
+                init_git=False,
+            )
+
+            # Should have infrastructure files
+            assert (package_dir / "flake.nix").exists()
+            assert (package_dir / "Makefile").exists()
+            assert (package_dir / "LICENSE").exists()
+            assert (package_dir / ".gitignore").exists()
+
+    def test_package_rejects_existing_directory(
+        self, package_engine, chip_config, sram_spec, slot_spec, fit_result
+    ):
+        """Test that creating a package in an existing directory fails."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir)
+            existing = output_path / "test_pkg_v1"
+            existing.mkdir()
+
+            with pytest.raises(ValueError, match="already exists"):
+                package_engine.create_package(
+                    chip_config,
+                    sram_spec,
+                    slot_spec,
+                    fit_result,
+                    "test_pkg_v1",
+                    output_path,
+                    init_git=False,
+                )

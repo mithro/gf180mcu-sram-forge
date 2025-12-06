@@ -309,8 +309,9 @@ def gen(config: str, output: str, only: str | None):
 @click.argument("config", type=click.Path(exists=True))
 @click.option("--name", required=True, help="Package name")
 @click.option("--output", "-o", default=".", help="Output directory")
-def package(config: str, name: str, output: str):
-    """Create a complete asset package."""
+@click.option("--no-git", is_flag=True, help="Skip git initialization")
+def package(config: str, name: str, output: str, no_git: bool):
+    """Create a complete buildable project from template."""
     import math
 
     data_dir = get_bundled_data_dir()
@@ -319,7 +320,7 @@ def package(config: str, name: str, output: str):
     try:
         # Load chip config
         chip_config = load_chip_config(Path(config))
-        click.echo(f"Creating package '{name}' for: {chip_config.chip.name}")
+        click.echo(f"Creating project '{name}' for: {chip_config.chip.name}")
 
         # Load databases
         srams = load_srams(data_dir / "srams.yaml")
@@ -349,22 +350,29 @@ def package(config: str, name: str, output: str):
 
         # Create package
         package_engine = PackageEngine()
-        archive_path = package_engine.create_package(
+        package_dir = package_engine.create_package(
             chip_config,
             sram_spec,
             slot_spec,
             fit_result,
             name,
             output_path,
+            init_git=not no_git,
         )
 
-        click.echo(f"Created package: {archive_path}")
-        click.echo(f"Contents:")
-        click.echo(f"  - Verilog sources (src/)")
-        click.echo(f"  - LibreLane config (config.yaml, pdn_cfg.tcl, *.sdc)")
-        click.echo(f"  - Testbench (cocotb/)")
-        click.echo(f"  - Documentation (docs/)")
-        click.echo(f"  - Manifest (manifest.yaml)")
+        click.echo(f"Created project: {package_dir}")
+        click.echo()
+        click.echo("Contents:")
+        click.echo(f"  src/           - Verilog sources")
+        click.echo(f"  librelane/     - Physical design config")
+        click.echo(f"  cocotb/        - Verification testbench")
+        click.echo(f"  docs/          - Documentation")
+        click.echo(f"  manifest.yaml  - Package manifest")
+        click.echo()
+        click.echo("To build:")
+        click.echo(f"  cd {package_dir}")
+        click.echo("  nix-shell")
+        click.echo("  make librelane")
 
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
