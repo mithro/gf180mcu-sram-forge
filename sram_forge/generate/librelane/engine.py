@@ -138,13 +138,16 @@ class LibreLaneEngine:
         fit_result: FitResult,
         halo_um: float = 10.0,
     ) -> list[dict]:
-        """Generate SRAM placement coordinates.
+        """Generate SRAM placement coordinates, centered in core area.
+
+        The SRAM array is centered within the core area so that there is
+        equal spacing on all sides (left/right and top/bottom).
 
         Args:
             sram_spec: SRAM macro specification.
             slot_spec: Slot specification.
             fit_result: Fit calculation result.
-            halo_um: Routing halo in microns.
+            halo_um: Routing halo between SRAMs in microns.
 
         Returns:
             List of placement dictionaries with x, y, orientation.
@@ -154,13 +157,28 @@ class LibreLaneEngine:
         sram_w = sram_spec.dimensions_um.width
         sram_h = sram_spec.dimensions_um.height
 
+        # Calculate total array dimensions
+        # Array width = cols * sram_width + (cols - 1) * 2 * halo (gaps between SRAMs)
+        # We also need halo on outer edges, so: cols * sram_w + (cols + 1) * halo on each side
+        # Simplified: total array with outer halos = cols * (sram_w + 2*halo)
+        array_width = fit_result.cols * (sram_w + 2 * halo_um)
+        array_height = fit_result.rows * (sram_h + 2 * halo_um)
+
+        # Core area dimensions
+        core_width = slot_spec.core_width
+        core_height = slot_spec.core_height
+
+        # Calculate margins to center the array
+        margin_x = (core_width - array_width) / 2
+        margin_y = (core_height - array_height) / 2
+
+        # Base position: core origin + margin + first halo
+        base_x = slot_spec.core.inset.left + margin_x + halo_um
+        base_y = slot_spec.core.inset.bottom + margin_y + halo_um
+
         # Effective cell size with halo
         cell_w = sram_w + (2 * halo_um)
         cell_h = sram_h + (2 * halo_um)
-
-        # Start from core origin
-        base_x = slot_spec.core.inset.left + halo_um
-        base_y = slot_spec.core.inset.bottom + halo_um
 
         idx = 0
         for row in range(fit_result.rows):
