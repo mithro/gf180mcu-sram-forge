@@ -12,9 +12,30 @@ on:
         type: boolean
 
 jobs:
-  update-0p5x0p5:
-    name: Update 0.5x0.5 Test Chip
+  update-downstream:
+    name: Update ${{ matrix.slot }} Chip
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slot: 0p5x0p5
+            config: examples/sram_0p5x0p5_u8b3k.yaml
+            repo: mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k
+            secret: DEPLOY_KEY_0P5X0P5
+          - slot: 0p5x1
+            config: examples/sram_0p5x1_u8b8k.yaml
+            repo: mithro/gf180mcu-ic-0p5x1-sram-u8b8k
+            secret: DEPLOY_KEY_0P5X1
+          - slot: 1x0p5
+            config: examples/sram_1x0p5_u8b9k.yaml
+            repo: mithro/gf180mcu-ic-1x0p5-sram-u8b9k
+            secret: DEPLOY_KEY_1X0P5
+          - slot: 1x1
+            config: examples/sram_1x1_u8b24k.yaml
+            repo: mithro/gf180mcu-ic-1x1-sram-u8b24k
+            secret: DEPLOY_KEY_1X1
+
     steps:
       - name: Checkout sram-forge
         uses: actions/checkout@v4
@@ -32,7 +53,7 @@ jobs:
 
       - name: Configure SSH for downstream repo
         env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY_0P5X0P5 }}
+          DEPLOY_KEY: ${{ secrets[matrix.secret] }}
         run: |
           mkdir -p ~/.ssh
           echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
@@ -42,11 +63,11 @@ jobs:
 
       - name: Clone downstream repo
         run: |
-          git clone git@github.com:mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k.git downstream
+          git clone git@github.com:${{ matrix.repo }}.git downstream
 
       - name: Generate updated files
         run: |
-          uv run sram-forge gen examples/sram_0p5x0p5_u8b3k.yaml -o downstream
+          uv run sram-forge gen ${{ matrix.config }} -o downstream
 
       - name: Check for changes
         id: check_changes
@@ -80,4 +101,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Dispatch workflow in downstream repo if it exists
-          gh workflow run build.yml --repo mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k 2>/dev/null || echo "No build workflow to trigger"
+          gh workflow run build.yml --repo ${{ matrix.repo }} 2>/dev/null || echo "No build workflow to trigger"

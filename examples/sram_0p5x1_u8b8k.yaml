@@ -1,0 +1,29 @@
+# GF180MCU 0.5x1 SRAM Chip Configuration
+# 16 SRAMs = 8KB total (8192 words x 8 bits)
+# For wafer.space MPW runs - half-width chip
+
+chip:
+  name: gf180mcu_ic_0p5x1_sram_u8b8k
+  description: "GF180MCU 0.5x1 SRAM Test Chip - 8KB unified 8-bit bus"
+
+slot: 0p5x1
+
+memory:
+  macro: gf180mcu_fd_ip_sram__sram512x8m8wm1
+  count: auto
+  arrangement:
+    prefer: rows
+    orientation: N
+
+interface:
+  scheme: unified_bus
+  unified_bus:
+    data_width: 8
+    output_routing: mux
+    write_mask: false
+
+clock:
+  frequency_mhz: 25
+
+power:
+  core_voltage: 5.0
