@@ -259,4 +259,5 @@ class LibreLaneEngine:
 
         return template.render(
             slot=chip_config.slot,
+            chip_name=chip_config.chip.name,
         )
