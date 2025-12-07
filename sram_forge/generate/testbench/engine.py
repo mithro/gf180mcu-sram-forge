@@ -123,3 +123,26 @@ class TestbenchEngine:
             total_words=fit_result.total_words,
             write_mask=chip_config.interface.unified_bus.write_mask,
         )
+
+    def generate_chip_top_tb(
+        self,
+        chip_config: ChipConfig,
+        sram_spec: SramSpec,
+    ) -> str:
+        """Generate chip-level cocotb testbench runner.
+
+        Args:
+            chip_config: Chip configuration.
+            sram_spec: SRAM macro specification.
+
+        Returns:
+            Generated Python testbench file.
+        """
+        template = self.get_template("chip_top_tb.py.j2")
+
+        return template.render(
+            chip=chip_config.chip,
+            config=chip_config,
+            sram=sram_spec,
+            slot=chip_config.slot,
+        )

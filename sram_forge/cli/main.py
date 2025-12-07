@@ -283,6 +283,11 @@ def gen(config: str, output: str, only: str | None):
             (tb_dir / "sram_model.py").write_text(model_py)
             generated.append("cocotb/sram_model.py")
 
+            # Chip-level testbench runner
+            chip_tb = testbench_engine.generate_chip_top_tb(chip_config, sram_spec)
+            (tb_dir / "chip_top_tb.py").write_text(chip_tb)
+            generated.append("cocotb/chip_top_tb.py")
+
         if only is None or only == "docs":
             docs_engine = DocumentationEngine()
             docs_dir = output_path / "docs"
@@ -541,6 +546,9 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
 
         model_py = testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
         (tb_dir / "sram_model.py").write_text(model_py)
+
+        chip_tb = testbench_engine.generate_chip_top_tb(chip_config, sram_spec)
+        (tb_dir / "chip_top_tb.py").write_text(chip_tb)
 
         # Generate docs
         docs_engine = DocumentationEngine()
