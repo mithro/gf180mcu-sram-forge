@@ -77,6 +77,10 @@ class LibreLaneEngine:
         # Convert slot name to define format (e.g., "1x1" -> "1X1", "0p5x1" -> "0P5X1")
         slot_define = chip_config.slot.upper().replace(".", "P").replace("X", "X")
 
+        # Calculate placement density based on macro utilization
+        # High macro occupancy requires lower target density to avoid placer divergence
+        placement_density_pct = self._calculate_placement_density(fit_result.utilization)
+
         return template.render(
             chip=chip_config.chip,
             config=chip_config,
@@ -89,7 +93,43 @@ class LibreLaneEngine:
             macro_name=chip_config.memory.macro,
             placements=placements,
             slot_define=slot_define,
+            placement_density_pct=placement_density_pct,
         )
+
+    def _calculate_placement_density(self, macro_utilization: float) -> int:
+        """Calculate appropriate placement density based on macro utilization.
+
+        When macros occupy a large fraction of the core area, the global placer
+        needs a lower target density to avoid numerical instability (GPL-0305).
+
+        For very high macro occupancy (>80%), the remaining space has very few
+        standard cells (typically <2% utilization in remaining area). The target
+        density must be close to or slightly above actual utilization, otherwise
+        the placer's penalty term grows exponentially causing Inf/NaN overflow.
+
+        Args:
+            macro_utilization: Fraction of core area occupied by macros (0.0-1.0).
+
+        Returns:
+            Target placement density percentage (1-100).
+        """
+        if macro_utilization > 0.80:
+            # Extremely high macro occupancy (>80%)
+            # Actual std cell utilization is typically ~1-2% of remaining area
+            # Use very low density to avoid GPL-0305 divergence
+            return 2
+        elif macro_utilization > 0.70:
+            # Very high macro occupancy (70-80%)
+            return 5
+        elif macro_utilization > 0.50:
+            # High macro occupancy (50-70%)
+            return 10
+        elif macro_utilization > 0.30:
+            # Moderate macro occupancy (30-50%)
+            return 15
+        else:
+            # Low macro occupancy (<30%) - use standard density
+            return 20
 
     def _generate_placements(
         self,

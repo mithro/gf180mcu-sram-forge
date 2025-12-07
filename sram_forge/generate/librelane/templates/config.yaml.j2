@@ -52,8 +52,9 @@ CLOCK_PERIOD: {{ clock_period_ns }}  # {{ config.clock.frequency_mhz }} MHz
 PL_RESIZER_HOLD_SLACK_MARGIN: 0.35
 GRT_RESIZER_HOLD_SLACK_MARGIN: 0.3
 
-# Placement density - lower for more macros
-PL_TARGET_DENSITY_PCT: 25
+# Placement density - adjusted based on macro occupancy ({{ "%.1f"|format(fit.utilization * 100) }}%)
+# Lower density prevents GPL-0305 divergence with high macro utilization
+PL_TARGET_DENSITY_PCT: {{ placement_density_pct }}
 GRT_ALLOW_CONGESTION: true
 
 # Fix antenna violations after DRT
