@@ -258,6 +258,11 @@ def gen(config: str, output: str, only: str | None):
             (librelane_dir / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
             generated.append(f"librelane/{chip_config.chip.name}_top.sdc")
 
+            # Root Makefile (with correct DEFAULT_SLOT for this chip)
+            makefile_content = librelane_engine.generate_makefile(chip_config)
+            (output_path / "Makefile").write_text(makefile_content)
+            generated.append("Makefile")
+
         if only is None or only == "testbench":
             testbench_engine = TestbenchEngine()
             tb_dir = output_path / "cocotb"
@@ -518,6 +523,10 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
 
         sdc = librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)
         (librelane_dir / f"{chip_config.chip.name}_top.sdc").write_text(sdc)
+
+        # Generate root Makefile with correct DEFAULT_SLOT for this chip
+        makefile_content = librelane_engine.generate_makefile(chip_config)
+        (clone_path / "Makefile").write_text(makefile_content)
 
         # Generate testbench
         testbench_engine = TestbenchEngine()

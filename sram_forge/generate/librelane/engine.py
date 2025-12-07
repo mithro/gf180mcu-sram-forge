@@ -242,3 +242,21 @@ class LibreLaneEngine:
             clock_period_ns=clock_period_ns,
             macro_name=chip_config.memory.macro,
         )
+
+    def generate_makefile(
+        self,
+        chip_config: ChipConfig,
+    ) -> str:
+        """Generate root Makefile with correct DEFAULT_SLOT.
+
+        Args:
+            chip_config: Chip configuration.
+
+        Returns:
+            Generated Makefile content.
+        """
+        template = self.get_template("Makefile.j2")
+
+        return template.render(
+            slot=chip_config.slot,
+        )
