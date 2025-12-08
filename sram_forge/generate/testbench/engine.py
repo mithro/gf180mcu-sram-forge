@@ -128,12 +128,14 @@ class TestbenchEngine:
         self,
         chip_config: ChipConfig,
         sram_spec: SramSpec,
+        fit_result: FitResult,
     ) -> str:
         """Generate chip-level cocotb testbench runner.
 
         Args:
             chip_config: Chip configuration.
             sram_spec: SRAM macro specification.
+            fit_result: Fit calculation result.
 
         Returns:
             Generated Python testbench file.
@@ -144,5 +146,101 @@ class TestbenchEngine:
             chip=chip_config.chip,
             config=chip_config,
             sram=sram_spec,
+            fit=fit_result,
             slot=chip_config.slot,
+            data_width=sram_spec.width,
+            addr_bits=fit_result.address_bits,
+            sram_count=fit_result.count,
+            total_words=fit_result.total_words,
+            write_mask=chip_config.interface.unified_bus.write_mask,
+        )
+
+    def generate_sram_utils(
+        self,
+        chip_config: ChipConfig,
+        sram_spec: SramSpec,
+        fit_result: FitResult,
+    ) -> str:
+        """Generate shared SRAM testbench utilities.
+
+        Args:
+            chip_config: Chip configuration.
+            sram_spec: SRAM macro specification.
+            fit_result: Fit calculation result.
+
+        Returns:
+            Generated Python utilities file.
+        """
+        template = self.get_template("sram_utils.py.j2")
+
+        return template.render(
+            chip=chip_config.chip,
+            config=chip_config,
+            sram=sram_spec,
+            fit=fit_result,
+            data_width=sram_spec.width,
+            addr_bits=fit_result.address_bits,
+            sram_count=fit_result.count,
+            total_words=fit_result.total_words,
+            write_mask=chip_config.interface.unified_bus.write_mask,
+        )
+
+    def generate_test_control_signals(
+        self,
+        chip_config: ChipConfig,
+        sram_spec: SramSpec,
+        fit_result: FitResult,
+    ) -> str:
+        """Generate control signal protocol tests.
+
+        Args:
+            chip_config: Chip configuration.
+            sram_spec: SRAM macro specification.
+            fit_result: Fit calculation result.
+
+        Returns:
+            Generated Python test file.
+        """
+        template = self.get_template("test_control_signals.py.j2")
+
+        return template.render(
+            chip=chip_config.chip,
+            config=chip_config,
+            sram=sram_spec,
+            fit=fit_result,
+            data_width=sram_spec.width,
+            addr_bits=fit_result.address_bits,
+            sram_count=fit_result.count,
+            total_words=fit_result.total_words,
+            write_mask=chip_config.interface.unified_bus.write_mask,
+        )
+
+    def generate_test_sram_selection(
+        self,
+        chip_config: ChipConfig,
+        sram_spec: SramSpec,
+        fit_result: FitResult,
+    ) -> str:
+        """Generate SRAM selection and isolation tests.
+
+        Args:
+            chip_config: Chip configuration.
+            sram_spec: SRAM macro specification.
+            fit_result: Fit calculation result.
+
+        Returns:
+            Generated Python test file.
+        """
+        template = self.get_template("test_sram_selection.py.j2")
+
+        return template.render(
+            chip=chip_config.chip,
+            config=chip_config,
+            sram=sram_spec,
+            fit=fit_result,
+            data_width=sram_spec.width,
+            addr_bits=fit_result.address_bits,
+            sram_count=fit_result.count,
+            total_words=fit_result.total_words,
+            write_mask=chip_config.interface.unified_bus.write_mask,
         )

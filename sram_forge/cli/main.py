@@ -268,25 +268,40 @@ def gen(config: str, output: str, only: str | None):
             tb_dir = output_path / "cocotb"
             tb_dir.mkdir(exist_ok=True)
 
-            # cocotb test
-            test_py = testbench_engine.generate_cocotb_test(chip_config, sram_spec, fit_result)
-            (tb_dir / "test_sram.py").write_text(test_py)
-            generated.append("cocotb/test_sram.py")
+            # Chip-level testbench runner (main entry point)
+            chip_tb = testbench_engine.generate_chip_top_tb(
+                chip_config, sram_spec, fit_result
+            )
+            (tb_dir / "chip_top_tb.py").write_text(chip_tb)
+            generated.append("cocotb/chip_top_tb.py")
 
-            # Makefile
-            makefile = testbench_engine.generate_makefile(chip_config)
-            (tb_dir / "Makefile").write_text(makefile)
-            generated.append("cocotb/Makefile")
+            # Shared utilities
+            sram_utils = testbench_engine.generate_sram_utils(
+                chip_config, sram_spec, fit_result
+            )
+            (tb_dir / "sram_utils.py").write_text(sram_utils)
+            generated.append("cocotb/sram_utils.py")
 
             # Behavioral model
-            model_py = testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
+            model_py = testbench_engine.generate_behavioral_model(
+                chip_config, sram_spec, fit_result
+            )
             (tb_dir / "sram_model.py").write_text(model_py)
             generated.append("cocotb/sram_model.py")
 
-            # Chip-level testbench runner
-            chip_tb = testbench_engine.generate_chip_top_tb(chip_config, sram_spec)
-            (tb_dir / "chip_top_tb.py").write_text(chip_tb)
-            generated.append("cocotb/chip_top_tb.py")
+            # Control signal tests
+            test_control = testbench_engine.generate_test_control_signals(
+                chip_config, sram_spec, fit_result
+            )
+            (tb_dir / "test_control_signals.py").write_text(test_control)
+            generated.append("cocotb/test_control_signals.py")
+
+            # SRAM selection tests
+            test_selection = testbench_engine.generate_test_sram_selection(
+                chip_config, sram_spec, fit_result
+            )
+            (tb_dir / "test_sram_selection.py").write_text(test_selection)
+            generated.append("cocotb/test_sram_selection.py")
 
         if only is None or only == "docs":
             docs_engine = DocumentationEngine()
@@ -538,17 +553,35 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
         tb_dir = clone_path / "cocotb"
         tb_dir.mkdir(exist_ok=True)
 
-        test_py = testbench_engine.generate_cocotb_test(chip_config, sram_spec, fit_result)
-        (tb_dir / "test_sram.py").write_text(test_py)
+        # Chip-level testbench runner (main entry point)
+        chip_tb = testbench_engine.generate_chip_top_tb(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "chip_top_tb.py").write_text(chip_tb)
 
-        makefile = testbench_engine.generate_makefile(chip_config)
-        (tb_dir / "Makefile").write_text(makefile)
+        # Shared utilities
+        sram_utils = testbench_engine.generate_sram_utils(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "sram_utils.py").write_text(sram_utils)
 
-        model_py = testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
+        # Behavioral model
+        model_py = testbench_engine.generate_behavioral_model(
+            chip_config, sram_spec, fit_result
+        )
         (tb_dir / "sram_model.py").write_text(model_py)
 
-        chip_tb = testbench_engine.generate_chip_top_tb(chip_config, sram_spec)
-        (tb_dir / "chip_top_tb.py").write_text(chip_tb)
+        # Control signal tests
+        test_control = testbench_engine.generate_test_control_signals(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "test_control_signals.py").write_text(test_control)
+
+        # SRAM selection tests
+        test_selection = testbench_engine.generate_test_sram_selection(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "test_sram_selection.py").write_text(test_selection)
 
         # Generate docs
         docs_engine = DocumentationEngine()

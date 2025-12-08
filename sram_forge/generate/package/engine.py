@@ -55,9 +55,11 @@ files:
     - librelane/pdn_cfg.tcl
     - librelane/{{ chip.name }}_top.sdc
   testbench:
-    - cocotb/test_sram.py
-    - cocotb/Makefile
+    - cocotb/chip_top_tb.py
+    - cocotb/sram_utils.py
     - cocotb/sram_model.py
+    - cocotb/test_control_signals.py
+    - cocotb/test_sram_selection.py
   docs:
     - docs/README.md
     - docs/datasheet.md
@@ -355,14 +357,35 @@ class PackageEngine:
         tb_dir = package_dir / "cocotb"
         tb_dir.mkdir(exist_ok=True)
 
-        test_py = self.testbench_engine.generate_cocotb_test(chip_config, sram_spec, fit_result)
-        (tb_dir / "test_sram.py").write_text(test_py)
+        # Main testbench runner
+        chip_top_tb = self.testbench_engine.generate_chip_top_tb(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "chip_top_tb.py").write_text(chip_top_tb)
 
-        makefile = self.testbench_engine.generate_makefile(chip_config)
-        (tb_dir / "Makefile").write_text(makefile)
+        # Shared utilities
+        sram_utils = self.testbench_engine.generate_sram_utils(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "sram_utils.py").write_text(sram_utils)
 
-        model_py = self.testbench_engine.generate_behavioral_model(chip_config, sram_spec, fit_result)
+        # Behavioral model
+        model_py = self.testbench_engine.generate_behavioral_model(
+            chip_config, sram_spec, fit_result
+        )
         (tb_dir / "sram_model.py").write_text(model_py)
+
+        # Control signal tests
+        test_control = self.testbench_engine.generate_test_control_signals(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "test_control_signals.py").write_text(test_control)
+
+        # SRAM selection tests
+        test_selection = self.testbench_engine.generate_test_sram_selection(
+            chip_config, sram_spec, fit_result
+        )
+        (tb_dir / "test_sram_selection.py").write_text(test_selection)
 
     def _generate_docs(
         self,

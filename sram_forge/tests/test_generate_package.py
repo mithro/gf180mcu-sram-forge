@@ -159,7 +159,12 @@ class TestPackageEngine:
             assert (package_dir / "src" / "test_pkg_top.sv").exists()
             assert (package_dir / "librelane" / "config.yaml").exists()
             assert (package_dir / "librelane" / "pdn_cfg.tcl").exists()
-            assert (package_dir / "cocotb" / "test_sram.py").exists()
+            # Check testbench files (modular structure)
+            assert (package_dir / "cocotb" / "chip_top_tb.py").exists()
+            assert (package_dir / "cocotb" / "sram_utils.py").exists()
+            assert (package_dir / "cocotb" / "sram_model.py").exists()
+            assert (package_dir / "cocotb" / "test_control_signals.py").exists()
+            assert (package_dir / "cocotb" / "test_sram_selection.py").exists()
             assert (package_dir / "docs" / "README.md").exists()
 
     def test_package_copies_infrastructure(
