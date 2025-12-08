@@ -6,24 +6,41 @@
 meta:
   version: 3
   flow: Chip
+  substituting_steps:
+
+    # Disable KLayout DRC
+    #KLayout.DRC: null
+    #Checker.KLayoutDRC: null
+
+    # Disable KLayout antenna check
+    #KLayout.Antenna: null
+    #Checker.KLayoutAntenna: null
+
+    # Disable KLayout density check
+    #KLayout.Density: null
+    #Checker.KLayoutDensity: null
+
+    # Save time during development
+    # Enable for sign-off
+    #OpenROAD.IRDropReport: null
+    #Magic.DRC: null
+    #Checker.MagicDRC: null
+    #KLayout.XOR: null
+    #Netgen.LVS: null
+    #Checker.LVS: null
 
 DESIGN_NAME: {{ chip.name }}_top
-
-# Die and core areas are specified in the slot file (e.g., slot_1x1.yaml)
-# Do not specify DIE_AREA/CORE_AREA here to avoid floating-point precision issues
-
 VERILOG_FILES:
-  - dir::../src/slot_defines.svh
-  - dir::../src/{{ chip.name }}_top.sv
-  - dir::../src/{{ chip.name }}_core.sv
-  - dir::../src/{{ chip.name }}_sram_array.sv
+- dir::../src/slot_defines.svh
+- dir::../src/{{ chip.name }}_top.sv
+- dir::../src/{{ chip.name }}_core.sv
+- dir::../src/{{ chip.name }}_sram_array.sv
 
-# Verilog defines
-VERILOG_DEFINES:
-  - USE_POWER_PINS
-  - SLOT_{{ slot_define }}
+# Enable plugin for better SystemVerilog support
+# USE_SLANG: True
+# SLANG_ARGUMENTS: ['--keep-hierarchy']
 
-# Use klayout for smaller GDS files
+# Slightly smaller file sizes
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 
 # SDC files
@@ -33,17 +50,18 @@ FALLBACK_SDC: dir::{{ chip.name }}_top.sdc
 
 # Power / ground nets
 VDD_NETS:
-  - VDD
+- VDD
 GND_NETS:
-  - VSS
+- VSS
 
-# Ignore disconnected modules (IO pads with unused outputs, wafer.space IP)
+# We need to add gf180mcu_fd_io__bi_24t
+# due to the unused Y output for output only pads
 IGNORE_DISCONNECTED_MODULES:
-  - gf180mcu_fd_io__bi_24t
-  - gf180mcu_ws_ip__id
-  - gf180mcu_ws_ip__logo
+- gf180mcu_fd_io__bi_24t
+- gf180mcu_ws_ip__id
+- gf180mcu_ws_ip__logo
 
-# Clock configuration
+# Clock
 CLOCK_PORT: clk_PAD
 CLOCK_NET: clk_pad/Y
 CLOCK_PERIOD: {{ clock_period_ns }}  # {{ config.clock.frequency_mhz }} MHz
@@ -52,14 +70,14 @@ CLOCK_PERIOD: {{ clock_period_ns }}  # {{ config.clock.frequency_mhz }} MHz
 PL_RESIZER_HOLD_SLACK_MARGIN: 0.35
 GRT_RESIZER_HOLD_SLACK_MARGIN: 0.3
 
-# Placement density - adjusted based on macro occupancy ({{ "%.1f"|format(fit.utilization * 100) }}%)
-# Lower density prevents GPL-0305 divergence with high macro utilization
+# Increase for more logic
+# on your die
 PL_TARGET_DENSITY_PCT: {{ placement_density_pct }}
 GRT_ALLOW_CONGESTION: true
 
 # Fix antenna violations after DRT
 DRT_ANTENNA_REPAIR_ITERS: 10
-DRT_ANTENNA_MARGIN: 10
+DRT_ANTENNA_MARGIN: 10 # %
 
 # PDN - Straps
 PDN_VWIDTH: 5
@@ -70,49 +88,60 @@ PDN_VPITCH: 75
 PDN_HPITCH: 75
 
 # PDN - Core ring
-PDN_CORE_RING: true
+PDN_CORE_RING: True
+# Maximum metal width without slotting: 30um
 PDN_CORE_RING_VWIDTH: 25
 PDN_CORE_RING_HWIDTH: 25
-PDN_CORE_RING_CONNECT_TO_PADS: true
-PDN_ENABLE_PINS: false
+PDN_CORE_RING_CONNECT_TO_PADS: True
+PDN_ENABLE_PINS: False
 PDN_CORE_VERTICAL_LAYER: Metal2
 PDN_CORE_HORIZONTAL_LAYER: Metal3
 
-# Prevent false positive DRC errors in I/O cells and SRAMs
-MAGIC_GDS_FLATGLOB:
-  - "*_CDNS_*"
-  - "COMP_fill_cell"
-  - "Poly2_fill_cell"
-  - "*$$*"
-  - "M1_N*"
-  - "M1_P*"
-  - "M2_M1*"
-  - "M3_M2*"
-  - "nmos_5p0*"
-  - "nmos_1p2*"
-  - "pmos_5p0*"
-  - "pmos_1p2*"
-  - "via1_*"
-  - "ypass_gate*"
-  - "G_ring_*"
-  - "dcap_103*"
-  - "din_*"
-  - "mux821_*"
-  - "rdummy_*"
-  - "pmoscap_*"
-  - "xdec_*"
-  - "ypredec*"
-  - "xpredec*"
-  - "prexdec_*"
-  - "xdec8_*"
-  - "xdec16_*"
-  - "xdec32_*"
-  - "sa_*"
+# Due to OpenROAD bug
+# https://github.com/The-OpenROAD-Project/OpenROAD/issues/8229
+#PL_TIME_DRIVEN: False
+#PL_ROUTABILITY_DRIVEN: False
 
-# Multiple power pads for one power domain
+# Prevent false positive DRC errors in I/O cells
+MAGIC_GDS_FLATGLOB:
+# For contacts
+- "*_CDNS_*"
+# COMP and Poly2 filler cells need to be 
+# flattened to form a "filltrans" layer
+- "COMP_fill_cell"
+- "Poly2_fill_cell"
+# Foundry provided SRAMs
+- "*$$*"
+- "M1_N*"
+- "M1_P*"
+- "M2_M1*"
+- "M3_M2*"
+- "nmos_5p0*"
+- "nmos_1p2*"
+- "pmos_5p0*"
+- "pmos_1p2*"
+- "via1_*"
+- "ypass_gate*"
+- "G_ring_*"
+# These additional cells must be flattened to get rid of 3.3V devices
+# (DUALGATE drawn into high-level cells)
+- "dcap_103*"
+- "din_*"
+- "mux821_*"
+- "rdummy_*"
+- "pmoscap_*"
+- "xdec_*"
+- "ypredec*"
+- "xpredec*"
+- "prexdec_*"
+- "xdec8_*"
+- "xdec16_*"
+- "xdec32_*"
+- "sa_*"
+
+# Because we have multiple power pads for one power domain
 MAGIC_EXT_UNIQUE: notopports
 
-# Macro definitions
 MACROS:
   gf180mcu_ws_ip__id:
     gds:
@@ -128,6 +157,7 @@ MACROS:
       chip_id:
         location: [26, 26]
         orientation: N
+
   gf180mcu_ws_ip__logo:
     gds:
       - dir::../ip/gf180mcu_ws_ip__logo/gds/gf180mcu_ws_ip__logo.gds
@@ -142,6 +172,7 @@ MACROS:
       wafer_space_logo:
         location: ["expr::$DIE_AREA[2] + -169.25", "expr::$DIE_AREA[3] + -169.25"]
         orientation: N
+
   {{ macro_name }}:
     gds:
       - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/gds/{{ macro_name }}.gds
@@ -157,6 +188,7 @@ MACROS:
       "*_ss_125C_4v50":
         - pdk_dir::libs.ref/gf180mcu_fd_ip_sram/lib/{{ macro_name }}__ss_125C_4v50.lib
     instances:
+      # Make sure to specify the SRAMs in pdn_cfg.tcl
       # {{ fit.count }} SRAMs in {{ fit.cols }}x{{ fit.rows }} arrangement
 {% for p in placements %}
       i_chip_core.u_sram_array.{{ p.name }}:
@@ -164,26 +196,30 @@ MACROS:
         orientation: {{ p.orientation }}
 {% endfor %}
 
-# Power connections for SRAM macros
+# This is an alternative method compared to
+# specifying the power connections in the RTL
 PDN_MACRO_CONNECTIONS:
 {% for p in placements %}
-  - "i_chip_core.u_sram_array.{{ p.name }} VDD VSS VDD VSS"
+- "i_chip_core.u_sram_array.{{ p.name }} VDD VSS VDD VSS"
 {% endfor %}
 
-# Halo size around macros
+# Halo size around macros while cutting rows.
+# Workaround for: https://github.com/The-OpenROAD-Project/OpenROAD/issues/8868
 FP_MACRO_HORIZONTAL_HALO: 10
 FP_MACRO_VERTICAL_HALO: 10
-PDN_HORIZONTAL_HALO: 5
-PDN_VERTICAL_HALO: 5
+FP_PDN_HORIZONTAL_HALO: 5
+FP_PDN_VERTICAL_HALO: 5
 
 PDN_CFG: dir::pdn_cfg.tcl
 
-# LVS - flatten wafer.space IP cells
+# Make sure netgen doesn't create 'no_connect' nets
+# Not needed since netgen 1.5.303
 LVS_FLATTEN_CELLS:
-  - gf180mcu_ws_ip__id
-  - gf180mcu_ws_ip__logo
+- gf180mcu_ws_ip__id
+- gf180mcu_ws_ip__logo
 
-# wafer.space IP has no ports and components - make abstract cells
+# gf180mcu_ws_ip__id/logo has no ports and components
+# therefore make it an abstract cell in the layout
 MAGIC_EXT_ABSTRACT_CELLS:
-  - gf180mcu_ws_ip__id
-  - gf180mcu_ws_ip__logo
+- gf180mcu_ws_ip__id
+- gf180mcu_ws_ip__logo
