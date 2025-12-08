@@ -33,3 +33,6 @@ packages = ["sram_forge"]
 testpaths = ["sram_forge/tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
+
+[tool.ruff]
+exclude = ["project-template"]
