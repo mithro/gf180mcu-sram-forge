@@ -122,10 +122,12 @@ See LICENSE file.
 def get_template_dir() -> Path:
     """Get path to the project template directory.
 
-    Returns the bundled project_template directory within the package.
+    Returns the gf180mcu-project-template submodule directory.
     """
-    # Template files are bundled in sram_forge/generate/package/project_template/
-    return Path(__file__).resolve().parent / "project_template"
+    # Navigate from sram_forge/generate/package/engine.py to repo root
+    # engine.py -> package -> generate -> sram_forge -> repo_root
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    return repo_root / "project-template"
 
 
 class PackageEngine:
