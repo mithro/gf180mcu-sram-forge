@@ -126,7 +126,7 @@ MACROS:
         - dir::../ip/gf180mcu_ws_ip__id/lib/gf180mcu_ws_ip__id.lib
     instances:
       chip_id:
-        location: [660, 660]
+        location: [26, 26]
         orientation: N
   gf180mcu_ws_ip__logo:
     gds:
@@ -140,7 +140,7 @@ MACROS:
         - dir::../ip/gf180mcu_ws_ip__logo/lib/gf180mcu_ws_ip__logo.lib
     instances:
       wafer_space_logo:
-        location: [660, 1160]
+        location: ["expr::$DIE_AREA[2] + -169.25", "expr::$DIE_AREA[3] + -169.25"]
         orientation: N
   {{ macro_name }}:
     gds:
