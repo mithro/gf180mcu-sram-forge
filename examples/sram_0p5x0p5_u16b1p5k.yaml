@@ -1,0 +1,30 @@
+# GF180MCU 0.5x0.5 SRAM Chip Configuration - 16-bit data path
+# 6 SRAMs banked as 3 pairs = 1.5KB total (1536 words x 16 bits)
+# Uses 2x 8-bit SRAMs per word for full 16-bit width
+# For wafer.space MPW runs
+
+chip:
+  name: gf180mcu_ic_0p5x0p5_sram_u16b1p5k
+  description: "GF180MCU 0.5x0.5 SRAM Test Chip - 1.5K words unified 16-bit bus"
+
+slot: 0p5x0p5
+
+memory:
+  macro: gf180mcu_fd_ip_sram__sram512x8m8wm1
+  count: auto
+  arrangement:
+    prefer: rows
+    orientation: N
+
+interface:
+  scheme: unified_bus
+  unified_bus:
+    data_width: 16
+    output_routing: mux
+    write_mask: false
+
+clock:
+  frequency_mhz: 10
+
+power:
+  core_voltage: 5.0

@@ -30,13 +30,13 @@ sram-forge list slots
 sram-forge calc --slot 1x1 --sram gf180mcu_fd_ip_sram__sram512x8m8wm1
 
 # Validate a chip configuration
-sram-forge check examples/sram_8k_8bit.yaml
+sram-forge check examples/sram_1x1_u8b8k.yaml
 
 # Generate all outputs
-sram-forge gen examples/sram_8k_8bit.yaml -o output/
+sram-forge gen examples/sram_1x1_u8b8k.yaml -o output/
 
 # Create a complete buildable project
-sram-forge package examples/sram_8k_8bit.yaml --name my_sram_chip -o projects/
+sram-forge package examples/sram_1x1_u8b8k.yaml --name my_sram_chip -o projects/
 ```
 
 ## Chip Configuration

@@ -32,9 +32,9 @@ uv run sram-forge --help
 uv run sram-forge list srams
 uv run sram-forge list slots
 uv run sram-forge calc --slot 1x1 --sram gf180mcu_fd_ip_sram__sram512x8m8wm1
-uv run sram-forge check examples/sram_8k_8bit.yaml
-uv run sram-forge gen examples/sram_8k_8bit.yaml -o ./output
-uv run sram-forge package examples/sram_8k_8bit.yaml --name my-chip -o ./projects
+uv run sram-forge check examples/sram_1x1_u8b8k.yaml
+uv run sram-forge gen examples/sram_1x1_u8b8k.yaml -o ./output
+uv run sram-forge package examples/sram_1x1_u8b8k.yaml --name my-chip -o ./projects
 ```
 
 ## Architecture
@@ -76,7 +76,7 @@ slots.yaml → load_slots() → dict[str, SlotSpec] ─┘
 
 ### Configuration Schema
 
-Chip configurations (e.g., `examples/sram_8k_8bit.yaml`) define:
+Chip configurations (e.g., `examples/sram_1x1_u8b8k.yaml`) define:
 - `chip`: name, description
 - `slot`: target slot (1x1, 0p5x1, 1x0p5, 0p5x0p5)
 - `memory`: macro name, count (or "auto"), arrangement
