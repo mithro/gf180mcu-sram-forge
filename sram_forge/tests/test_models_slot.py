@@ -1,7 +1,6 @@
 """Tests for slot model."""
 
-import pytest
-from sram_forge.models.slot import SlotSpec, Die, Core, Inset, IoBudget
+from sram_forge.models.slot import SlotSpec
 
 
 def test_slot_spec_from_dict(sample_slot_spec):

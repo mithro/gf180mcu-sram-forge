@@ -103,7 +103,7 @@ def calc(slot: str, sram: str, halo: float):
     result = calculate_fit(slot_spec, sram_spec, halo_um=halo)
 
     # Display results
-    click.echo(f"SRAM Fit Calculation")
+    click.echo("SRAM Fit Calculation")
     click.echo("=" * 60)
     click.echo(f"Slot: {slot}")
     click.echo(f"SRAM: {sram}")
@@ -160,7 +160,7 @@ def check(config: str):
             if count > fit_result.count:
                 click.echo(f"Warning: Requested {count} SRAMs but only {fit_result.count} fit.", err=True)
 
-        click.echo(f"Valid configuration:")
+        click.echo("Valid configuration:")
         click.echo(f"  Slot: {chip_config.slot}")
         click.echo(f"  SRAM: {chip_config.memory.macro}")
         click.echo(f"  Count: {count}")
@@ -390,11 +390,11 @@ def package(config: str, name: str, output: str, no_git: bool):
         click.echo(f"Created project: {package_dir}")
         click.echo()
         click.echo("Contents:")
-        click.echo(f"  src/           - Verilog sources")
-        click.echo(f"  librelane/     - Physical design config")
-        click.echo(f"  cocotb/        - Verification testbench")
-        click.echo(f"  docs/          - Documentation")
-        click.echo(f"  manifest.yaml  - Package manifest")
+        click.echo("  src/           - Verilog sources")
+        click.echo("  librelane/     - Physical design config")
+        click.echo("  cocotb/        - Verification testbench")
+        click.echo("  docs/          - Documentation")
+        click.echo("  manifest.yaml  - Package manifest")
         click.echo()
         click.echo("To build:")
         click.echo(f"  cd {package_dir}")
@@ -672,7 +672,6 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     """
     import subprocess
     import tempfile
-    import os
     import re
 
     # Validate repo format
@@ -751,12 +750,12 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
             raise SystemExit(1)
 
         private_key = key_path.read_text()
-        public_key = pub_key_path.read_text().strip()
+        _public_key = pub_key_path.read_text().strip()  # Read but not used directly
 
-        click.echo(f"  Generated ed25519 key pair")
+        click.echo("  Generated ed25519 key pair")
 
         # Check if deploy key already exists and remove it
-        click.echo(f"Checking for existing deploy key...")
+        click.echo("Checking for existing deploy key...")
         result = subprocess.run(
             ["gh", "repo", "deploy-key", "list", "--repo", downstream_repo],
             capture_output=True,
@@ -791,7 +790,7 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
             click.echo(f"Error adding deploy key: {result.stderr}", err=True)
             raise SystemExit(1)
 
-        click.echo(f"  Added deploy key with write access")
+        click.echo("  Added deploy key with write access")
 
         # Add private key as secret to forge repo
         click.echo(f"Adding secret to {forge_repo}...")
@@ -815,16 +814,16 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     click.echo("To use in GitHub Actions workflow, add:")
     click.echo()
     click.echo(f"    - name: Configure SSH for {downstream_repo}")
-    click.echo(f"      env:")
+    click.echo("      env:")
     click.echo(f"        DEPLOY_KEY: ${{{{ secrets.{secret_name} }}}}")
-    click.echo(f"      run: |")
-    click.echo(f"        mkdir -p ~/.ssh")
-    click.echo(f"        echo \"$DEPLOY_KEY\" > ~/.ssh/deploy_key")
-    click.echo(f"        chmod 600 ~/.ssh/deploy_key")
-    click.echo(f"        ssh-keyscan github.com >> ~/.ssh/known_hosts")
-    click.echo(f"        git config --global core.sshCommand 'ssh -i ~/.ssh/deploy_key'")
+    click.echo("      run: |")
+    click.echo("        mkdir -p ~/.ssh")
+    click.echo("        echo \"$DEPLOY_KEY\" > ~/.ssh/deploy_key")
+    click.echo("        chmod 600 ~/.ssh/deploy_key")
+    click.echo("        ssh-keyscan github.com >> ~/.ssh/known_hosts")
+    click.echo("        git config --global core.sshCommand 'ssh -i ~/.ssh/deploy_key'")
     click.echo()
-    click.echo(f"    - name: Clone downstream repo")
+    click.echo("    - name: Clone downstream repo")
     click.echo(f"      run: git clone git@github.com:{downstream_repo}.git downstream")
 
 

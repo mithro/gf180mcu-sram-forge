@@ -1,7 +1,6 @@
 """Tests for chip configuration model."""
 
-import pytest
-from sram_forge.models.chip import ChipConfig, Memory, Interface, UnifiedBus
+from sram_forge.models.chip import ChipConfig, Memory
 
 
 def test_chip_config_minimal():

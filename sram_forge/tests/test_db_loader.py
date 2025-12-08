@@ -2,8 +2,8 @@
 
 import pytest
 from pathlib import Path
-from sram_forge.db.loader import load_srams, load_slots, load_chip_config
-from sram_forge.models import SramSpec, SlotSpec, ChipConfig
+from sram_forge.db.loader import load_srams, load_slots
+from sram_forge.models import SramSpec, SlotSpec
 
 
 def test_load_srams(fixtures_dir):

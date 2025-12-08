@@ -1,7 +1,6 @@
 """Tests for LibreLane configuration generation."""
 
 import pytest
-from pathlib import Path
 
 from sram_forge.generate.librelane.engine import LibreLaneEngine
 from sram_forge.models import SramSpec, SlotSpec, ChipConfig

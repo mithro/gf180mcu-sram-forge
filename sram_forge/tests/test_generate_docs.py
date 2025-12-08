@@ -3,7 +3,7 @@
 import pytest
 
 from sram_forge.models import ChipConfig, SramSpec, SlotSpec
-from sram_forge.calc.fit import FitResult, calculate_fit
+from sram_forge.calc.fit import calculate_fit
 from sram_forge.generate.docs.engine import DocumentationEngine
 
 

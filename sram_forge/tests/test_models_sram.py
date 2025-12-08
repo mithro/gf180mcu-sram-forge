@@ -1,7 +1,7 @@
 """Tests for SRAM model."""
 
 import pytest
-from sram_forge.models.sram import SramSpec, Port, Timing
+from sram_forge.models.sram import SramSpec, Port
 
 
 def test_sram_spec_from_dict(sample_sram_spec):

@@ -1,7 +1,6 @@
 """Tests for Verilog generation."""
 
 import pytest
-from pathlib import Path
 
 from sram_forge.generate.verilog.engine import VerilogEngine
 from sram_forge.models import SramSpec, SlotSpec, ChipConfig
