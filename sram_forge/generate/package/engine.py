@@ -122,17 +122,10 @@ See LICENSE file.
 def get_template_dir() -> Path:
     """Get path to the project template directory.
 
-    Returns the root of gf180mcu-sram-only repository.
+    Returns the bundled project_template directory within the package.
     """
-    # Navigate from sram_forge/generate/package/engine.py to repo root
-    # .worktrees/sram-forge is a worktree, main repo is parent
-    current = Path(__file__).resolve()
-    # Go up: engine.py -> package -> generate -> sram_forge -> .worktrees/sram-forge -> .worktrees -> gf180mcu-sram-only
-    worktree_root = current.parent.parent.parent.parent
-    if worktree_root.name == "sram-forge" and worktree_root.parent.name == ".worktrees":
-        return worktree_root.parent.parent
-    # Fallback: assume we're in the main repo
-    return worktree_root
+    # Template files are bundled in sram_forge/generate/package/project_template/
+    return Path(__file__).resolve().parent / "project_template"
 
 
 class PackageEngine:
