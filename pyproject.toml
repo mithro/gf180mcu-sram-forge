@@ -64,7 +64,6 @@ python_version = "3.11"
 warn_unused_configs = true
 disallow_untyped_defs = false  # Start permissive, tighten over time
 check_untyped_defs = true
-ignore_missing_imports = true  # Third-party libs may lack stubs
 # Permissive settings for initial setup - tighten over time
 warn_return_any = false  # Jinja render() returns Any
 strict = false
@@ -81,5 +80,5 @@ disable_error_code = ["valid-type"]
 
 [[tool.mypy.overrides]]
 module = "sram_forge.cli.main"
-# Import fallback pattern for __version__ causes redefinition warning
-disable_error_code = ["no-redef"]
+# Import fallback pattern for __version__ causes redefinition and import-not-found warnings
+disable_error_code = ["no-redef", "import-not-found"]

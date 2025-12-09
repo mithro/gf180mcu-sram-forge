@@ -35,7 +35,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Type check
-        run: uv run mypy sram_forge --ignore-missing-imports
+        run: uv run mypy sram_forge
 
       - name: Validate example configs
         run: |
