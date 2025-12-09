@@ -139,3 +139,24 @@ def test_cli_check_subcommand(runner):
     result = runner.invoke(main, ["check", "--help"])
 
     assert result.exit_code == 0
+
+
+def test_downstream_list(runner):
+    """downstream list shows all repos."""
+    result = runner.invoke(main, ["downstream", "list"])
+
+    assert result.exit_code == 0
+    assert "u8b24k" in result.output
+    assert "u8b3k" in result.output
+
+
+def test_downstream_matrix(runner):
+    """downstream matrix outputs JSON."""
+    import json
+
+    result = runner.invoke(main, ["downstream", "matrix"])
+
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert "include" in data
+    assert len(data["include"]) == 4
