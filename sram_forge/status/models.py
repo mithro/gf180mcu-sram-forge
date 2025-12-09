@@ -24,7 +24,10 @@ class WorkflowRun(BaseModel):
     status: Literal["queued", "in_progress", "completed"]
     """Current status of the run."""
 
-    conclusion: Literal["success", "failure", "cancelled", "skipped"] | None
+    conclusion: Literal[
+        "success", "failure", "cancelled", "skipped",
+        "neutral", "timed_out", "action_required", "stale"
+    ] | None
     """Final conclusion (only set when completed)."""
 
     run_id: int
