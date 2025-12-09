@@ -102,7 +102,10 @@ def format_json(report: StatusReport) -> str:
 def format_html(report: StatusReport) -> str:
     """Format report as self-contained HTML page."""
     template_dir = Path(__file__).parent / "templates"
-    env = Environment(loader=FileSystemLoader(template_dir))
+    env = Environment(
+        loader=FileSystemLoader(template_dir),
+        autoescape=True,
+    )
     env.globals["time_ago"] = _time_ago
 
     template = env.get_template("status_page.html.j2")
