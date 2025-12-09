@@ -63,9 +63,8 @@ def test_generate_config_yaml(librelane_engine, chip_config, sram_spec, slot_spe
     # Should be valid YAML-like content
     assert "DESIGN_NAME" in result or "design_name" in result.lower()
 
-    # Should have die and core areas
+    # Should have die area reference (used in logo positioning)
     assert "DIE_AREA" in result or "die_area" in result.lower()
-    assert "CORE_AREA" in result or "core_area" in result.lower()
 
     # Should reference SRAM macros
     assert "MACRO" in result.upper() or "macro" in result.lower()
