@@ -3,6 +3,7 @@
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 
 from sram_forge.models.downstream import DownstreamRepo
@@ -176,7 +177,7 @@ def fetch_all_status(repos: list[DownstreamRepo], limit: int = 5) -> StatusRepor
             all_runs.extend(runs)
         except subprocess.CalledProcessError as e:
             # Log error but continue with other repos
-            print(f"Warning: Failed to fetch status for {repo.full_name}: {e}")
+            print(f"Warning: Failed to fetch status for {repo.full_name}: {e}", file=sys.stderr)
 
     revisions = group_by_forge_revision(all_runs)
 
