@@ -105,4 +105,7 @@ def load_downstream_repos(path: Union[str, Path]) -> list[DownstreamRepo]:
     with open(path) as f:
         data = yaml.safe_load(f)
 
+    if not data or "repos" not in data:
+        raise ValueError(f"Invalid downstream repos config: missing 'repos' key in {path}")
+
     return [DownstreamRepo.model_validate(r) for r in data["repos"]]
