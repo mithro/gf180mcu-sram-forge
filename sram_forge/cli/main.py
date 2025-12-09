@@ -871,7 +871,7 @@ def downstream_matrix():
 
 @downstream.command("status")
 @click.option("--format", "fmt", type=click.Choice(["terminal", "md", "json", "html"]), default="terminal")
-@click.option("--output", "-o", type=click.Path(), help="Output file (required for HTML)")
+@click.option("--output", "-o", type=click.Path(), help="Output file (writes to stdout if not specified)")
 def downstream_status(fmt: str, output: str | None):
     """Show GitHub Actions status for all downstream repos."""
     data_dir = get_bundled_data_dir()
@@ -880,18 +880,22 @@ def downstream_status(fmt: str, output: str | None):
     click.echo("Fetching status...", err=True)
     report = fetch_all_status(repos)
 
+    # Generate the formatted content
     if fmt == "terminal":
-        click.echo(format_terminal(report))
+        content = format_terminal(report)
     elif fmt == "md":
-        click.echo(format_markdown(report))
+        content = format_markdown(report)
     elif fmt == "json":
-        click.echo(format_json(report))
+        content = format_json(report)
     elif fmt == "html":
-        if not output:
-            click.echo("Error: --output required for HTML format", err=True)
-            raise SystemExit(1)
-        Path(output).write_text(format_html(report))
-        click.echo(f"Wrote HTML to {output}", err=True)
+        content = format_html(report)
+
+    # Write to file or stdout
+    if output:
+        Path(output).write_text(content)
+        click.echo(f"Wrote {fmt.upper()} to {output}", err=True)
+    else:
+        click.echo(content)
 
 
 if __name__ == "__main__":
