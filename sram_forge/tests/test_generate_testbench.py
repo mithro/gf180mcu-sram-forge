@@ -2,9 +2,9 @@
 
 import pytest
 
-from sram_forge.generate.testbench.engine import TestbenchEngine
-from sram_forge.models import SramSpec, SlotSpec, ChipConfig
 from sram_forge.calc.fit import calculate_fit
+from sram_forge.generate.testbench.engine import TestbenchEngine
+from sram_forge.models import ChipConfig, SlotSpec, SramSpec
 
 
 @pytest.fixture
@@ -16,20 +16,22 @@ def testbench_engine():
 @pytest.fixture
 def chip_config():
     """Sample chip configuration for testing."""
-    return ChipConfig.model_validate({
-        "chip": {"name": "test_sram_8k", "description": "8K SRAM test chip"},
-        "slot": "1x1",
-        "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
-        "interface": {
-            "scheme": "unified_bus",
-            "unified_bus": {
-                "data_width": 8,
-                "output_routing": "mux",
-                "write_mask": False,
+    return ChipConfig.model_validate(
+        {
+            "chip": {"name": "test_sram_8k", "description": "8K SRAM test chip"},
+            "slot": "1x1",
+            "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
+            "interface": {
+                "scheme": "unified_bus",
+                "unified_bus": {
+                    "data_width": 8,
+                    "output_routing": "mux",
+                    "write_mask": False,
+                },
             },
-        },
-        "clock": {"frequency_mhz": 25},
-    })
+            "clock": {"frequency_mhz": 25},
+        }
+    )
 
 
 @pytest.fixture
@@ -67,7 +69,9 @@ def test_generate_cocotb_test(testbench_engine, chip_config, sram_spec, slot_spe
     assert "@cocotb.test" in result or "async def test_" in result
 
 
-def test_generate_cocotb_test_has_write_read(testbench_engine, chip_config, sram_spec, slot_spec):
+def test_generate_cocotb_test_has_write_read(
+    testbench_engine, chip_config, sram_spec, slot_spec
+):
     """Generated testbench includes write/read tests."""
     fit_result = calculate_fit(slot_spec, sram_spec)
 
@@ -82,7 +86,9 @@ def test_generate_cocotb_test_has_write_read(testbench_engine, chip_config, sram
     assert "read" in result.lower()
 
 
-def test_generate_cocotb_test_has_address_boundary(testbench_engine, chip_config, sram_spec, slot_spec):
+def test_generate_cocotb_test_has_address_boundary(
+    testbench_engine, chip_config, sram_spec, slot_spec
+):
     """Generated testbench includes address boundary tests."""
     fit_result = calculate_fit(slot_spec, sram_spec)
 

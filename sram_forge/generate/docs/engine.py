@@ -1,12 +1,11 @@
 """Documentation generator for sram-forge."""
 
 from pathlib import Path
-from typing import Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from sram_forge.models import ChipConfig, SramSpec
 from sram_forge.calc.fit import FitResult
+from sram_forge.models import ChipConfig, SramSpec
 
 
 def get_templates_dir() -> Path:
@@ -17,7 +16,7 @@ def get_templates_dir() -> Path:
 class DocumentationEngine:
     """Jinja2-based documentation generator."""
 
-    def __init__(self, templates_dir: Optional[Path] = None):
+    def __init__(self, templates_dir: Path | None = None):
         """Initialize the documentation engine.
 
         Args:
@@ -132,12 +131,14 @@ class DocumentationEngine:
         for i in range(fit_result.count):
             start = i * sram_spec.size
             end = start + sram_spec.size - 1
-            regions.append({
-                "index": i,
-                "start": start,
-                "end": end,
-                "size": sram_spec.size,
-            })
+            regions.append(
+                {
+                    "index": i,
+                    "start": start,
+                    "end": end,
+                    "size": sram_spec.size,
+                }
+            )
 
         return template.render(
             chip=chip_config.chip,

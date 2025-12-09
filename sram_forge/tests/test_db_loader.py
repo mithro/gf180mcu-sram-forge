@@ -1,9 +1,11 @@
 """Tests for database loader."""
 
-import pytest
 from pathlib import Path
-from sram_forge.db.loader import load_srams, load_slots
-from sram_forge.models import SramSpec, SlotSpec
+
+import pytest
+
+from sram_forge.db.loader import load_slots, load_srams
+from sram_forge.models import SlotSpec, SramSpec
 
 
 def test_load_srams(fixtures_dir):

@@ -1,7 +1,8 @@
 """Tests for SRAM model."""
 
 import pytest
-from sram_forge.models.sram import SramSpec, Port
+
+from sram_forge.models.sram import Port, SramSpec
 
 
 def test_sram_spec_from_dict(sample_sram_spec):
@@ -58,7 +59,14 @@ def test_port_without_write_mask():
         type="rw",
         clk_enable=True,
         clk_polarity="rising",
-        pins={"clk": "CLK", "en_n": "CEN", "we_n": "WE", "addr": "A[7:0]", "din": "D[7:0]", "dout": "Q[7:0]"},
+        pins={
+            "clk": "CLK",
+            "en_n": "CEN",
+            "we_n": "WE",
+            "addr": "A[7:0]",
+            "din": "D[7:0]",
+            "dout": "Q[7:0]",
+        },
     )
 
     assert port.has_write_mask is False

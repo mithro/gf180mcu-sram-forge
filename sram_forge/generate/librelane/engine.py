@@ -1,12 +1,11 @@
 """LibreLane configuration generator for sram-forge."""
 
 from pathlib import Path
-from typing import Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from sram_forge.models import ChipConfig, SramSpec, SlotSpec
 from sram_forge.calc.fit import FitResult
+from sram_forge.models import ChipConfig, SlotSpec, SramSpec
 
 
 def get_templates_dir() -> Path:
@@ -17,7 +16,7 @@ def get_templates_dir() -> Path:
 class LibreLaneEngine:
     """Jinja2-based LibreLane configuration generator."""
 
-    def __init__(self, templates_dir: Optional[Path] = None):
+    def __init__(self, templates_dir: Path | None = None):
         """Initialize the LibreLane engine.
 
         Args:
@@ -29,7 +28,9 @@ class LibreLaneEngine:
         self.templates_dir = templates_dir
         self.env = Environment(
             loader=FileSystemLoader(templates_dir),
-            autoescape=select_autoescape(disabled_extensions=["yaml", "tcl", "sdc", "j2"]),
+            autoescape=select_autoescape(
+                disabled_extensions=["yaml", "tcl", "sdc", "j2"]
+            ),
             trim_blocks=True,
             lstrip_blocks=True,
         )
@@ -79,7 +80,9 @@ class LibreLaneEngine:
 
         # Calculate placement density based on macro utilization
         # High macro occupancy requires lower target density to avoid placer divergence
-        placement_density_pct = self._calculate_placement_density(fit_result.utilization)
+        placement_density_pct = self._calculate_placement_density(
+            fit_result.utilization
+        )
 
         return template.render(
             chip=chip_config.chip,
@@ -189,12 +192,14 @@ class LibreLaneEngine:
                 x = base_x + (col * cell_w)
                 y = base_y + (row * cell_h)
 
-                placements.append({
-                    "name": f"sram_{idx}",
-                    "x": round(x, 2),
-                    "y": round(y, 2),
-                    "orientation": "N",  # North (no rotation)
-                })
+                placements.append(
+                    {
+                        "name": f"sram_{idx}",
+                        "x": round(x, 2),
+                        "y": round(y, 2),
+                        "orientation": "N",  # North (no rotation)
+                    }
+                )
                 idx += 1
 
         return placements

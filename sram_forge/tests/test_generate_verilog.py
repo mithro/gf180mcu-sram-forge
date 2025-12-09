@@ -2,9 +2,9 @@
 
 import pytest
 
-from sram_forge.generate.verilog.engine import VerilogEngine
-from sram_forge.models import SramSpec, SlotSpec, ChipConfig
 from sram_forge.calc.fit import calculate_fit
+from sram_forge.generate.verilog.engine import VerilogEngine
+from sram_forge.models import ChipConfig, SlotSpec, SramSpec
 
 
 @pytest.fixture
@@ -16,19 +16,21 @@ def verilog_engine():
 @pytest.fixture
 def chip_config():
     """Sample chip configuration for testing."""
-    return ChipConfig.model_validate({
-        "chip": {"name": "test_sram_8k", "description": "8K SRAM test chip"},
-        "slot": "1x1",
-        "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
-        "interface": {
-            "scheme": "unified_bus",
-            "unified_bus": {
-                "data_width": 8,
-                "output_routing": "mux",
-                "write_mask": False,
+    return ChipConfig.model_validate(
+        {
+            "chip": {"name": "test_sram_8k", "description": "8K SRAM test chip"},
+            "slot": "1x1",
+            "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
+            "interface": {
+                "scheme": "unified_bus",
+                "unified_bus": {
+                    "data_width": 8,
+                    "output_routing": "mux",
+                    "write_mask": False,
+                },
             },
-        },
-    })
+        }
+    )
 
 
 @pytest.fixture
@@ -78,7 +80,9 @@ def test_generate_sram_array_mux(verilog_engine, chip_config, sram_spec, slot_sp
     assert "dout" in result.lower() or "q[" in result.lower()
 
 
-def test_generate_sram_array_has_address_decoder(verilog_engine, chip_config, sram_spec, slot_spec):
+def test_generate_sram_array_has_address_decoder(
+    verilog_engine, chip_config, sram_spec, slot_spec
+):
     """Generated SRAM array includes address decoder."""
     fit_result = calculate_fit(slot_spec, sram_spec)
 
@@ -92,10 +96,14 @@ def test_generate_sram_array_has_address_decoder(verilog_engine, chip_config, sr
     assert "addr" in result.lower()
 
     # Should have case statement or mux for output selection
-    assert "case" in result.lower() or "mux" in result.lower() or "sel" in result.lower()
+    assert (
+        "case" in result.lower() or "mux" in result.lower() or "sel" in result.lower()
+    )
 
 
-def test_generate_sram_array_no_parameters(verilog_engine, chip_config, sram_spec, slot_spec):
+def test_generate_sram_array_no_parameters(
+    verilog_engine, chip_config, sram_spec, slot_spec
+):
     """Generated Verilog should be fully expanded (no parameters)."""
     fit_result = calculate_fit(slot_spec, sram_spec)
 
@@ -110,29 +118,34 @@ def test_generate_sram_array_no_parameters(verilog_engine, chip_config, sram_spe
     # Should NOT contain generate blocks (Verilog generate keyword, not "generated")
     # Look for "generate" as a standalone keyword, not part of "generated"
     import re
-    assert not re.search(r'\bgenerate\b', result.lower())
+
+    assert not re.search(r"\bgenerate\b", result.lower())
     assert "genvar" not in result.lower()
 
 
 @pytest.fixture
 def chip_config_tristate():
     """Chip configuration with tristate output routing."""
-    return ChipConfig.model_validate({
-        "chip": {"name": "test_sram_tristate", "description": "Tristate SRAM test"},
-        "slot": "1x1",
-        "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
-        "interface": {
-            "scheme": "unified_bus",
-            "unified_bus": {
-                "data_width": 8,
-                "output_routing": "tristate",
-                "write_mask": False,
+    return ChipConfig.model_validate(
+        {
+            "chip": {"name": "test_sram_tristate", "description": "Tristate SRAM test"},
+            "slot": "1x1",
+            "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
+            "interface": {
+                "scheme": "unified_bus",
+                "unified_bus": {
+                    "data_width": 8,
+                    "output_routing": "tristate",
+                    "write_mask": False,
+                },
             },
-        },
-    })
+        }
+    )
 
 
-def test_generate_sram_array_tristate(verilog_engine, chip_config_tristate, sram_spec, slot_spec):
+def test_generate_sram_array_tristate(
+    verilog_engine, chip_config_tristate, sram_spec, slot_spec
+):
     """Generate SRAM array with tristate output routing."""
     fit_result = calculate_fit(slot_spec, sram_spec)
 
@@ -151,22 +164,26 @@ def test_generate_sram_array_tristate(verilog_engine, chip_config_tristate, sram
 @pytest.fixture
 def chip_config_write_mask():
     """Chip configuration with write mask enabled."""
-    return ChipConfig.model_validate({
-        "chip": {"name": "test_sram_wmask", "description": "Write mask SRAM test"},
-        "slot": "1x1",
-        "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
-        "interface": {
-            "scheme": "unified_bus",
-            "unified_bus": {
-                "data_width": 8,
-                "output_routing": "mux",
-                "write_mask": True,
+    return ChipConfig.model_validate(
+        {
+            "chip": {"name": "test_sram_wmask", "description": "Write mask SRAM test"},
+            "slot": "1x1",
+            "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
+            "interface": {
+                "scheme": "unified_bus",
+                "unified_bus": {
+                    "data_width": 8,
+                    "output_routing": "mux",
+                    "write_mask": True,
+                },
             },
-        },
-    })
+        }
+    )
 
 
-def test_generate_sram_array_write_mask(verilog_engine, chip_config_write_mask, sram_spec, slot_spec):
+def test_generate_sram_array_write_mask(
+    verilog_engine, chip_config_write_mask, sram_spec, slot_spec
+):
     """Generate SRAM array with write mask support."""
     fit_result = calculate_fit(slot_spec, sram_spec)
 

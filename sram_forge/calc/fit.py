@@ -3,7 +3,7 @@
 import math
 from dataclasses import dataclass
 
-from sram_forge.models import SramSpec, SlotSpec
+from sram_forge.models import SlotSpec, SramSpec
 
 
 @dataclass
@@ -87,7 +87,9 @@ def calculate_fit(
 
     # Calculate utilization
     if core_w * core_h > 0:
-        utilization = (count * sram.dimensions_um.width * sram.dimensions_um.height) / (core_w * core_h)
+        utilization = (count * sram.dimensions_um.width * sram.dimensions_um.height) / (
+            core_w * core_h
+        )
     else:
         utilization = 0.0
 

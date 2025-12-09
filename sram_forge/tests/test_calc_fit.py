@@ -1,8 +1,9 @@
 """Tests for SRAM fit calculator."""
 
 import pytest
-from sram_forge.models import SramSpec, SlotSpec
-from sram_forge.calc.fit import calculate_fit, FitResult
+
+from sram_forge.calc.fit import FitResult, calculate_fit
+from sram_forge.models import SlotSpec, SramSpec
 
 
 @pytest.fixture
@@ -54,6 +55,7 @@ def test_calculate_fit_address_bits(sram_512x8, slot_1x1):
     result = calculate_fit(slot_1x1, sram_512x8)
 
     import math
+
     expected_abits = math.ceil(math.log2(result.total_words))
     assert result.address_bits == expected_abits
 
@@ -64,27 +66,33 @@ def test_calculate_fit_with_halo():
     from sram_forge.models.slot import SlotSpec
     from sram_forge.models.sram import SramSpec
 
-    sram = SramSpec.model_validate({
-        "source": "pdk",
-        "size": 64,
-        "width": 8,
-        "abits": 6,
-        "dimensions_um": {"width": 100, "height": 100},
-        "ports": [{
-            "name": "port0",
-            "type": "rw",
-            "clk_enable": True,
-            "clk_polarity": "rising",
-            "pins": {"clk": "CLK"},
-        }],
-    })
+    sram = SramSpec.model_validate(
+        {
+            "source": "pdk",
+            "size": 64,
+            "width": 8,
+            "abits": 6,
+            "dimensions_um": {"width": 100, "height": 100},
+            "ports": [
+                {
+                    "name": "port0",
+                    "type": "rw",
+                    "clk_enable": True,
+                    "clk_polarity": "rising",
+                    "pins": {"clk": "CLK"},
+                }
+            ],
+        }
+    )
 
-    slot = SlotSpec.model_validate({
-        "die": {"width": 200, "height": 200},
-        "core": {"inset": {"left": 10, "bottom": 10, "right": 10, "top": 10}},
-        "io_budget": {"dvdd": 1, "dvss": 1, "input": 0, "bidir": 10, "analog": 0},
-        "reserved_area_um2": 0,
-    })
+    slot = SlotSpec.model_validate(
+        {
+            "die": {"width": 200, "height": 200},
+            "core": {"inset": {"left": 10, "bottom": 10, "right": 10, "top": 10}},
+            "io_budget": {"dvdd": 1, "dvss": 1, "input": 0, "bidir": 10, "analog": 0},
+            "reserved_area_um2": 0,
+        }
+    )
 
     # Core is 180x180, SRAM is 100x100
     # With 20um halo (10 each side): effective 120x120
