@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sram-forge IC Status</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #eee;
+            --text-muted: #888;
+            --success: #4ade80;
+            --failure: #f87171;
+            --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        h1 { font-size: 1.5rem; }
+        .timestamp { color: var(--text-muted); font-size: 0.9rem; }
+        .filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--border);
+        }
+        .summary {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .summary.passing { border-left: 4px solid var(--success); }
+        .summary.failing { border-left: 4px solid var(--failure); }
+        .revision {
+            background: var(--card-bg);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .revision-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .revision-header:hover { background: rgba(255,255,255,0.05); }
+        .revision.failing .revision-header { border-left: 4px solid var(--failure); }
+        .revision.passing .revision-header { border-left: 4px solid var(--success); }
+        .sha { font-family: monospace; font-weight: bold; }
+        .sha a { color: var(--text); text-decoration: none; }
+        .sha a:hover { text-decoration: underline; }
+        .time-ago { color: var(--text-muted); font-size: 0.9rem; }
+        .status-summary { font-weight: bold; }
+        .status-summary.passing { color: var(--success); }
+        .status-summary.failing { color: var(--failure); }
+        .sram-chips {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+        .sram-chip {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sram-chip.success { background: rgba(74, 222, 128, 0.2); }
+        .sram-chip.failure { background: rgba(248, 113, 113, 0.2); }
+        .sram-chip a { color: inherit; text-decoration: none; }
+        .sram-chip a:hover { text-decoration: underline; }
+        .revision-details {
+            display: none;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .revision.expanded .revision-details { display: block; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.5rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-weight: normal; }
+        td a { color: var(--text); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>sram-forge IC Status</h1>
+                <div class="timestamp">Last updated: {{ report.generated_at.strftime('%Y-%m-%d %H:%M UTC') }}</div>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="passing">Passing</button>
+                <button class="filter-btn" data-filter="failing">Failing</button>
+            </div>
+        </header>
+
+        {% if report.revisions %}
+        {% set latest = report.revisions[0] %}
+        <div class="summary {{ 'passing' if latest.all_passing else 'failing' }}">
+            Latest: {{ latest.summary }} {{ '✅' if latest.all_passing else '❌' }}
+        </div>
+        {% endif %}
+
+        <div id="revisions">
+        {% for rev in report.revisions %}
+            <div class="revision {{ 'passing' if rev.all_passing else 'failing' }}" data-status="{{ 'passing' if rev.all_passing else 'failing' }}">
+                <div class="revision-header" onclick="toggleRevision(this)">
+                    <div>
+                        <span class="sha">
+                            {% if rev.forge_run_url %}
+                            <a href="{{ rev.forge_run_url }}" target="_blank">📦 {{ rev.forge_sha[:7] }}</a>
+                            {% else %}
+                            📦 {{ rev.forge_sha[:7] }}
+                            {% endif %}
+                        </span>
+                        <span class="time-ago">({{ time_ago(rev.timestamp) }})</span>
+                    </div>
+                    <span class="status-summary {{ 'passing' if rev.all_passing else 'failing' }}">
+                        {{ rev.summary }} {{ '✅' if rev.all_passing else '❌' }}
+                    </span>
+                </div>
+                <div class="sram-chips">
+                    {% for run in rev.runs %}
+                    <div class="sram-chip {{ 'success' if run.is_success else 'failure' }}">
+                        {{ '✅' if run.is_success else '❌' }}
+                        <a href="https://github.com/{{ run.repo }}/actions" target="_blank">{{ run.sram }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="revision-details">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SRAM</th>
+                                <th>Slot</th>
+                                <th>Status</th>
+                                <th>Workflow</th>
+                                <th>Commit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for run in rev.runs %}
+                            <tr>
+                                <td>{{ run.sram }}</td>
+                                <td>{{ run.slot }}</td>
+                                <td>{{ '✅' if run.is_success else '❌' }} {{ run.conclusion or run.status }}</td>
+                                <td>{{ run.workflow_name }}</td>
+                                <td><a href="{{ run.html_url }}" target="_blank">{{ run.head_sha[:7] }}</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function toggleRevision(header) {
+            header.parentElement.classList.toggle('expanded');
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.revision').forEach(rev => {
+                    if (filter === 'all') {
+                        rev.classList.remove('hidden');
+                    } else {
+                        rev.classList.toggle('hidden', rev.dataset.status !== filter);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
