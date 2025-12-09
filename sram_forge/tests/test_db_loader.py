@@ -51,7 +51,6 @@ def test_load_downstream_repos(fixtures_dir):
 
 def test_load_downstream_repos_from_bundled():
     """Load downstream repos from bundled data."""
-    from pathlib import Path
     from sram_forge.db.loader import load_downstream_repos
 
     bundled_path = Path(__file__).parent.parent / "db" / "data" / "downstream_repos.yaml"
