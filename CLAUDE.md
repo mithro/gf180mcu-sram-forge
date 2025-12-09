@@ -37,6 +37,23 @@ uv run sram-forge gen examples/sram_1x1_u8b8k.yaml -o ./output
 uv run sram-forge package examples/sram_1x1_u8b8k.yaml --name my-chip -o ./projects
 ```
 
+## Git Worktrees
+
+This repository uses a git submodule (`project-template`) for infrastructure files. When creating a new worktree, you **must** initialize the submodule before running tests:
+
+```bash
+# Create worktree
+git worktree add .worktrees/<name> -b <branch-name>
+
+# Initialize submodule in the worktree (required for tests to pass)
+git -C .worktrees/<name> submodule update --init --recursive
+
+# Or if already in the worktree directory:
+git submodule update --init --recursive
+```
+
+Tests that depend on the submodule (`test_template_dir_detection`, `test_package_copies_infrastructure`) will fail if the submodule is not initialized.
+
 ## Architecture
 
 ### Data Flow
