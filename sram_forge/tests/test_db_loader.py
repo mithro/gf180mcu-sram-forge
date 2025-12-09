@@ -36,3 +36,29 @@ def test_load_slots_file_not_found():
     """Loading non-existent file raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError):
         load_slots(Path("/nonexistent/slots.yaml"))
+
+
+def test_load_downstream_repos(fixtures_dir):
+    """Load downstream repos from YAML."""
+    from sram_forge.db.loader import load_downstream_repos
+
+    repos = load_downstream_repos(fixtures_dir / "downstream_repos.yaml")
+
+    assert len(repos) >= 1
+    assert all(hasattr(r, "name") for r in repos)
+    assert all(hasattr(r, "full_name") for r in repos)
+
+
+def test_load_downstream_repos_from_bundled():
+    """Load downstream repos from bundled data."""
+    from sram_forge.db.loader import load_downstream_repos
+
+    bundled_path = Path(__file__).parent.parent / "db" / "data" / "downstream_repos.yaml"
+    repos = load_downstream_repos(bundled_path)
+
+    assert len(repos) == 4
+    sram_names = [r.sram for r in repos]
+    assert "u8b3k" in sram_names
+    assert "u8b8k" in sram_names
+    assert "u8b9k" in sram_names
+    assert "u8b24k" in sram_names

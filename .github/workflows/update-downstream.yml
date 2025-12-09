@@ -12,29 +12,38 @@ on:
         type: boolean
 
 jobs:
+  load-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout sram-forge
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.x"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install sram-forge
+        run: uv sync
+
+      - name: Generate matrix
+        id: set-matrix
+        run: echo "matrix=$(uv run sram-forge downstream matrix)" >> $GITHUB_OUTPUT
+
   update-downstream:
-    name: Update ${{ matrix.slot }} Chip
+    needs: load-matrix
+    name: Update ${{ matrix.sram }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - slot: 0p5x0p5
-            config: examples/sram_0p5x0p5_u8b3k.yaml
-            repo: mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k
-            secret: DEPLOY_KEY_0P5X0P5
-          - slot: 0p5x1
-            config: examples/sram_0p5x1_u8b8k.yaml
-            repo: mithro/gf180mcu-ic-0p5x1-sram-u8b8k
-            secret: DEPLOY_KEY_0P5X1
-          - slot: 1x0p5
-            config: examples/sram_1x0p5_u8b9k.yaml
-            repo: mithro/gf180mcu-ic-1x0p5-sram-u8b9k
-            secret: DEPLOY_KEY_1X0P5
-          - slot: 1x1
-            config: examples/sram_1x1_u8b24k.yaml
-            repo: mithro/gf180mcu-ic-1x1-sram-u8b24k
-            secret: DEPLOY_KEY_1X1
+      matrix: ${{ fromJSON(needs.load-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout sram-forge

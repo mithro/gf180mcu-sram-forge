@@ -1,0 +1,14 @@
+repos:
+  - name: test-repo-1
+    owner: test-owner
+    sram: u8b1k
+    slot: 1x1
+    config: examples/test1.yaml
+    deploy_key_secret: TEST_KEY_1
+
+  - name: test-repo-2
+    owner: test-owner
+    sram: u8b2k
+    slot: 0p5x0p5
+    config: examples/test2.yaml
+    deploy_key_secret: TEST_KEY_2

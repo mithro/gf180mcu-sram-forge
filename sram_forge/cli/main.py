@@ -1,5 +1,6 @@
 """Main CLI entry point for sram-forge."""
 
+import json
 from pathlib import Path
 
 import click
@@ -12,13 +13,15 @@ except ImportError:
     sys.path.insert(0, str(Path(__file__).parent.parent))
     from __init__ import __version__
 
-from sram_forge.db.loader import load_srams, load_slots, load_chip_config
+from sram_forge.db.loader import load_srams, load_slots, load_chip_config, load_downstream_repos
 from sram_forge.calc.fit import calculate_fit
 from sram_forge.generate.verilog.engine import VerilogEngine
 from sram_forge.generate.librelane.engine import LibreLaneEngine
 from sram_forge.generate.testbench.engine import TestbenchEngine
 from sram_forge.generate.docs.engine import DocumentationEngine
 from sram_forge.generate.package.engine import PackageEngine
+from sram_forge.status.fetcher import fetch_all_status
+from sram_forge.status.reporter import format_terminal, format_markdown, format_json, format_html
 
 
 def get_bundled_data_dir() -> Path:
@@ -825,6 +828,74 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     click.echo()
     click.echo("    - name: Clone downstream repo")
     click.echo(f"      run: git clone git@github.com:{downstream_repo}.git downstream")
+
+
+@main.group()
+def downstream():
+    """Manage downstream IC repositories."""
+    pass
+
+
+@downstream.command("list")
+def downstream_list():
+    """List all downstream IC repositories."""
+    data_dir = get_bundled_data_dir()
+    repos = load_downstream_repos(data_dir / "downstream_repos.yaml")
+
+    click.echo("Downstream IC Repositories:")
+    click.echo("-" * 60)
+    for repo in repos:
+        click.echo(f"  {repo.sram:8} {repo.slot:8} {repo.full_name}")
+
+
+@downstream.command("matrix")
+def downstream_matrix():
+    """Output repository list as JSON matrix for GitHub Actions."""
+    data_dir = get_bundled_data_dir()
+    repos = load_downstream_repos(data_dir / "downstream_repos.yaml")
+
+    matrix = {
+        "include": [
+            {
+                "sram": r.sram,
+                "slot": r.slot,
+                "config": r.config,
+                "repo": r.full_name,
+                "secret": r.deploy_key_secret,
+            }
+            for r in repos
+        ]
+    }
+    click.echo(json.dumps(matrix))
+
+
+@downstream.command("status")
+@click.option("--format", "fmt", type=click.Choice(["terminal", "md", "json", "html"]), default="terminal")
+@click.option("--output", "-o", type=click.Path(), help="Output file (writes to stdout if not specified)")
+def downstream_status(fmt: str, output: str | None):
+    """Show GitHub Actions status for all downstream repos."""
+    data_dir = get_bundled_data_dir()
+    repos = load_downstream_repos(data_dir / "downstream_repos.yaml")
+
+    click.echo("Fetching status...", err=True)
+    report = fetch_all_status(repos)
+
+    # Generate the formatted content
+    if fmt == "terminal":
+        content = format_terminal(report)
+    elif fmt == "md":
+        content = format_markdown(report)
+    elif fmt == "json":
+        content = format_json(report)
+    elif fmt == "html":
+        content = format_html(report)
+
+    # Write to file or stdout
+    if output:
+        Path(output).write_text(content)
+        click.echo(f"Wrote {fmt.upper()} to {output}", err=True)
+    else:
+        click.echo(content)
 
 
 if __name__ == "__main__":
