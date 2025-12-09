@@ -91,8 +91,8 @@ class ForgeRevision(BaseModel):
     @computed_field
     @property
     def all_passing(self) -> bool:
-        """Whether all runs passed."""
-        return self.passing_count == self.total_count
+        """Whether all runs passed (and at least one run exists)."""
+        return bool(self.runs) and self.passing_count == self.total_count
 
 
 class StatusReport(BaseModel):
