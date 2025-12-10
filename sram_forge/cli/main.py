@@ -58,7 +58,6 @@ def list_cmd(what: str):
         click.echo("Available Slots:")
         click.echo("-" * 70)
         for name, slot_spec in sorted(slots.items()):
-            die_area, core_area = slot_spec.to_librelane_areas()
             click.echo(
                 f"  {name}\n"
                 f"    Die: {slot_spec.die.width:.0f} x {slot_spec.die.height:.0f} um\n"
