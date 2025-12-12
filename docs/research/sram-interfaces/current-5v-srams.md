@@ -4,7 +4,7 @@
 
 **Related Issue**: GitHub Issue #34
 
-**Research Date**: 2024-12-12
+**Research Date**: 2025-12-13
 
 ---
 
@@ -351,7 +351,7 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ## Availability Summary
 
-### DigiKey Availability (as of December 2024)
+### DigiKey Availability (as of December 2025)
 
 | Part Number | Status | Notes |
 |-------------|--------|-------|
@@ -455,4 +455,4 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ---
 
-*This document was generated on 2024-12-12 for GitHub Issue #34.*
+*This document was generated on 2025-12-13 for GitHub Issue #34.*
