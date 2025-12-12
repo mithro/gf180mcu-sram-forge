@@ -1,12 +1,13 @@
 """Tests for package generator."""
 
-import pytest
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
-from sram_forge.models import ChipConfig, SramSpec, SlotSpec
+import pytest
+
 from sram_forge.calc.fit import calculate_fit
 from sram_forge.generate.package.engine import PackageEngine, get_template_dir
+from sram_forge.models import ChipConfig, SlotSpec, SramSpec
 
 
 @pytest.fixture
@@ -18,12 +19,14 @@ def package_engine():
 @pytest.fixture
 def chip_config():
     """Sample chip configuration for testing."""
-    return ChipConfig.model_validate({
-        "chip": {"name": "test_pkg", "description": "Test package chip"},
-        "slot": "1x1",
-        "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
-        "interface": {"scheme": "unified_bus"},
-    })
+    return ChipConfig.model_validate(
+        {
+            "chip": {"name": "test_pkg", "description": "Test package chip"},
+            "slot": "1x1",
+            "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": 16},
+            "interface": {"scheme": "unified_bus"},
+        }
+    )
 
 
 @pytest.fixture
@@ -47,6 +50,7 @@ def fit_result(slot_spec, sram_spec, chip_config):
     result.total_words = 16 * sram_spec.size
     result.total_bits = result.total_words * sram_spec.width
     import math
+
     result.address_bits = math.ceil(math.log2(result.total_words))
     return result
 
@@ -95,9 +99,7 @@ class TestPackageEngine:
         assert "librelane/config.yaml" in result
         assert "docs/README.md" in result
 
-    def test_generate_readme(
-        self, package_engine, chip_config, sram_spec, fit_result
-    ):
+    def test_generate_readme(self, package_engine, chip_config, sram_spec, fit_result):
         """Test README generation."""
         result = package_engine.generate_readme(chip_config, sram_spec, fit_result)
 

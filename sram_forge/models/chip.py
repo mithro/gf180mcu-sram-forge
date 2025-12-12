@@ -1,6 +1,7 @@
 """Chip configuration models."""
 
-from typing import Literal, Optional, Union
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -8,7 +9,7 @@ class ChipInfo(BaseModel):
     """Basic chip identification."""
 
     name: str = Field(description="Design name")
-    description: Optional[str] = Field(default=None, description="Chip description")
+    description: str | None = Field(default=None, description="Chip description")
 
 
 class Arrangement(BaseModel):
@@ -26,7 +27,7 @@ class Memory(BaseModel):
     """SRAM array configuration."""
 
     macro: str = Field(description="SRAM macro name from srams.yaml")
-    count: Union[Literal["auto"], int] = Field(
+    count: Literal["auto"] | int = Field(
         default="auto", description="Number of SRAMs: 'auto' or integer"
     )
     arrangement: Arrangement = Field(
@@ -38,9 +39,7 @@ class UnifiedBus(BaseModel):
     """Unified bus interface configuration."""
 
     data_width: int = Field(default=8, gt=0, description="Data bus width")
-    registered_output: bool = Field(
-        default=False, description="Add output register"
-    )
+    registered_output: bool = Field(default=False, description="Add output register")
     output_routing: Literal["mux", "tristate", "tristate_registered"] = Field(
         default="mux", description="Output routing strategy"
     )
@@ -66,9 +65,7 @@ class IoConfig(BaseModel):
     base: Literal["template", "minimal", "custom"] = Field(
         default="template", description="IO base configuration"
     )
-    pins: dict[str, str] = Field(
-        default_factory=dict, description="Pin assignments"
-    )
+    pins: dict[str, str] = Field(default_factory=dict, description="Pin assignments")
 
 
 class Features(BaseModel):

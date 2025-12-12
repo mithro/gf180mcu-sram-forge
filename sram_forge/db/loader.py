@@ -1,13 +1,13 @@
 """YAML database loader."""
 
 from pathlib import Path
-from typing import Union
+
 import yaml
 
-from sram_forge.models import SramSpec, SlotSpec, ChipConfig
+from sram_forge.models import ChipConfig, SlotSpec, SramSpec
 
 
-def load_srams(path: Union[str, Path]) -> dict[str, SramSpec]:
+def load_srams(path: str | Path) -> dict[str, SramSpec]:
     """Load SRAM specifications from YAML file.
 
     Args:
@@ -34,7 +34,7 @@ def load_srams(path: Union[str, Path]) -> dict[str, SramSpec]:
     return srams
 
 
-def load_slots(path: Union[str, Path]) -> dict[str, SlotSpec]:
+def load_slots(path: str | Path) -> dict[str, SlotSpec]:
     """Load slot specifications from YAML file.
 
     Args:
@@ -61,7 +61,7 @@ def load_slots(path: Union[str, Path]) -> dict[str, SlotSpec]:
     return slots
 
 
-def load_chip_config(path: Union[str, Path]) -> ChipConfig:
+def load_chip_config(path: str | Path) -> ChipConfig:
     """Load chip configuration from YAML file.
 
     Args:

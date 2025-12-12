@@ -9,16 +9,17 @@ try:
 except ImportError:
     # Fallback for when running directly
     import sys
-    sys.path.insert(0, str(Path(__file__).parent.parent))
-    from __init__ import __version__
 
-from sram_forge.db.loader import load_srams, load_slots, load_chip_config
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from __init__ import __version__ as __version__  # noqa: F811
+
 from sram_forge.calc.fit import calculate_fit
-from sram_forge.generate.verilog.engine import VerilogEngine
-from sram_forge.generate.librelane.engine import LibreLaneEngine
-from sram_forge.generate.testbench.engine import TestbenchEngine
+from sram_forge.db.loader import load_chip_config, load_slots, load_srams
 from sram_forge.generate.docs.engine import DocumentationEngine
+from sram_forge.generate.librelane.engine import LibreLaneEngine
 from sram_forge.generate.package.engine import PackageEngine
+from sram_forge.generate.testbench.engine import TestbenchEngine
+from sram_forge.generate.verilog.engine import VerilogEngine
 
 
 def get_bundled_data_dir() -> Path:
@@ -43,27 +44,26 @@ def list_cmd(what: str):
         srams = load_srams(data_dir / "srams.yaml")
         click.echo("Available SRAMs:")
         click.echo("-" * 70)
-        for name, spec in sorted(srams.items()):
-            bits = spec.size * spec.width
+        for name, sram_spec in sorted(srams.items()):
+            bits = sram_spec.size * sram_spec.width
             click.echo(
                 f"  {name}\n"
-                f"    Capacity: {spec.size} x {spec.width}-bit = {bits} bits ({bits // 8} bytes)\n"
-                f"    Size: {spec.dimensions_um.width:.2f} x {spec.dimensions_um.height:.2f} um\n"
-                f"    Source: {spec.source}"
+                f"    Capacity: {sram_spec.size} x {sram_spec.width}-bit = {bits} bits ({bits // 8} bytes)\n"
+                f"    Size: {sram_spec.dimensions_um.width:.2f} x {sram_spec.dimensions_um.height:.2f} um\n"
+                f"    Source: {sram_spec.source}"
             )
             click.echo()
     else:
         slots = load_slots(data_dir / "slots.yaml")
         click.echo("Available Slots:")
         click.echo("-" * 70)
-        for name, spec in sorted(slots.items()):
-            die_area, core_area = spec.to_librelane_areas()
+        for name, slot_spec in sorted(slots.items()):
             click.echo(
                 f"  {name}\n"
-                f"    Die: {spec.die.width:.0f} x {spec.die.height:.0f} um\n"
-                f"    Core: {spec.core_width:.0f} x {spec.core_height:.0f} um\n"
-                f"    Core Area: {spec.core_area_um2 / 1e6:.3f} mm^2\n"
-                f"    IO Budget: {spec.io_budget.bidir} bidir, {spec.io_budget.input} input"
+                f"    Die: {slot_spec.die.width:.0f} x {slot_spec.die.height:.0f} um\n"
+                f"    Core: {slot_spec.core_width:.0f} x {slot_spec.core_height:.0f} um\n"
+                f"    Core Area: {slot_spec.core_area_um2 / 1e6:.3f} mm^2\n"
+                f"    IO Budget: {slot_spec.io_budget.bidir} bidir, {slot_spec.io_budget.input} input"
             )
             click.echo()
 
@@ -82,7 +82,7 @@ def calc(slot: str, sram: str, halo: float):
         slots = load_slots(data_dir / "slots.yaml")
     except FileNotFoundError as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     # Validate SRAM name
     if sram not in srams:
@@ -158,7 +158,10 @@ def check(config: str):
         else:
             count = chip_config.memory.count
             if count > fit_result.count:
-                click.echo(f"Warning: Requested {count} SRAMs but only {fit_result.count} fit.", err=True)
+                click.echo(
+                    f"Warning: Requested {count} SRAMs but only {fit_result.count} fit.",
+                    err=True,
+                )
 
         click.echo("Valid configuration:")
         click.echo(f"  Slot: {chip_config.slot}")
@@ -168,13 +171,17 @@ def check(config: str):
 
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
 
 @main.command()
 @click.argument("config", type=click.Path(exists=True))
 @click.option("--output", "-o", default="./output", help="Output directory")
-@click.option("--only", type=click.Choice(["verilog", "librelane", "testbench", "docs"]), help="Generate only specific output type")
+@click.option(
+    "--only",
+    type=click.Choice(["verilog", "librelane", "testbench", "docs"]),
+    help="Generate only specific output type",
+)
 def gen(config: str, output: str, only: str | None):
     """Generate outputs from chip configuration."""
     data_dir = get_bundled_data_dir()
@@ -210,6 +217,7 @@ def gen(config: str, output: str, only: str | None):
             fit_result.total_words = fit_result.count * sram_spec.size
             fit_result.total_bits = fit_result.total_words * sram_spec.width
             import math
+
             fit_result.address_bits = math.ceil(math.log2(fit_result.total_words))
 
         # Create output directory
@@ -224,17 +232,25 @@ def gen(config: str, output: str, only: str | None):
             verilog_dir.mkdir(exist_ok=True)
 
             # SRAM array
-            sram_array = verilog_engine.generate_sram_array(chip_config, sram_spec, fit_result)
-            (verilog_dir / f"{chip_config.chip.name}_sram_array.sv").write_text(sram_array)
+            sram_array = verilog_engine.generate_sram_array(
+                chip_config, sram_spec, fit_result
+            )
+            (verilog_dir / f"{chip_config.chip.name}_sram_array.sv").write_text(
+                sram_array
+            )
             generated.append(f"src/{chip_config.chip.name}_sram_array.sv")
 
             # Chip core
-            chip_core = verilog_engine.generate_chip_core(chip_config, sram_spec, fit_result)
+            chip_core = verilog_engine.generate_chip_core(
+                chip_config, sram_spec, fit_result
+            )
             (verilog_dir / f"{chip_config.chip.name}_core.sv").write_text(chip_core)
             generated.append(f"src/{chip_config.chip.name}_core.sv")
 
             # Chip top
-            chip_top = verilog_engine.generate_chip_top(chip_config, sram_spec, fit_result)
+            chip_top = verilog_engine.generate_chip_top(
+                chip_config, sram_spec, fit_result
+            )
             (verilog_dir / f"{chip_config.chip.name}_top.sv").write_text(chip_top)
             generated.append(f"src/{chip_config.chip.name}_top.sv")
 
@@ -244,12 +260,16 @@ def gen(config: str, output: str, only: str | None):
             librelane_dir.mkdir(exist_ok=True)
 
             # Config
-            ll_config = librelane_engine.generate_config(chip_config, sram_spec, slot_spec, fit_result)
+            ll_config = librelane_engine.generate_config(
+                chip_config, sram_spec, slot_spec, fit_result
+            )
             (librelane_dir / "config.yaml").write_text(ll_config)
             generated.append("librelane/config.yaml")
 
             # PDN
-            pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, slot_spec, fit_result)
+            pdn_cfg = librelane_engine.generate_pdn(
+                chip_config, sram_spec, slot_spec, fit_result
+            )
             (librelane_dir / "pdn_cfg.tcl").write_text(pdn_cfg)
             generated.append("librelane/pdn_cfg.tcl")
 
@@ -314,12 +334,16 @@ def gen(config: str, output: str, only: str | None):
             generated.append("docs/README.md")
 
             # Datasheet
-            datasheet = docs_engine.generate_datasheet(chip_config, sram_spec, fit_result)
+            datasheet = docs_engine.generate_datasheet(
+                chip_config, sram_spec, fit_result
+            )
             (docs_dir / "datasheet.md").write_text(datasheet)
             generated.append("docs/datasheet.md")
 
             # Memory map
-            memory_map = docs_engine.generate_memory_map(chip_config, sram_spec, fit_result)
+            memory_map = docs_engine.generate_memory_map(
+                chip_config, sram_spec, fit_result
+            )
             (docs_dir / "memory_map.md").write_text(memory_map)
             generated.append("docs/memory_map.md")
 
@@ -329,7 +353,7 @@ def gen(config: str, output: str, only: str | None):
 
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
 
 @main.command()
@@ -403,17 +427,34 @@ def package(config: str, name: str, output: str, no_git: bool):
 
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
 
 @main.command("create-repo")
 @click.argument("config", type=click.Path(exists=True))
 @click.option("--owner", default="mithro", help="GitHub owner/organization")
-@click.option("--template", default="wafer-space/gf180mcu-project-template", help="Template repository")
-@click.option("--clone-dir", default=None, help="Local directory to clone into (default: current dir)")
+@click.option(
+    "--template",
+    default="wafer-space/gf180mcu-project-template",
+    help="Template repository",
+)
+@click.option(
+    "--clone-dir",
+    default=None,
+    help="Local directory to clone into (default: current dir)",
+)
 @click.option("--public/--private", default=True, help="Repository visibility")
-@click.option("--push/--no-push", default=True, help="Push generated files after creation")
-def create_repo(config: str, owner: str, template: str, clone_dir: str | None, public: bool, push: bool):
+@click.option(
+    "--push/--no-push", default=True, help="Push generated files after creation"
+)
+def create_repo(
+    config: str,
+    owner: str,
+    template: str,
+    clone_dir: str | None,
+    public: bool,
+    push: bool,
+):
     """Create a GitHub repository from template and populate with generated files.
 
     This command:
@@ -423,8 +464,8 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
     4. Commits and pushes the generated files
     """
     import math
-    import subprocess
     import shutil
+    import subprocess
 
     data_dir = get_bundled_data_dir()
 
@@ -465,9 +506,7 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
 
         # Check if repo already exists
         result = subprocess.run(
-            ["gh", "repo", "view", full_repo],
-            capture_output=True,
-            text=True
+            ["gh", "repo", "view", full_repo], capture_output=True, text=True
         )
         if result.returncode == 0:
             click.echo(f"Repository {full_repo} already exists.", err=True)
@@ -480,9 +519,18 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
         # Create repo from template
         visibility = "--public" if public else "--private"
         result = subprocess.run(
-            ["gh", "repo", "create", full_repo, "--template", template, visibility, "--clone=false"],
+            [
+                "gh",
+                "repo",
+                "create",
+                full_repo,
+                "--template",
+                template,
+                visibility,
+                "--clone=false",
+            ],
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode != 0:
             click.echo(f"Error creating repository: {result.stderr}", err=True)
@@ -501,7 +549,7 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
         result = subprocess.run(
             ["gh", "repo", "clone", full_repo, str(clone_path)],
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode != 0:
             click.echo(f"Error cloning repository: {result.stderr}", err=True)
@@ -521,10 +569,14 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
         verilog_dir = clone_path / "src"
         verilog_dir.mkdir(exist_ok=True)
 
-        sram_array = verilog_engine.generate_sram_array(chip_config, sram_spec, fit_result)
+        sram_array = verilog_engine.generate_sram_array(
+            chip_config, sram_spec, fit_result
+        )
         (verilog_dir / f"{chip_config.chip.name}_sram_array.sv").write_text(sram_array)
 
-        chip_core = verilog_engine.generate_chip_core(chip_config, sram_spec, fit_result)
+        chip_core = verilog_engine.generate_chip_core(
+            chip_config, sram_spec, fit_result
+        )
         (verilog_dir / f"{chip_config.chip.name}_core.sv").write_text(chip_core)
 
         chip_top = verilog_engine.generate_chip_top(chip_config, sram_spec, fit_result)
@@ -535,10 +587,14 @@ def create_repo(config: str, owner: str, template: str, clone_dir: str | None, p
         librelane_dir = clone_path / "librelane"
         librelane_dir.mkdir(exist_ok=True)
 
-        ll_config = librelane_engine.generate_config(chip_config, sram_spec, slot_spec, fit_result)
+        ll_config = librelane_engine.generate_config(
+            chip_config, sram_spec, slot_spec, fit_result
+        )
         (librelane_dir / "config.yaml").write_text(ll_config)
 
-        pdn_cfg = librelane_engine.generate_pdn(chip_config, sram_spec, slot_spec, fit_result)
+        pdn_cfg = librelane_engine.generate_pdn(
+            chip_config, sram_spec, slot_spec, fit_result
+        )
         (librelane_dir / "pdn_cfg.tcl").write_text(pdn_cfg)
 
         sdc = librelane_engine.generate_sdc(chip_config, sram_spec, fit_result)
@@ -626,9 +682,7 @@ Capacity: {fit_result.total_bits // 8:,} bytes
 Generated by sram-forge"""
 
             subprocess.run(
-                ["git", "commit", "-m", commit_msg],
-                cwd=clone_path,
-                check=True
+                ["git", "commit", "-m", commit_msg], cwd=clone_path, check=True
             )
 
             # Git push
@@ -648,18 +702,32 @@ Generated by sram-forge"""
 
     except subprocess.CalledProcessError as e:
         click.echo(f"Error running command: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
 
 @main.command("setup-downstream")
 @click.argument("downstream_repo")
-@click.option("--forge-repo", default="mithro/gf180mcu-sram-forge", help="The sram-forge repo to add the secret to")
-@click.option("--key-name", default=None, help="Name for the deploy key (default: derived from repo name)")
-@click.option("--secret-name", default=None, help="Name for the secret (default: derived from repo name)")
-def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None, secret_name: str | None):
+@click.option(
+    "--forge-repo",
+    default="mithro/gf180mcu-sram-forge",
+    help="The sram-forge repo to add the secret to",
+)
+@click.option(
+    "--key-name",
+    default=None,
+    help="Name for the deploy key (default: derived from repo name)",
+)
+@click.option(
+    "--secret-name",
+    default=None,
+    help="Name for the secret (default: derived from repo name)",
+)
+def setup_downstream(
+    downstream_repo: str, forge_repo: str, key_name: str | None, secret_name: str | None
+):
     """Set up deploy key access to a downstream chip repository.
 
     This command:
@@ -670,20 +738,23 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     Example:
         sram-forge setup-downstream mithro/gf180mcu-ic-0p5x0p5-sram-u8b3k
     """
+    import re
     import subprocess
     import tempfile
-    import re
 
     # Validate repo format
     if "/" not in downstream_repo:
-        click.echo(f"Error: Repository must be in 'owner/repo' format, got: {downstream_repo}", err=True)
+        click.echo(
+            f"Error: Repository must be in 'owner/repo' format, got: {downstream_repo}",
+            err=True,
+        )
         raise SystemExit(1)
 
     # Derive names from repo if not specified
     repo_short = downstream_repo.split("/")[1]
     # Convert repo name to safe identifier (e.g., gf180mcu-ic-0p5x0p5-sram-u8b3k -> 0P5X0P5)
     # Extract the slot part from the repo name
-    slot_match = re.search(r'-(0p5x0p5|0p5x1|1x0p5|1x1)-', repo_short)
+    slot_match = re.search(r"-(0p5x0p5|0p5x1|1x0p5|1x1)-", repo_short)
     if slot_match:
         slot_id = slot_match.group(1).upper().replace("P", "P")
     else:
@@ -709,7 +780,7 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     result = subprocess.run(
         ["gh", "repo", "view", downstream_repo, "--json", "name"],
         capture_output=True,
-        text=True
+        text=True,
     )
     if result.returncode != 0:
         click.echo(f"Error: Cannot access downstream repo {downstream_repo}", err=True)
@@ -719,7 +790,7 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     result = subprocess.run(
         ["gh", "repo", "view", forge_repo, "--json", "name"],
         capture_output=True,
-        text=True
+        text=True,
     )
     if result.returncode != 0:
         click.echo(f"Error: Cannot access forge repo {forge_repo}", err=True)
@@ -737,13 +808,17 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
         result = subprocess.run(
             [
                 "ssh-keygen",
-                "-t", "ed25519",
-                "-f", str(key_path),
-                "-N", "",  # No passphrase
-                "-C", f"sram-forge deploy key for {downstream_repo}"
+                "-t",
+                "ed25519",
+                "-f",
+                str(key_path),
+                "-N",
+                "",  # No passphrase
+                "-C",
+                f"sram-forge deploy key for {downstream_repo}",
             ],
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode != 0:
             click.echo(f"Error generating SSH key: {result.stderr}", err=True)
@@ -759,7 +834,7 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
         result = subprocess.run(
             ["gh", "repo", "deploy-key", "list", "--repo", downstream_repo],
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode == 0:
             # Parse output to find existing key with same name
@@ -769,22 +844,36 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
                     key_id = line.split()[0]
                     click.echo(f"  Removing existing deploy key: {key_id}")
                     subprocess.run(
-                        ["gh", "repo", "deploy-key", "delete", key_id, "--repo", downstream_repo, "--yes"],
-                        capture_output=True
+                        [
+                            "gh",
+                            "repo",
+                            "deploy-key",
+                            "delete",
+                            key_id,
+                            "--repo",
+                            downstream_repo,
+                            "--yes",
+                        ],
+                        capture_output=True,
                     )
 
         # Add public key as deploy key to downstream repo
         click.echo(f"Adding deploy key to {downstream_repo}...")
         result = subprocess.run(
             [
-                "gh", "repo", "deploy-key", "add",
+                "gh",
+                "repo",
+                "deploy-key",
+                "add",
                 str(pub_key_path),
-                "--repo", downstream_repo,
-                "--title", key_name,
-                "--allow-write"
+                "--repo",
+                downstream_repo,
+                "--title",
+                key_name,
+                "--allow-write",
             ],
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode != 0:
             click.echo(f"Error adding deploy key: {result.stderr}", err=True)
@@ -800,7 +889,7 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
             ["gh", "secret", "set", secret_name, "--repo", forge_repo],
             input=private_key,
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode != 0:
             click.echo(f"Error adding secret: {result.stderr}", err=True)
@@ -818,7 +907,7 @@ def setup_downstream(downstream_repo: str, forge_repo: str, key_name: str | None
     click.echo(f"        DEPLOY_KEY: ${{{{ secrets.{secret_name} }}}}")
     click.echo("      run: |")
     click.echo("        mkdir -p ~/.ssh")
-    click.echo("        echo \"$DEPLOY_KEY\" > ~/.ssh/deploy_key")
+    click.echo('        echo "$DEPLOY_KEY" > ~/.ssh/deploy_key')
     click.echo("        chmod 600 ~/.ssh/deploy_key")
     click.echo("        ssh-keyscan github.com >> ~/.ssh/known_hosts")
     click.echo("        git config --global core.sshCommand 'ssh -i ~/.ssh/deploy_key'")

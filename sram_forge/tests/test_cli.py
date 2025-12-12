@@ -2,6 +2,7 @@
 
 import pytest
 from click.testing import CliRunner
+
 from sram_forge.cli.main import main
 
 
@@ -71,7 +72,7 @@ def test_cli_list_srams_shows_capacity(runner):
     assert result.exit_code == 0
     # Should show words and bits
     assert "512" in result.output  # 512 words
-    assert "8" in result.output    # 8-bit width
+    assert "8" in result.output  # 8-bit width
 
 
 def test_cli_list_slots_shows_dimensions(runner):
@@ -86,7 +87,9 @@ def test_cli_list_slots_shows_dimensions(runner):
 
 def test_cli_calc_basic(runner):
     """Calc command calculates SRAM fit."""
-    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+    result = runner.invoke(
+        main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"]
+    )
 
     assert result.exit_code == 0
     # Should show fit results
@@ -96,16 +99,24 @@ def test_cli_calc_basic(runner):
 
 def test_cli_calc_shows_capacity(runner):
     """Calc command shows total capacity."""
-    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+    result = runner.invoke(
+        main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"]
+    )
 
     assert result.exit_code == 0
     # Should show capacity information
-    assert "word" in result.output.lower() or "bit" in result.output.lower() or "byte" in result.output.lower()
+    assert (
+        "word" in result.output.lower()
+        or "bit" in result.output.lower()
+        or "byte" in result.output.lower()
+    )
 
 
 def test_cli_calc_shows_address_bits(runner):
     """Calc command shows address bits needed."""
-    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+    result = runner.invoke(
+        main, ["calc", "--slot", "1x1", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"]
+    )
 
     assert result.exit_code == 0
     # Should show address bits
@@ -114,16 +125,35 @@ def test_cli_calc_shows_address_bits(runner):
 
 def test_cli_calc_invalid_sram(runner):
     """Calc command reports error for invalid SRAM."""
-    result = runner.invoke(main, ["calc", "--slot", "1x1", "--sram", "nonexistent_sram"])
+    result = runner.invoke(
+        main, ["calc", "--slot", "1x1", "--sram", "nonexistent_sram"]
+    )
 
-    assert result.exit_code != 0 or "error" in result.output.lower() or "not found" in result.output.lower()
+    assert (
+        result.exit_code != 0
+        or "error" in result.output.lower()
+        or "not found" in result.output.lower()
+    )
 
 
 def test_cli_calc_invalid_slot(runner):
     """Calc command reports error for invalid slot."""
-    result = runner.invoke(main, ["calc", "--slot", "invalid_slot", "--sram", "gf180mcu_fd_ip_sram__sram512x8m8wm1"])
+    result = runner.invoke(
+        main,
+        [
+            "calc",
+            "--slot",
+            "invalid_slot",
+            "--sram",
+            "gf180mcu_fd_ip_sram__sram512x8m8wm1",
+        ],
+    )
 
-    assert result.exit_code != 0 or "error" in result.output.lower() or "not found" in result.output.lower()
+    assert (
+        result.exit_code != 0
+        or "error" in result.output.lower()
+        or "not found" in result.output.lower()
+    )
 
 
 def test_cli_gen_subcommand(runner):

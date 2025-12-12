@@ -46,7 +46,9 @@ class SlotSpec(BaseModel):
     die: Die = Field(description="Die dimensions")
     core: Core = Field(description="Core area definition")
     io_budget: IoBudget = Field(description="Available IO pads")
-    reserved_area_um2: float = Field(ge=0, description="Reserved area for logo, ID, etc.")
+    reserved_area_um2: float = Field(
+        ge=0, description="Reserved area for logo, ID, etc."
+    )
 
     @property
     def core_width(self) -> float:

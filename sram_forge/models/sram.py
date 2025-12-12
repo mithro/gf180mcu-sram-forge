@@ -1,6 +1,7 @@
 """SRAM specification models."""
 
-from typing import Literal, Optional
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -15,20 +16,24 @@ class Pins(BaseModel):
     """Pin mapping for an SRAM port."""
 
     clk: str = Field(description="Clock pin name")
-    en_n: Optional[str] = Field(default=None, description="Enable pin (active low)")
-    we_n: Optional[str] = Field(default=None, description="Write enable pin (active low)")
-    wem_n: Optional[str] = Field(default=None, description="Write mask pin (active low)")
-    addr: Optional[str] = Field(default=None, description="Address bus")
-    din: Optional[str] = Field(default=None, description="Data input bus")
-    dout: Optional[str] = Field(default=None, description="Data output bus")
+    en_n: str | None = Field(default=None, description="Enable pin (active low)")
+    we_n: str | None = Field(default=None, description="Write enable pin (active low)")
+    wem_n: str | None = Field(default=None, description="Write mask pin (active low)")
+    addr: str | None = Field(default=None, description="Address bus")
+    din: str | None = Field(default=None, description="Data input bus")
+    dout: str | None = Field(default=None, description="Data output bus")
 
 
 class SetupHold(BaseModel):
     """Setup and hold timing parameters."""
 
     addr: float = Field(ge=0, description="Address setup/hold time in ns")
-    din: Optional[float] = Field(default=None, ge=0, description="Data input setup/hold time in ns")
-    en: Optional[float] = Field(default=None, ge=0, description="Enable setup/hold time in ns")
+    din: float | None = Field(
+        default=None, ge=0, description="Data input setup/hold time in ns"
+    )
+    en: float | None = Field(
+        default=None, ge=0, description="Enable setup/hold time in ns"
+    )
 
 
 class Timing(BaseModel):
@@ -44,7 +49,9 @@ class Port(BaseModel):
     """SRAM port definition."""
 
     name: str = Field(description="Port identifier")
-    type: Literal["ro", "wo", "rw"] = Field(description="Port type: read-only, write-only, read-write")
+    type: Literal["ro", "wo", "rw"] = Field(
+        description="Port type: read-only, write-only, read-write"
+    )
     clk_enable: bool = Field(description="Whether port is synchronous")
     clk_polarity: Literal["rising", "falling"] = Field(description="Clock edge")
     pins: Pins = Field(description="Pin mapping")
@@ -67,8 +74,8 @@ class Files(BaseModel):
 
     gds: str = Field(description="GDS file path")
     lef: str = Field(description="LEF file path")
-    lib: Optional[str] = Field(default=None, description="Liberty timing file path")
-    verilog: Optional[str] = Field(default=None, description="Verilog model path")
+    lib: str | None = Field(default=None, description="Liberty timing file path")
+    verilog: str | None = Field(default=None, description="Verilog model path")
 
 
 class SramSpec(BaseModel):
@@ -80,8 +87,8 @@ class SramSpec(BaseModel):
     abits: int = Field(gt=0, description="Address bus width")
     dimensions_um: Dimensions = Field(description="Physical dimensions")
     ports: list[Port] = Field(min_length=1, description="Port definitions")
-    timing_ns: Optional[Timing] = Field(default=None, description="Timing parameters")
-    files: Optional[Files] = Field(default=None, description="File paths")
+    timing_ns: Timing | None = Field(default=None, description="Timing parameters")
+    files: Files | None = Field(default=None, description="File paths")
 
     @property
     def total_bits(self) -> int:

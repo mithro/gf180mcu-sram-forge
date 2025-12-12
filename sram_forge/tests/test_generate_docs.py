@@ -2,9 +2,9 @@
 
 import pytest
 
-from sram_forge.models import ChipConfig, SramSpec, SlotSpec
 from sram_forge.calc.fit import calculate_fit
 from sram_forge.generate.docs.engine import DocumentationEngine
+from sram_forge.models import ChipConfig, SlotSpec, SramSpec
 
 
 @pytest.fixture
@@ -16,12 +16,14 @@ def docs_engine():
 @pytest.fixture
 def chip_config():
     """Sample chip configuration for testing."""
-    return ChipConfig.model_validate({
-        "chip": {"name": "test_chip", "description": "Test SRAM chip"},
-        "slot": "1x1",
-        "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": "auto"},
-        "interface": {"scheme": "unified_bus"},
-    })
+    return ChipConfig.model_validate(
+        {
+            "chip": {"name": "test_chip", "description": "Test SRAM chip"},
+            "slot": "1x1",
+            "memory": {"macro": "gf180mcu_fd_ip_sram__sram512x8m8wm1", "count": "auto"},
+            "interface": {"scheme": "unified_bus"},
+        }
+    )
 
 
 @pytest.fixture
@@ -84,7 +86,9 @@ class TestDocumentationEngine:
         assert "0x0000" in result or "0x0" in result
         assert "SRAM" in result
 
-    def test_readme_includes_usage(self, docs_engine, chip_config, sram_spec, fit_result):
+    def test_readme_includes_usage(
+        self, docs_engine, chip_config, sram_spec, fit_result
+    ):
         """Test README includes usage instructions."""
         result = docs_engine.generate_readme(chip_config, sram_spec, fit_result)
 

@@ -1,7 +1,8 @@
 """Shared pytest fixtures for sram-forge tests."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture
@@ -57,9 +58,7 @@ def sample_slot_spec() -> dict:
     """Sample slot specification for testing."""
     return {
         "die": {"width": 3932, "height": 5122},
-        "core": {
-            "inset": {"left": 442, "bottom": 442, "right": 442, "top": 442}
-        },
+        "core": {"inset": {"left": 442, "bottom": 442, "right": 442, "top": 442}},
         "io_budget": {
             "dvdd": 8,
             "dvss": 10,

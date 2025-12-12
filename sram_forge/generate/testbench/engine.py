@@ -1,12 +1,11 @@
 """Testbench generator for sram-forge."""
 
 from pathlib import Path
-from typing import Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from sram_forge.models import ChipConfig, SramSpec
 from sram_forge.calc.fit import FitResult
+from sram_forge.models import ChipConfig, SramSpec
 
 
 def get_templates_dir() -> Path:
@@ -17,7 +16,7 @@ def get_templates_dir() -> Path:
 class TestbenchEngine:
     """Jinja2-based cocotb testbench generator."""
 
-    def __init__(self, templates_dir: Optional[Path] = None):
+    def __init__(self, templates_dir: Path | None = None):
         """Initialize the testbench engine.
 
         Args:
