@@ -69,7 +69,7 @@ jobs:
 
       - name: Generate updated files
         run: |
-          uv run sram-forge gen ${{ matrix.config }} -o downstream
+          uv run sram-forge gen ${{ matrix.config }} -o downstream --sync-infra
 
       - name: Check for changes
         id: check_changes

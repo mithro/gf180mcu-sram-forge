@@ -129,26 +129,72 @@ def get_template_dir() -> Path:
     return repo_root / "project-template"
 
 
+# Infrastructure files/dirs to copy from template
+INFRASTRUCTURE_FILES = [
+    "flake.nix",
+    "flake.lock",
+    "shell.nix",
+    "LICENSE",
+    "AUTHORS.md",
+    ".gitignore",
+]
+
+INFRASTRUCTURE_DIRS = [
+    ".github",
+    "scripts",
+    "ip",
+    "librelane/slots",
+]
+
+
+def copy_infrastructure(
+    target_dir: Path,
+    template_dir: Path | None = None,
+    exclude_makefile: bool = True,
+) -> list[str]:
+    """Copy infrastructure files from template to target directory.
+
+    Args:
+        target_dir: Directory to copy infrastructure files to.
+        template_dir: Path to project template. Auto-detected if None.
+        exclude_makefile: If True, don't copy Makefile (it's generated separately).
+
+    Returns:
+        List of copied file/directory paths.
+    """
+    if template_dir is None:
+        template_dir = get_template_dir()
+
+    copied = []
+
+    # Copy individual files
+    files_to_copy = INFRASTRUCTURE_FILES.copy()
+    if not exclude_makefile:
+        files_to_copy.append("Makefile")
+
+    for filename in files_to_copy:
+        src = template_dir / filename
+        dst = target_dir / filename
+        if src.exists():
+            shutil.copy2(src, dst)
+            copied.append(filename)
+
+    # Copy directories (remove existing first to handle deleted files)
+    for dirname in INFRASTRUCTURE_DIRS:
+        src = template_dir / dirname
+        dst = target_dir / dirname
+        if src.exists():
+            if dst.exists():
+                shutil.rmtree(dst)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(src, dst)
+            copied.append(f"{dirname}/")
+
+    return copied
+
+
 class PackageEngine:
     """Project package generator using template cloning."""
-
-    # Infrastructure files/dirs to copy from template
-    COPY_FILES = [
-        "flake.nix",
-        "flake.lock",
-        "shell.nix",
-        "Makefile",
-        "LICENSE",
-        "AUTHORS.md",
-        ".gitignore",
-    ]
-
-    COPY_DIRS = [
-        ".github",
-        "scripts",
-        "ip",
-        "librelane/slots",
-    ]
 
     def __init__(self, template_dir: Path | None = None):
         """Initialize the package engine.
@@ -287,19 +333,11 @@ class PackageEngine:
 
     def _copy_infrastructure(self, package_dir: Path) -> None:
         """Copy infrastructure files from template."""
-        # Copy individual files
-        for filename in self.COPY_FILES:
-            src = self.template_dir / filename
-            if src.exists():
-                shutil.copy2(src, package_dir / filename)
-
-        # Copy directories
-        for dirname in self.COPY_DIRS:
-            src = self.template_dir / dirname
-            if src.exists():
-                dst = package_dir / dirname
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copytree(src, dst)
+        # Use the shared copy_infrastructure function
+        # exclude_makefile=False because package creates fresh directories
+        copy_infrastructure(
+            package_dir, self.template_dir, exclude_makefile=False
+        )
 
     def _generate_verilog(
         self,

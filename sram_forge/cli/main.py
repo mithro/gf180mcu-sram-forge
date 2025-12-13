@@ -17,7 +17,7 @@ from sram_forge.calc.fit import calculate_fit
 from sram_forge.db.loader import load_chip_config, load_slots, load_srams
 from sram_forge.generate.docs.engine import DocumentationEngine
 from sram_forge.generate.librelane.engine import LibreLaneEngine
-from sram_forge.generate.package.engine import PackageEngine
+from sram_forge.generate.package.engine import PackageEngine, copy_infrastructure
 from sram_forge.generate.testbench.engine import TestbenchEngine
 from sram_forge.generate.verilog.engine import VerilogEngine
 
@@ -182,7 +182,12 @@ def check(config: str):
     type=click.Choice(["verilog", "librelane", "testbench", "docs"]),
     help="Generate only specific output type",
 )
-def gen(config: str, output: str, only: str | None):
+@click.option(
+    "--sync-infra",
+    is_flag=True,
+    help="Also sync infrastructure files from project-template",
+)
+def gen(config: str, output: str, only: str | None, sync_infra: bool):
     """Generate outputs from chip configuration."""
     data_dir = get_bundled_data_dir()
     output_path = Path(output)
@@ -225,6 +230,14 @@ def gen(config: str, output: str, only: str | None):
 
         # Generate outputs
         generated = []
+
+        # Sync infrastructure files from template if requested
+        if sync_infra:
+            click.echo("Syncing infrastructure files from project-template...")
+            infra_copied = copy_infrastructure(output_path)
+            for item in infra_copied:
+                click.echo(f"  {item}")
+            generated.extend(infra_copied)
 
         if only is None or only == "verilog":
             verilog_engine = VerilogEngine()
