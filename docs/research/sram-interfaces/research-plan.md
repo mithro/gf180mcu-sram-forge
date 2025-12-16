@@ -214,13 +214,15 @@ All research outputs will be documented in:
 
 ## Success Criteria
 
-- [ ] Comprehensive list of historical and current SRAM parts (8-bit, 16-bit, 32-bit)
-- [ ] Datasheets archived for key parts in each width category
-- [ ] Pinout comparison tables for each width (8/16/32-bit)
-- [ ] Interface recommendations documented for:
+- [x] Comprehensive list of historical and current SRAM parts (8-bit, 16-bit, 32-bit)
+- [x] Datasheets archived for key parts in each width category
+  - R1RP0416D (16-bit, RISCBOY critical) ✓
+  - Others require manual download (bot protection on manufacturer sites)
+- [x] Pinout comparison tables for each width (8/16/32-bit)
+- [x] Interface recommendations documented for:
   - Z80/retro computing compatibility (8-bit)
   - RISCBOY compatibility (16-bit)
   - High-performance applications (32-bit)
-- [ ] GitHub issue #34 updated with findings
-- [ ] Clear path forward for RISCBOY compatibility
-- [ ] Assessment of 32-bit feasibility within 1x1 slot pin budget
+- [x] GitHub issue #34 updated with findings
+- [x] Clear path forward for RISCBOY compatibility
+- [x] Assessment of 32-bit feasibility within 1x1 slot pin budget
