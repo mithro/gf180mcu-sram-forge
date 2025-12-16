@@ -45,7 +45,7 @@ The 6116 represents the transition from NMOS (2016 series) to CMOS technology fo
 
 ### 24-Pin DIP Pinout
 
-```
+```text
               .----\/----.
         A7 - |01      24| - Vcc (+5V)
         A6 - |02      23| - A8
@@ -102,7 +102,7 @@ The 6264 became the JEDEC standard for 8K x 8 static RAM, widely used in Nintend
 
 ### 28-Pin DIP Pinout
 
-```
+```text
               .----\/----.
         nc - |01      28| - Vcc (+5V)
        A12 - |02      27| - /WE
@@ -168,7 +168,7 @@ The 62256 is the most widely used SRAM for retro computing projects. Its 32KB ca
 
 ### 28-Pin DIP Pinout
 
-```
+```text
               .----\/----.
        A14 - |01      28| - Vcc (+5V)
        A12 - |02      27| - /WE
@@ -244,7 +244,7 @@ The 628128 provides 128KB in a 32-pin package, used in larger retro systems and 
 
 ### 32-Pin DIP Pinout
 
-```
+```text
               .----\/----.
   nc (A18) - |01      32| - Vcc (+5V)
        A16 - |02      31| - A15
@@ -426,7 +426,7 @@ The 28-pin 62256 pinout has become the de-facto standard for 8-bit asynchronous 
 
 ### Asynchronous Read Cycle
 
-```
+```text
             ___________________________________________
 Address    X___________VALID_ADDRESS___________________X
             ___________________________________________
@@ -447,7 +447,7 @@ Data Out   ----------X--------VALID_DATA--------------X
 
 ### Asynchronous Write Cycle
 
-```
+```text
             ___________________________________________
 Address    X___________VALID_ADDRESS___________________X
             ___________________________________________

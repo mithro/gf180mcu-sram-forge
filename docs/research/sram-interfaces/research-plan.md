@@ -86,7 +86,7 @@
 **Goal**: Download and archive key datasheets locally
 
 **Directory structure**:
-```
+```text
 docs/research/sram-datasheets/
 ├── alliance-memory/
 │   ├── AS6C62256.pdf

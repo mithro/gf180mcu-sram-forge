@@ -71,7 +71,7 @@ These are direct replacements for the classic 62256 SRAM used in Z80, 6502, and 
 - ISSI IS61LV256AL offers faster access (10ns) but narrower voltage range
 
 **Package Pinout (28-pin DIP):**
-```
+```text
         +----v----+
    A14 -|1     28|- VCC
    A12 -|2     27|- WE#
@@ -171,7 +171,7 @@ These are alternatives to the Renesas R1RP0416D used in RISCBOY.
 | H   | H   | No write (outputs high-Z during write) |
 
 **Package Pinout (44-pin TSOP-II):**
-```
+```text
 Control signals: CE#, OE#, WE#, LB#, UB#
 Address: A0-A17 (18 bits for 256K words)
 Data: D0-D15 (16 bits bidirectional)
@@ -243,7 +243,7 @@ Higher density 16-bit parts.
 
 For applications requiring 32-bit data width, using two 16-bit SRAMs is often more practical:
 
-```
+```text
                     +-------------+
 Address A[17:0] --> | IS61WV25616 | --> D[15:0]
 Control CE#,OE#,WE# | (256Kx16)   |
@@ -468,7 +468,7 @@ For interfacing 3.3V-only SRAMs with 5V systems, use:
 
 ### Alliance Memory AS6Cxxxx
 
-```
+```text
 AS6C 4008 - 55 S IN
 │    │      │  │ │
 │    │      │  │ └─ Temperature: blank=Commercial, I=Industrial (-40 to +85C)
@@ -480,7 +480,7 @@ AS6C 4008 - 55 S IN
 
 ### ISSI IS61/62WVxxxx
 
-```
+```text
 IS61 WV 5128 B LL - 55 H L I
 │    │   │    │ │    │  │ │ │
 │    │   │    │ │    │  │ │ └─ Temperature: blank=Commercial, I=Industrial
@@ -496,7 +496,7 @@ IS61 WV 5128 B LL - 55 H L I
 
 ### Infineon CY62xxx
 
-```
+```text
 CY62 167 EV 30 LL - 45 ZS X I
 │    │   │  │  │    │  │  │ │
 │    │   │  │  │    │  │  │ └─ Temperature: I=Industrial, A=Automotive

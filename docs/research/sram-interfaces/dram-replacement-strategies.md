@@ -57,7 +57,7 @@ Alto, as well as arcade games like Defender and Missile Command.
 
 #### Pin Configuration
 
-```
+```text
        +---+--+---+
    VBB |1  +--+ 16| VSS (GND)
    DIN |2       15| CAS*
@@ -127,7 +127,7 @@ a single +5V power supply. This made it far more reliable and easier to use in s
 
 #### Pin Configuration
 
-```
+```text
        +---+--+---+
    N/C |1  +--+ 16| VSS (GND)
      D |2       15| CAS*
@@ -190,7 +190,7 @@ a 9-bit multiplexed address bus while maintaining pin-compatibility with the 416
 
 #### Pin Configuration
 
-```
+```text
        +---+--+---+
     A8 |1  +--+ 16| VSS (GND)
      D |2       15| CAS*
@@ -566,7 +566,7 @@ provides an educational project and deep understanding of the memory system.
 
 #### Basic Design Approach
 
-```
+```text
 DRAM Socket Interface          Logic             SRAM
      A0-A6 ──────────────────────┐
         │                        │
@@ -696,7 +696,7 @@ The SRAM's 25ns access time provides enormous margin over the original
 
 ### 20-Pin DRAM (44256 / 256Kx4)
 
-```
+```text
        +---+--+---+
     A8 |1  +--+ 20| VSS (GND)
    DQ0 |2       19| DQ3
@@ -713,7 +713,7 @@ The SRAM's 25ns access time provides enormous margin over the original
 
 ### Common SRAM Pinout (62256 - 32Kx8)
 
-```
+```text
         +---+--+---+
     A14 |1  +--+ 28| VCC (+5V)
     A12 |2       27| WE*

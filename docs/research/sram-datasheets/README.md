@@ -85,7 +85,7 @@ For DRAM-to-SRAM replacement research:
 
 Standard JEDEC pinout used by 6264 (8Kx8) and 62256 (32Kx8):
 
-```
+```text
         ┌────────┐
  A14 ─┤1     28├─ VCC
  A12 ─┤2     27├─ WE#
@@ -110,7 +110,7 @@ Standard JEDEC pinout used by 6264 (8Kx8) and 62256 (32Kx8):
 
 Standard JEDEC pinout for larger 8-bit SRAMs:
 
-```
+```text
         ┌────────┐
  A18 ─┤1     32├─ VCC
  A16 ─┤2     31├─ A15

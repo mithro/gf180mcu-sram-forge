@@ -36,7 +36,7 @@ All standard async SRAMs use **active-low** control signals:
 
 ### Timing Model
 
-```
+```text
 Asynchronous SRAM Timing (Read Cycle):
 
          _________________
@@ -286,7 +286,7 @@ Using 2x R1RP0416D (256Kx16) for 256Kx32:
 
 From sram-forge exploration, the unified bus interface supports:
 
-```
+```text
 Interface Signals:
 - CLK            : Clock (for synchronous wrapper)
 - CE_n           : Chip enable (active-low)
