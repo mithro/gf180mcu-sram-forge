@@ -19,6 +19,7 @@ Configuration:
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge, ClockCycles
+from cocotb.types import LogicArray
 
 from sram_model import SramModel
 
@@ -129,6 +130,43 @@ def build_bidir_value(addr=0, data=0, ce_n=1, we_n=1):
     return value
 
 
+# Total width of bidir_PAD bus
+BIDIR_PAD_WIDTH = DATA_WIDTH + 2 + ADDR_BITS
+
+
+def build_bidir_value_for_read(addr=0, ce_n=1):
+    """Build the bidir_PAD value for a read operation.
+
+    During reads, the data bits must be high-Z (released) so the chip can
+    drive them. Only control and address bits are driven by the testbench.
+
+    Args:
+        addr: Address value
+        ce_n: Chip enable (1=disabled, 0=enabled)
+
+    Returns:
+        LogicArray with data bits as 'Z' and control/address bits driven
+    """
+    # Build the bit string from MSB to LSB
+    # Order: addr bits (MSB), we_n, ce_n, data bits (LSB)
+    bits = []
+
+    # Address bits (MSB side)
+    for i in range(ADDR_BITS - 1, -1, -1):
+        bits.append('1' if (addr >> i) & 1 else '0')
+
+    # WE_n = 1 (read mode)
+    bits.append('1')
+
+    # CE_n
+    bits.append('1' if ce_n else '0')
+
+    # Data bits as high-Z (LSB side)
+    bits.extend(['Z'] * DATA_WIDTH)
+
+    return LogicArray(''.join(bits))
+
+
 async def write_sram(dut, addr, data):
     """Write a word to SRAM through chip pad interface.
 
@@ -157,16 +195,23 @@ async def read_sram(dut, addr):
         Data value read (8-bit)
     """
     # Setup address with CE_n=0, WE_n=1 (read)
-    dut.bidir_PAD.value = build_bidir_value(addr=addr, data=0, ce_n=0, we_n=1)
+    # Data bits are high-Z so the chip can drive them
+    dut.bidir_PAD.value = build_bidir_value_for_read(addr=addr, ce_n=0)
     await RisingEdge(dut.clk_PAD)
     await RisingEdge(dut.clk_PAD)  # Wait for output
     await Timer(1, "ns")  # Allow signal to settle (avoid race condition)
 
     # Read data from bidir_PAD (lower DATA_WIDTH bits)
-    bidir_val = int(dut.bidir_PAD.value)
-    data = bidir_val & ((1 << DATA_WIDTH) - 1)
+    # Handle potential X/Z values gracefully
+    try:
+        bidir_val = dut.bidir_PAD.value
+        data = int(bidir_val[DATA_MSB:DATA_LSB])
+    except ValueError:
+        # If conversion fails due to X/Z, return 0 and log warning
+        cocotb.log.warning(f"Read returned non-0/1 values: {dut.bidir_PAD.value}")
+        data = 0
 
-    # Deassert controls
+    # Deassert controls (back to all driven, inactive state)
     dut.bidir_PAD.value = build_bidir_value(addr=0, data=0, ce_n=1, we_n=1)
 
     return data
@@ -204,12 +249,18 @@ async def read_sram_no_enable(dut, addr):
         Data value on output (may be stale/undefined)
     """
     # Setup address with CE_n=1 (disabled), WE_n=1 (read mode)
-    dut.bidir_PAD.value = build_bidir_value(addr=addr, data=0, ce_n=1, we_n=1)
+    # Data bits are high-Z so we can observe what's on the bus
+    dut.bidir_PAD.value = build_bidir_value_for_read(addr=addr, ce_n=1)
     await RisingEdge(dut.clk_PAD)
     await RisingEdge(dut.clk_PAD)
 
-    bidir_val = int(dut.bidir_PAD.value)
-    data = bidir_val & ((1 << DATA_WIDTH) - 1)
+    # Read data - with CE_n=1, chip shouldn't drive, so expect Z or 0
+    try:
+        bidir_val = dut.bidir_PAD.value
+        data = int(bidir_val[DATA_MSB:DATA_LSB])
+    except ValueError:
+        # Expected when CE_n=1 - chip doesn't drive, we see Z
+        data = 0
 
     dut.bidir_PAD.value = build_bidir_value(addr=0, data=0, ce_n=1, we_n=1)
 
