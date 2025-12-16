@@ -12,13 +12,13 @@ The **62256 (32K x 8)** is the de-facto standard for 8-bit SRAM in retro computi
 
 ## SRAM Family Overview
 
-| Family | Organization | Package | Address Lines | Era | Primary Use Cases |
-|--------|-------------|---------|---------------|-----|-------------------|
-| **6116** | 2K x 8 | 24-pin DIP | A0-A10 (11) | ~1981-1982 | VIC-20, early arcade |
-| **6264** | 8K x 8 | 28-pin DIP | A0-A12 (13) | ~1983-1985 | NES, small systems |
-| **62256** | 32K x 8 | 28-pin DIP | A0-A14 (15) | ~1985-1987 | Z80, 6502, most common |
-| **628128** | 128K x 8 | 32-pin DIP | A0-A16 (17) | ~1988-1990 | Larger retro systems |
-| **621024** | 128K x 8 | 32-pin DIP | A0-A16 (17) | ~1988-1990 | Alternative to 628128 |
+| Family     | Organization | Package    | Address Lines | Era        | Primary Use Cases      |
+| ---------- | ------------ | ---------- | ------------- | ---------- | ---------------------- |
+| **6116**   | 2K x 8       | 24-pin DIP | A0-A10 (11)   | ~1981-1982 | VIC-20, early arcade   |
+| **6264**   | 8K x 8       | 28-pin DIP | A0-A12 (13)   | ~1983-1985 | NES, small systems     |
+| **62256**  | 32K x 8      | 28-pin DIP | A0-A14 (15)   | ~1985-1987 | Z80, 6502, most common |
+| **628128** | 128K x 8     | 32-pin DIP | A0-A16 (17)   | ~1988-1990 | Larger retro systems   |
+| **621024** | 128K x 8     | 32-pin DIP | A0-A16 (17)   | ~1988-1990 | Alternative to 628128  |
 
 ---
 
@@ -64,11 +64,11 @@ The 6116 represents the transition from NMOS (2016 series) to CMOS technology fo
 
 ### Control Signals
 
-| Signal | Pin | Polarity | Function |
-|--------|-----|----------|----------|
-| /CS | 18 | Active LOW | Chip Select - enables the device |
-| /OE | 20 | Active LOW | Output Enable - enables data output |
-| /WE | 21 | Active LOW | Write Enable - enables write operation |
+| Signal | Pin | Polarity   | Function                               |
+| ------ | --- | ---------- | -------------------------------------- |
+| /CS    | 18  | Active LOW | Chip Select - enables the device       |
+| /OE    | 20  | Active LOW | Output Enable - enables data output    |
+| /WE    | 21  | Active LOW | Write Enable - enables write operation |
 
 ### Systems Using 6116
 
@@ -79,11 +79,11 @@ The 6116 represents the transition from NMOS (2016 series) to CMOS technology fo
 
 ### Voltage Specifications
 
-| Parameter | Standard | Low Power (LP) |
-|-----------|----------|----------------|
-| Vcc | 5V +/- 5% | 5V +/- 5% |
-| Standby Current | 10-100mA | 1-4 uW @ 2V (battery retention) |
-| Data Retention | N/A | 2V minimum |
+| Parameter       | Standard  | Low Power (LP)                  |
+| --------------- | --------- | ------------------------------- |
+| Vcc             | 5V +/- 5% | 5V +/- 5%                       |
+| Standby Current | 10-100mA  | 1-4 uW @ 2V (battery retention) |
+| Data Retention  | N/A       | 2V minimum                      |
 
 ---
 
@@ -123,12 +123,12 @@ The 6264 became the JEDEC standard for 8K x 8 static RAM, widely used in Nintend
 
 ### Control Signals
 
-| Signal | Pin | Polarity | Function |
-|--------|-----|----------|----------|
-| /CS1 | 20 | Active LOW | Chip Select 1 |
-| CS2 | 26 | Active HIGH | Chip Select 2 |
-| /OE | 22 | Active LOW | Output Enable |
-| /WE | 27 | Active LOW | Write Enable |
+| Signal | Pin | Polarity    | Function      |
+| ------ | --- | ----------- | ------------- |
+| /CS1   | 20  | Active LOW  | Chip Select 1 |
+| CS2    | 26  | Active HIGH | Chip Select 2 |
+| /OE    | 22  | Active LOW  | Output Enable |
+| /WE    | 27  | Active LOW  | Write Enable  |
 
 **Note:** The 6264 has dual chip selects - the chip is selected when /CS1 is LOW **and** CS2 is HIGH. This allows flexible memory decoding.
 
@@ -189,20 +189,20 @@ The 62256 is the most widely used SRAM for retro computing projects. Its 32KB ca
 
 ### Control Signals
 
-| Signal | Pin | Polarity | Function |
-|--------|-----|----------|----------|
-| /CS | 20 | Active LOW | Chip Select |
-| /OE | 22 | Active LOW | Output Enable |
-| /WE | 27 | Active LOW | Write Enable |
+| Signal | Pin | Polarity   | Function      |
+| ------ | --- | ---------- | ------------- |
+| /CS    | 20  | Active LOW | Chip Select   |
+| /OE    | 22  | Active LOW | Output Enable |
+| /WE    | 27  | Active LOW | Write Enable  |
 
 ### 6264 vs 62256 Pinout Comparison
 
 The 62256 and 6264 share the same 28-pin package with nearly identical pinouts. Key difference:
 
-| Pin | 6264 | 62256 |
-|-----|------|-------|
-| 1 | NC | A14 |
-| 26 | CS2 (active high) | A13 |
+| Pin | 6264              | 62256 |
+| --- | ----------------- | ----- |
+| 1   | NC                | A14   |
+| 26  | CS2 (active high) | A13   |
 
 This means:
 - A 62256 can replace a 6264 if you tie A13 and A14 appropriately
@@ -219,13 +219,13 @@ This means:
 
 ### Voltage Specifications and 3.3V Variants
 
-| Part Number | Voltage Range | Manufacturer | Notes |
-|-------------|---------------|--------------|-------|
-| HM62256 | 5V +/- 10% | Hitachi | Original 5V part |
-| CY62256 | 4.5V - 5.5V | Cypress | Discontinued 2018 |
-| AS6C62256 | 2.7V - 5.5V | Alliance Memory | **Recommended** - works at both 3.3V and 5V |
-| IS61C256 | 4.5V - 5.5V | ISSI | 5V only |
-| IS61LV256 | 2.7V - 3.6V | ISSI | 3.3V only, lower absolute max (4.6V) |
+| Part Number | Voltage Range | Manufacturer    | Notes                                       |
+| ----------- | ------------- | --------------- | ------------------------------------------- |
+| HM62256     | 5V +/- 10%    | Hitachi         | Original 5V part                            |
+| CY62256     | 4.5V - 5.5V   | Cypress         | Discontinued 2018                           |
+| AS6C62256   | 2.7V - 5.5V   | Alliance Memory | **Recommended** - works at both 3.3V and 5V |
+| IS61C256    | 4.5V - 5.5V   | ISSI            | 5V only                                     |
+| IS61LV256   | 2.7V - 3.6V   | ISSI            | 3.3V only, lower absolute max (4.6V)        |
 
 **Critical Note:** The IS61C256 (5V) has absolute max of 7.0V, while IS61LV256 (3.3V) has absolute max of 4.6V. Do not use 3.3V parts with 5V signals without level shifting.
 
@@ -267,12 +267,12 @@ The 628128 provides 128KB in a 32-pin package, used in larger retro systems and 
 
 ### Control Signals
 
-| Signal | Pin | Polarity | Function |
-|--------|-----|----------|----------|
-| /CS1 | 22 | Active LOW | Chip Select 1 |
-| CS2 | 30 | Active HIGH | Chip Select 2 (or A17 on some variants) |
-| /OE | 24 | Active LOW | Output Enable |
-| /WE | 29 | Active LOW | Write Enable |
+| Signal | Pin | Polarity    | Function                                |
+| ------ | --- | ----------- | --------------------------------------- |
+| /CS1   | 22  | Active LOW  | Chip Select 1                           |
+| CS2    | 30  | Active HIGH | Chip Select 2 (or A17 on some variants) |
+| /OE    | 24  | Active LOW  | Output Enable                           |
+| /WE    | 29  | Active LOW  | Write Enable                            |
 
 ### Systems Using 628128
 
@@ -295,13 +295,13 @@ The 621024 shares the same general pinout as the 628128 with pin 1 designated as
 
 ### Key Specifications
 
-| Parameter | Value |
-|-----------|-------|
-| Organization | 128K x 8 (131,072 words x 8 bits) |
-| Supply Voltage | 5V single supply |
-| Access Time | 35-70 ns typical |
-| Standby Current | 2 uA typical |
-| Data Retention Voltage | 2V minimum |
+| Parameter              | Value                             |
+| ---------------------- | --------------------------------- |
+| Organization           | 128K x 8 (131,072 words x 8 bits) |
+| Supply Voltage         | 5V single supply                  |
+| Access Time            | 35-70 ns typical                  |
+| Standby Current        | 2 uA typical                      |
+| Data Retention Voltage | 2V minimum                        |
 
 ---
 
@@ -325,13 +325,13 @@ The 28-pin 62256 pinout has become the de-facto standard for 8-bit asynchronous 
 
 ### Interface Compatibility with Modern FPGAs/ASICs
 
-| Signal | 62256 Name | Typical FPGA Name | Polarity |
-|--------|------------|-------------------|----------|
-| Chip Enable | /CS | CE_n or CSn | Active LOW |
-| Output Enable | /OE | OE_n | Active LOW |
-| Write Enable | /WE | WE_n | Active LOW |
-| Address | A[14:0] | ADDR[14:0] | - |
-| Data | D[7:0] | DATA[7:0] | Bidirectional |
+| Signal        | 62256 Name | Typical FPGA Name | Polarity      |
+| ------------- | ---------- | ----------------- | ------------- |
+| Chip Enable   | /CS        | CE_n or CSn       | Active LOW    |
+| Output Enable | /OE        | OE_n              | Active LOW    |
+| Write Enable  | /WE        | WE_n              | Active LOW    |
+| Address       | A[14:0]    | ADDR[14:0]        | -             |
+| Data          | D[7:0]     | DATA[7:0]         | Bidirectional |
 
 ---
 
@@ -339,14 +339,14 @@ The 28-pin 62256 pinout has become the de-facto standard for 8-bit asynchronous 
 
 ### Currently Available (2025)
 
-| Part Number | Organization | Voltage | Package | Manufacturer | Status |
-|-------------|-------------|---------|---------|--------------|--------|
-| AS6C6264 | 8K x 8 | 2.7-5.5V | 28-DIP, SOP | Alliance Memory | **In Production** |
-| AS6C62256 | 32K x 8 | 2.7-5.5V | 28-DIP, SOP | Alliance Memory | **In Production** |
-| AS6C1008 | 128K x 8 | 2.7-5.5V | 32-DIP, SOP | Alliance Memory | **In Production** |
-| AS6C4008 | 512K x 8 | 2.7-5.5V | 32-DIP, SOP | Alliance Memory | **In Production** |
-| IS61C256 | 32K x 8 | 4.5-5.5V | 28-DIP, SOP | ISSI | **In Production** |
-| IS61LV256 | 32K x 8 | 2.7-3.6V | 28-DIP, SOP | ISSI | **In Production** |
+| Part Number | Organization | Voltage  | Package     | Manufacturer    | Status            |
+| ----------- | ------------ | -------- | ----------- | --------------- | ----------------- |
+| AS6C6264    | 8K x 8       | 2.7-5.5V | 28-DIP, SOP | Alliance Memory | **In Production** |
+| AS6C62256   | 32K x 8      | 2.7-5.5V | 28-DIP, SOP | Alliance Memory | **In Production** |
+| AS6C1008    | 128K x 8     | 2.7-5.5V | 32-DIP, SOP | Alliance Memory | **In Production** |
+| AS6C4008    | 512K x 8     | 2.7-5.5V | 32-DIP, SOP | Alliance Memory | **In Production** |
+| IS61C256    | 32K x 8      | 4.5-5.5V | 28-DIP, SOP | ISSI            | **In Production** |
+| IS61LV256   | 32K x 8      | 2.7-3.6V | 28-DIP, SOP | ISSI            | **In Production** |
 
 ### Recommended Parts for New Designs
 
@@ -369,56 +369,56 @@ The 28-pin 62256 pinout has become the de-facto standard for 8-bit asynchronous 
 ### 28-Pin SRAM Comparison (6264 vs 62256)
 
 | Pin | 6116 (24-pin) | 6264 (28-pin) | 62256 (28-pin) |
-|-----|---------------|---------------|----------------|
-| 1 | A7 | NC | A14 |
-| 2 | A6 | A12 | A12 |
-| 3 | A5 | A7 | A7 |
-| 4 | A4 | A6 | A6 |
-| 5 | A3 | A5 | A5 |
-| 6 | A2 | A4 | A4 |
-| 7 | A1 | A3 | A3 |
-| 8 | A0 | A2 | A2 |
-| 9 | I/O0 | A1 | A1 |
-| 10 | I/O1 | A0 | A0 |
-| 11 | I/O2 | D0 | D0 |
-| 12 | GND | D1 | D1 |
-| 13 | I/O3 | D2 | D2 |
-| 14 | I/O4 | GND | GND |
-| 15 | I/O5 | D3 | D3 |
-| 16 | I/O6 | D4 | D4 |
-| 17 | I/O7 | D5 | D5 |
-| 18 | /CS | D6 | D6 |
-| 19 | A10 | D7 | D7 |
-| 20 | /OE | /CS1 | /CS |
-| 21 | /WE | A10 | A10 |
-| 22 | A9 | /OE | /OE |
-| 23 | A8 | A11 | A11 |
-| 24 | Vcc | A9 | A9 |
-| 25 | - | A8 | A8 |
-| 26 | - | **CS2** | **A13** |
-| 27 | - | /WE | /WE |
-| 28 | - | Vcc | Vcc |
+| --- | ------------- | ------------- | -------------- |
+| 1   | A7            | NC            | A14            |
+| 2   | A6            | A12           | A12            |
+| 3   | A5            | A7            | A7             |
+| 4   | A4            | A6            | A6             |
+| 5   | A3            | A5            | A5             |
+| 6   | A2            | A4            | A4             |
+| 7   | A1            | A3            | A3             |
+| 8   | A0            | A2            | A2             |
+| 9   | I/O0          | A1            | A1             |
+| 10  | I/O1          | A0            | A0             |
+| 11  | I/O2          | D0            | D0             |
+| 12  | GND           | D1            | D1             |
+| 13  | I/O3          | D2            | D2             |
+| 14  | I/O4          | GND           | GND            |
+| 15  | I/O5          | D3            | D3             |
+| 16  | I/O6          | D4            | D4             |
+| 17  | I/O7          | D5            | D5             |
+| 18  | /CS           | D6            | D6             |
+| 19  | A10           | D7            | D7             |
+| 20  | /OE           | /CS1          | /CS            |
+| 21  | /WE           | A10           | A10            |
+| 22  | A9            | /OE           | /OE            |
+| 23  | A8            | A11           | A11            |
+| 24  | Vcc           | A9            | A9             |
+| 25  | -             | A8            | A8             |
+| 26  | -             | **CS2**       | **A13**        |
+| 27  | -             | /WE           | /WE            |
+| 28  | -             | Vcc           | Vcc            |
 
 ### 32-Pin SRAM (628128/621024)
 
-| Pin | Function | Pin | Function |
-|-----|----------|-----|----------|
-| 1 | NC (A18) | 17 | D3 |
-| 2 | A16 | 18 | D4 |
-| 3 | A14 | 19 | D5 |
-| 4 | A12 | 20 | D6 |
-| 5 | A7 | 21 | D7 |
-| 6 | A6 | 22 | /CS1 |
-| 7 | A5 | 23 | A10 |
-| 8 | A4 | 24 | /OE |
-| 9 | A3 | 25 | A11 |
-| 10 | A2 | 26 | A9 |
-| 11 | A1 | 27 | A8 |
-| 12 | A0 | 28 | A13 |
-| 13 | D0 | 29 | /WE |
-| 14 | D1 | 30 | CS2 (A17) |
-| 15 | D2 | 31 | A15 |
-| 16 | GND | 32 | Vcc |
+| Pin | Function | Pin | Function  |
+| --- | -------- | --- | --------- |
+| 1   | NC (A18) | 17  | D3        |
+| 2   | A16      | 18  | D4        |
+| 3   | A14      | 19  | D5        |
+| 4   | A12      | 20  | D6        |
+| 5   | A7       | 21  | D7        |
+| 6   | A6       | 22  | /CS1      |
+| 7   | A5       | 23  | A10       |
+| 8   | A4       | 24  | /OE       |
+| 9   | A3       | 25  | A11       |
+| 10  | A2       | 26  | A9        |
+| 11  | A1       | 27  | A8        |
+| 12  | A0       | 28  | A13       |
+| 13  | D0       | 29  | /WE       |
+| 14  | D1       | 30  | CS2 (A17) |
+| 15  | D2       | 31  | A15       |
+| 16  | GND      | 32  | Vcc       |
 
 ---
 
@@ -480,13 +480,13 @@ Based on this research, the **62256-compatible interface** should be the primary
 
 ### Interface Mapping
 
-| sram-forge Signal | 62256 Signal | Notes |
-|-------------------|--------------|-------|
-| CE_n | /CS | Active LOW chip enable |
-| WE_n | /WE | Active LOW write enable |
-| OE_n | /OE | Active LOW output enable (optional for synchronous) |
-| ADDR[14:0] | A[14:0] | 15-bit address for 32KB |
-| DATA[7:0] | D[7:0] | Bidirectional 8-bit data |
+| sram-forge Signal | 62256 Signal | Notes                                               |
+| ----------------- | ------------ | --------------------------------------------------- |
+| CE_n              | /CS          | Active LOW chip enable                              |
+| WE_n              | /WE          | Active LOW write enable                             |
+| OE_n              | /OE          | Active LOW output enable (optional for synchronous) |
+| ADDR[14:0]        | A[14:0]      | 15-bit address for 32KB                             |
+| DATA[7:0]         | D[7:0]       | Bidirectional 8-bit data                            |
 
 ### Future Considerations
 

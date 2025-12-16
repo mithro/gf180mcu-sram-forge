@@ -14,20 +14,20 @@
 
 ### Target Parts Identified
 
-| Family | Organization | Voltage | Package | Use Case |
-|--------|-------------|---------|---------|----------|
-| **8-bit** |
-| 6264 | 8K x 8 | 5V | 28-pin DIP | Classic NES, small retro |
-| 62256 | 32K x 8 | 5V/3.3V | 28-pin DIP | Z80 systems, RC2014 |
-| 628128 | 128K x 8 | 5V | 32-pin DIP | Larger Z80/retro systems |
-| AS6C1008 | 128K x 8 | 2.7-5.5V | 32-pin DIP | Modern replacement |
-| AS6C4008 | 512K x 8 | 2.7-5.5V | 32-pin DIP | Modern replacement |
-| **16-bit** |
-| R1RP0416D | 256K x 16 | 5V | 44-pin TSOP | RISCBOY target |
-| IS61LV25616 | 256K x 16 | 3.3V | 44-pin TSOP | Low voltage alternative |
-| **32-bit** |
-| 256Kx32 modules | 256K x 32 | 5V | 66-68 pin | DSP applications |
-| 512Kx32 modules | 512K x 32 | 5V/3.3V | 68-pin PLCC | High-performance |
+| Family          | Organization | Voltage  | Package     | Use Case                 |
+| --------------- | ------------ | -------- | ----------- | ------------------------ |
+| **8-bit**       |              |          |             |                          |
+| 6264            | 8K x 8       | 5V       | 28-pin DIP  | Classic NES, small retro |
+| 62256           | 32K x 8      | 5V/3.3V  | 28-pin DIP  | Z80 systems, RC2014      |
+| 628128          | 128K x 8     | 5V       | 32-pin DIP  | Larger Z80/retro systems |
+| AS6C1008        | 128K x 8     | 2.7-5.5V | 32-pin DIP  | Modern replacement       |
+| AS6C4008        | 512K x 8     | 2.7-5.5V | 32-pin DIP  | Modern replacement       |
+| **16-bit**      |              |          |             |                          |
+| R1RP0416D       | 256K x 16    | 5V       | 44-pin TSOP | RISCBOY target           |
+| IS61LV25616     | 256K x 16    | 3.3V     | 44-pin TSOP | Low voltage alternative  |
+| **32-bit**      |              |          |             |                          |
+| 256Kx32 modules | 256K x 32    | 5V       | 66-68 pin   | DSP applications         |
+| 512Kx32 modules | 512K x 32    | 5V/3.3V  | 68-pin PLCC | High-performance         |
 
 ### Active Manufacturers
 - **Alliance Memory**: Drop-in replacements for legacy parts (AS6C series)
@@ -167,14 +167,14 @@ docs/research/sram-datasheets/
 - Phases 5 and 6 are sequential after Phase 4
 
 ### Sub-agent Types to Use
-| Phase | Agent Type | Count | Purpose |
-|-------|-----------|-------|---------|
-| 1 | solution-researcher | 2 | Historical SRAM and DRAM research |
-| 2 | solution-researcher | 2 | Current availability survey |
-| 3 | general-purpose | 1 | Datasheet downloads |
-| 4 | data-scientist | 2 | Pinout and timing analysis |
-| 5 | backend-architect | 1 | Interface compatibility analysis |
-| 6 | documentation-writer | 1 | Final synthesis and issue update |
+| Phase | Agent Type           | Count | Purpose                           |
+| ----- | -------------------- | ----- | --------------------------------- |
+| 1     | solution-researcher  | 2     | Historical SRAM and DRAM research |
+| 2     | solution-researcher  | 2     | Current availability survey       |
+| 3     | general-purpose      | 1     | Datasheet downloads               |
+| 4     | data-scientist       | 2     | Pinout and timing analysis        |
+| 5     | backend-architect    | 1     | Interface compatibility analysis  |
+| 6     | documentation-writer | 1     | Final synthesis and issue update  |
 
 ### Output Location
 All research outputs will be documented in:
@@ -202,11 +202,11 @@ All research outputs will be documented in:
    - Consider: 62256-mode, R1RP0416D-mode, custom-mode
 
 4. **Pin budget for each data width on 1x1 slot (52 pins available)?**
-   | Width | Control | Addr | Data | Byte-EN | Total | Spare |
-   |-------|---------|------|------|---------|-------|-------|
-   | 8-bit | 3 | 15 | 8 | 0 | 26 | 26 |
-   | 16-bit | 3 | 14 | 16 | 0-2 | 33-35 | 17-19 |
-   | 32-bit | 3 | 13 | 32 | 0-4 | 48-52 | 0-4 |
+| Width  | Control | Addr | Data | Byte-EN | Total | Spare |
+| ------ | ------- | ---- | ---- | ------- | ----- | ----- |
+| 8-bit  | 3       | 15   | 8    | 0       | 26    | 26    |
+| 16-bit | 3       | 14   | 16   | 0-2     | 33-35 | 17-19 |
+| 32-bit | 3       | 13   | 32   | 0-4     | 48-52 | 0-4   |
 
    32-bit is feasible but tight; byte-enables may need to be optional
 

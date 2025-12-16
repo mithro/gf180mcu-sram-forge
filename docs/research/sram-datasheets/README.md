@@ -6,37 +6,37 @@ This directory contains references to key datasheets for SRAM parts relevant to 
 
 ### Alliance Memory AS6C Series (Modern Replacements)
 
-| Part | Organization | Datasheet URL |
-|------|-------------|---------------|
-| AS6C6264 | 8K x 8 | https://www.alliancememory.com/datasheets/AS6C6264.pdf |
-| AS6C62256 | 32K x 8 | https://www.alliancememory.com/datasheets/AS6C62256.pdf |
-| AS6C1008 | 128K x 8 | https://www.alliancememory.com/datasheets/AS6C1008.pdf |
-| AS6C4008 | 512K x 8 | https://www.alliancememory.com/datasheets/AS6C4008.pdf |
-| AS6C8008 | 1M x 8 | https://www.alliancememory.com/datasheets/AS6C8008.pdf |
+| Part      | Organization | Datasheet URL                                           |
+| --------- | ------------ | ------------------------------------------------------- |
+| AS6C6264  | 8K x 8       | https://www.alliancememory.com/datasheets/AS6C6264.pdf  |
+| AS6C62256 | 32K x 8      | https://www.alliancememory.com/datasheets/AS6C62256.pdf |
+| AS6C1008  | 128K x 8     | https://www.alliancememory.com/datasheets/AS6C1008.pdf  |
+| AS6C4008  | 512K x 8     | https://www.alliancememory.com/datasheets/AS6C4008.pdf  |
+| AS6C8008  | 1M x 8       | https://www.alliancememory.com/datasheets/AS6C8008.pdf  |
 
 ### ISSI IS62/IS61 Series
 
-| Part | Organization | Datasheet URL |
-|------|-------------|---------------|
-| IS62C256 | 32K x 8 | https://www.issi.com/WW/pdf/62-65C256AL.pdf |
-| IS61C1024 | 128K x 8 | https://www.issi.com/WW/pdf/61C1024.pdf |
+| Part      | Organization | Datasheet URL                               |
+| --------- | ------------ | ------------------------------------------- |
+| IS62C256  | 32K x 8      | https://www.issi.com/WW/pdf/62-65C256AL.pdf |
+| IS61C1024 | 128K x 8     | https://www.issi.com/WW/pdf/61C1024.pdf     |
 
 ### Classic References
 
-| Part | Organization | Source | Notes |
-|------|-------------|--------|-------|
-| HM6264 | 8K x 8 | Hitachi | Original manufacturer datasheet |
-| HM62256 | 32K x 8 | Hitachi | Original manufacturer datasheet |
-| TMM2064 | 8K x 8 | Toshiba | NES compatible variant |
+| Part    | Organization | Source  | Notes                           |
+| ------- | ------------ | ------- | ------------------------------- |
+| HM6264  | 8K x 8       | Hitachi | Original manufacturer datasheet |
+| HM62256 | 32K x 8      | Hitachi | Original manufacturer datasheet |
+| TMM2064 | 8K x 8       | Toshiba | NES compatible variant          |
 
 ## 16-bit SRAMs (x16)
 
 ### Renesas R1RP Series (RISCBOY Target)
 
-| Part | Organization | Datasheet URL |
-|------|-------------|---------------|
-| R1RP0416D | 256K x 16 | https://www.renesas.com/en/document/dst/r1rp0416d-series-datasheet |
-| R1RP0416D-I | 256K x 16 | Same as above (industrial temp range) |
+| Part        | Organization | Datasheet URL                                                      |
+| ----------- | ------------ | ------------------------------------------------------------------ |
+| R1RP0416D   | 256K x 16    | https://www.renesas.com/en/document/dst/r1rp0416d-series-datasheet |
+| R1RP0416D-I | 256K x 16    | Same as above (industrial temp range)                              |
 
 **Key specs for R1RP0416D:**
 - 5V operation (4.5V - 5.5V)
@@ -46,25 +46,25 @@ This directory contains references to key datasheets for SRAM parts relevant to 
 
 ### ISSI IS61/IS62 16-bit Series
 
-| Part | Organization | Datasheet URL |
-|------|-------------|---------------|
-| IS61WV25616BLL | 256K x 16 | https://www.issi.com/WW/pdf/61WV25616.pdf |
-| IS61WV51216BLL | 512K x 16 | https://www.issi.com/WW/pdf/61WV51216.pdf |
+| Part           | Organization | Datasheet URL                             |
+| -------------- | ------------ | ----------------------------------------- |
+| IS61WV25616BLL | 256K x 16    | https://www.issi.com/WW/pdf/61WV25616.pdf |
+| IS61WV51216BLL | 512K x 16    | https://www.issi.com/WW/pdf/61WV51216.pdf |
 
 ### Alliance Memory 16-bit
 
-| Part | Organization | Datasheet URL |
-|------|-------------|---------------|
-| AS6C8016 | 512K x 16 | https://www.alliancememory.com/datasheets/AS6C8016.pdf |
+| Part     | Organization | Datasheet URL                                          |
+| -------- | ------------ | ------------------------------------------------------ |
+| AS6C8016 | 512K x 16    | https://www.alliancememory.com/datasheets/AS6C8016.pdf |
 
 ## 32-bit SRAMs (x32)
 
 ### Alliance Memory 32-bit
 
-| Part | Organization | Datasheet URL |
-|------|-------------|---------------|
-| AS7C325632 | 256K x 32 | https://www.alliancememory.com/datasheets/AS7C325632.pdf |
-| AS7C351232 | 512K x 32 | https://www.alliancememory.com/datasheets/AS7C351232.pdf |
+| Part       | Organization | Datasheet URL                                            |
+| ---------- | ------------ | -------------------------------------------------------- |
+| AS7C325632 | 256K x 32    | https://www.alliancememory.com/datasheets/AS7C325632.pdf |
+| AS7C351232 | 512K x 32    | https://www.alliancememory.com/datasheets/AS7C351232.pdf |
 
 **Note:** 32-bit parts are typically only available in BGA packages.
 
@@ -72,12 +72,12 @@ This directory contains references to key datasheets for SRAM parts relevant to 
 
 For DRAM-to-SRAM replacement research:
 
-| Part | Organization | Notes |
-|------|-------------|-------|
-| 4116 | 16K x 1 | Triple-voltage DRAM, widely documented online |
-| 4164 | 64K x 1 | Single 5V DRAM |
-| 41256 | 256K x 1 | Higher capacity DRAM |
-| 44256 | 256K x 4 | Nibble-wide variant |
+| Part  | Organization | Notes                                         |
+| ----- | ------------ | --------------------------------------------- |
+| 4116  | 16K x 1      | Triple-voltage DRAM, widely documented online |
+| 4164  | 64K x 1      | Single 5V DRAM                                |
+| 41256 | 256K x 1     | Higher capacity DRAM                          |
+| 44256 | 256K x 4     | Nibble-wide variant                           |
 
 ## Pinout Quick Reference
 
@@ -137,30 +137,30 @@ Standard JEDEC pinout for larger 8-bit SRAMs:
 
 Pin layout for 256Kx16 and 512Kx16 parts (e.g., R1RP0416D):
 
-| Signal | Pin(s) | Function |
-|--------|--------|----------|
-| A0-A17 | Various | Address inputs |
-| DQ0-DQ15 | Various | Data I/O |
-| CE1# | Active-low chip enable |
-| CE2 | Active-high chip enable |
-| OE# | Output enable (active-low) |
-| WE# | Write enable (active-low) |
-| LB# | Lower byte enable (DQ0-7) |
-| UB# | Upper byte enable (DQ8-15) |
-| VCC | Power (5V or 3.3V) |
-| VSS | Ground |
+| Signal   | Pin(s)                     | Function       |
+| -------- | -------------------------- | -------------- |
+| A0-A17   | Various                    | Address inputs |
+| DQ0-DQ15 | Various                    | Data I/O       |
+| CE1#     | Active-low chip enable     |                |
+| CE2      | Active-high chip enable    |                |
+| OE#      | Output enable (active-low) |                |
+| WE#      | Write enable (active-low)  |                |
+| LB#      | Lower byte enable (DQ0-7)  |                |
+| UB#      | Upper byte enable (DQ8-15) |                |
+| VCC      | Power (5V or 3.3V)         |                |
+| VSS      | Ground                     |                |
 
 ## Control Signal Summary
 
 All standard SRAMs use active-low control signals:
 
-| Signal | Active | Function |
-|--------|--------|----------|
-| CS#/CE# | LOW | Chip select/enable |
-| OE# | LOW | Output enable (tristate when high) |
-| WE# | LOW | Write enable |
-| LB# | LOW | Lower byte enable (16-bit parts) |
-| UB# | LOW | Upper byte enable (16-bit parts) |
+| Signal  | Active | Function                           |
+| ------- | ------ | ---------------------------------- |
+| CS#/CE# | LOW    | Chip select/enable                 |
+| OE#     | LOW    | Output enable (tristate when high) |
+| WE#     | LOW    | Write enable                       |
+| LB#     | LOW    | Lower byte enable (16-bit parts)   |
+| UB#     | LOW    | Upper byte enable (16-bit parts)   |
 
 **Exception:** Some parts have a secondary CE2 that is active-high.
 

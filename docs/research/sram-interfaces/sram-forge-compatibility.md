@@ -26,25 +26,25 @@ class Interface(BaseModel):
 
 The current sram-forge generates these external signals:
 
-| Signal | Direction | Description |
-|--------|-----------|-------------|
-| CLK | Input | System clock |
-| CE_n | Input | Chip enable (active-low) |
-| WE_n | Input | Write enable (active-low) |
-| ADDR[N-1:0] | Input | Address bus |
-| DATA[M-1:0] | Bidir | Data bus (configurable width) |
-| WMASK[M-1:0] | Input | Optional write mask |
+| Signal       | Direction | Description                   |
+| ------------ | --------- | ----------------------------- |
+| CLK          | Input     | System clock                  |
+| CE_n         | Input     | Chip enable (active-low)      |
+| WE_n         | Input     | Write enable (active-low)     |
+| ADDR[N-1:0]  | Input     | Address bus                   |
+| DATA[M-1:0]  | Bidir     | Data bus (configurable width) |
+| WMASK[M-1:0] | Input     | Optional write mask           |
 
 ### Slot I/O Budgets
 
 From `db/data/slots.yaml`:
 
-| Slot | Input | Bidir | Total Signal |
-|------|-------|-------|--------------|
-| 1x1 | 12 | 40 | 52 |
-| 0p5x1 | 4 | 44 | 48 |
-| 1x0p5 | 4 | 46 | 50 |
-| 0p5x0p5 | 4 | 38 | 42 |
+| Slot    | Input | Bidir | Total Signal |
+| ------- | ----- | ----- | ------------ |
+| 1x1     | 12    | 40    | 52           |
+| 0p5x1   | 4     | 44    | 48           |
+| 1x0p5   | 4     | 46    | 50           |
+| 0p5x0p5 | 4     | 38    | 42           |
 
 ---
 
@@ -52,15 +52,15 @@ From `db/data/slots.yaml`:
 
 ### What sram-forge Has vs. What External SRAMs Need
 
-| Feature | sram-forge | 8-bit SRAM | 16-bit SRAM | 32-bit SRAM |
-|---------|------------|------------|-------------|-------------|
-| Chip enable (CE_n) | Yes | Yes (CS#) | Yes (CE1#) | Yes |
-| Write enable (WE_n) | Yes | Yes (WE#) | Yes (WE#) | Yes |
-| Output enable (OE_n) | **No** | Yes (OE#) | Yes (OE#) | Optional |
-| Byte enables (LB_n, UB_n) | **No** | N/A | Yes | Optional |
-| Secondary CE (CE2) | **No** | Some | Yes | N/A |
-| Address width | Flexible | 15 | 18 | 16-18 |
-| Data width | 8,10,12,16 | 8 | 16 | 32 |
+| Feature                   | sram-forge | 8-bit SRAM | 16-bit SRAM | 32-bit SRAM |
+| ------------------------- | ---------- | ---------- | ----------- | ----------- |
+| Chip enable (CE_n)        | Yes        | Yes (CS#)  | Yes (CE1#)  | Yes         |
+| Write enable (WE_n)       | Yes        | Yes (WE#)  | Yes (WE#)   | Yes         |
+| Output enable (OE_n)      | **No**     | Yes (OE#)  | Yes (OE#)   | Optional    |
+| Byte enables (LB_n, UB_n) | **No**     | N/A        | Yes         | Optional    |
+| Secondary CE (CE2)        | **No**     | Some       | Yes         | N/A         |
+| Address width             | Flexible   | 15         | 18          | 16-18       |
+| Data width                | 8,10,12,16 | 8          | 16          | 32          |
 
 ### Missing Features
 
@@ -147,21 +147,21 @@ profile_32bit_min:
 
 ### 1x1 Slot Analysis
 
-| Profile | Address | Data | Control | Total | Spare |
-|---------|---------|------|---------|-------|-------|
-| 62256 | 15 | 8 | 3 | 26 | 26 |
-| R1RP0416D | 18 | 16 | 5 | 39 | 13 |
-| 32-bit min | 16 | 32 | 2 | 50 | 2 |
+| Profile    | Address | Data | Control | Total | Spare |
+| ---------- | ------- | ---- | ------- | ----- | ----- |
+| 62256      | 15      | 8    | 3       | 26    | 26    |
+| R1RP0416D  | 18      | 16   | 5       | 39    | 13    |
+| 32-bit min | 16      | 32   | 2       | 50    | 2     |
 
 All profiles fit within the 52-pin budget of the 1x1 slot.
 
 ### Smaller Slots
 
-| Profile | Pins Needed | 0p5x1 (48) | 1x0p5 (50) | 0p5x0p5 (42) |
-|---------|-------------|------------|------------|--------------|
-| 62256 | 26 | OK | OK | OK |
-| R1RP0416D | 39 | OK | OK | **NO** |
-| 32-bit | 50 | **NO** | OK | **NO** |
+| Profile   | Pins Needed | 0p5x1 (48) | 1x0p5 (50) | 0p5x0p5 (42) |
+| --------- | ----------- | ---------- | ---------- | ------------ |
+| 62256     | 26          | OK         | OK         | OK           |
+| R1RP0416D | 39          | OK         | OK         | **NO**       |
+| 32-bit    | 50          | **NO**     | OK         | **NO**       |
 
 ---
 
@@ -288,29 +288,29 @@ endmodule
 
 ### sram-forge vs External SRAM Features
 
-| Feature | Current | With Changes | Notes |
-|---------|---------|--------------|-------|
-| 8-bit data | Yes | Yes | Works today |
-| 16-bit data | Yes | Yes | data_width=16 |
-| 32-bit data | **No** | Yes | Need to add |
-| CE_n | Yes | Yes | Works today |
-| WE_n | Yes | Yes | Works today |
-| OE_n | **No** | Yes | Add option |
-| LB_n/UB_n | **No** | Yes | Add for 16-bit |
-| 5V operation | Yes | Yes | core_voltage=5.0 |
-| 3.3V operation | Yes | Yes | core_voltage=3.3 |
-| Per-bit mask | Yes | Yes | write_mask=true |
-| Per-byte mask | **No** | Yes | byte_enable=true |
+| Feature        | Current | With Changes | Notes            |
+| -------------- | ------- | ------------ | ---------------- |
+| 8-bit data     | Yes     | Yes          | Works today      |
+| 16-bit data    | Yes     | Yes          | data_width=16    |
+| 32-bit data    | **No**  | Yes          | Need to add      |
+| CE_n           | Yes     | Yes          | Works today      |
+| WE_n           | Yes     | Yes          | Works today      |
+| OE_n           | **No**  | Yes          | Add option       |
+| LB_n/UB_n      | **No**  | Yes          | Add for 16-bit   |
+| 5V operation   | Yes     | Yes          | core_voltage=5.0 |
+| 3.3V operation | Yes     | Yes          | core_voltage=3.3 |
+| Per-bit mask   | Yes     | Yes          | write_mask=true  |
+| Per-byte mask  | **No**  | Yes          | byte_enable=true |
 
 ### Target Compatibility
 
-| SRAM Part | Current | With Changes |
-|-----------|---------|--------------|
-| AS6C62256 | Partial | Full |
-| IS62C256 | Partial | Full |
-| R1RP0416D | **No** | Full |
-| AS6C8016 | **No** | Full |
-| 2x R1RP0416D (32-bit) | **No** | Limited* |
+| SRAM Part             | Current | With Changes |
+| --------------------- | ------- | ------------ |
+| AS6C62256             | Partial | Full         |
+| IS62C256              | Partial | Full         |
+| R1RP0416D             | **No**  | Full         |
+| AS6C8016              | **No**  | Full         |
+| 2x R1RP0416D (32-bit) | **No**  | Limited*     |
 
 *32-bit: No byte enables within pin budget
 

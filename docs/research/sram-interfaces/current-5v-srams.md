@@ -48,13 +48,13 @@ Most "5V" SRAM parts today operate across a wide voltage range (typically 2.7V-5
 
 Alliance Memory is the leading supplier of drop-in replacement SRAMs for legacy parts. All parts operate from 2.7V to 5.5V, making them compatible with 5V systems.
 
-| Part Number | Organization | Density | Access Time | Package Options | Voltage Range | Temp Range |
-|-------------|--------------|---------|-------------|-----------------|---------------|------------|
-| AS6C62256 | 32K x 8 | 256Kb | 55ns | 28-PDIP, 28-SOP, 28-TSOP I | 2.7V - 5.5V | -40C to +85C |
-| AS6C1008 | 128K x 8 | 1Mb | 55ns | 32-PDIP, 32-SOP, 32-TSOP I | 2.7V - 5.5V | -40C to +85C |
-| AS6C2008 | 256K x 8 | 2Mb | 55ns | 32-PDIP, 32-SOP, 32-TSOP I | 2.7V - 5.5V | -40C to +85C |
-| AS6C4008 | 512K x 8 | 4Mb | 55ns, 70ns | 32-PDIP, 32-SOP, 32-TSOP I, 36-TFBGA | 2.7V - 5.5V | -40C to +125C (auto) |
-| AS6C8008 | 1M x 8 | 8Mb | 55ns | 44-TSOP II, 48-TFBGA | 2.7V - 5.5V | -40C to +85C |
+| Part Number | Organization | Density | Access Time | Package Options                      | Voltage Range | Temp Range           |
+| ----------- | ------------ | ------- | ----------- | ------------------------------------ | ------------- | -------------------- |
+| AS6C62256   | 32K x 8      | 256Kb   | 55ns        | 28-PDIP, 28-SOP, 28-TSOP I           | 2.7V - 5.5V   | -40C to +85C         |
+| AS6C1008    | 128K x 8     | 1Mb     | 55ns        | 32-PDIP, 32-SOP, 32-TSOP I           | 2.7V - 5.5V   | -40C to +85C         |
+| AS6C2008    | 256K x 8     | 2Mb     | 55ns        | 32-PDIP, 32-SOP, 32-TSOP I           | 2.7V - 5.5V   | -40C to +85C         |
+| AS6C4008    | 512K x 8     | 4Mb     | 55ns, 70ns  | 32-PDIP, 32-SOP, 32-TSOP I, 36-TFBGA | 2.7V - 5.5V   | -40C to +125C (auto) |
+| AS6C8008    | 1M x 8       | 8Mb     | 55ns        | 44-TSOP II, 48-TFBGA                 | 2.7V - 5.5V   | -40C to +85C         |
 
 **Key Features**:
 - Drop-in replacements for Cypress, IDT, and other legacy SRAMs
@@ -78,11 +78,11 @@ Alliance Memory is the leading supplier of drop-in replacement SRAMs for legacy 
 
 ISSI (Integrated Silicon Solution Inc.) offers a range of 5V-compatible SRAM parts.
 
-| Part Number | Organization | Density | Access Time | Package Options | Voltage | Notes |
-|-------------|--------------|---------|-------------|-----------------|---------|-------|
-| IS62C256 | 32K x 8 | 256Kb | 45ns, 70ns | 28-SOP, 28-TSOP I | 5V (+/-10%) | Active |
-| IS61C1024 | 128K x 8 | 1Mb | 12ns, 15ns, 20ns, 25ns | 32-PDIP, 32-SOP, 32-TSOP | 5V (+/-10%) | Some variants obsolete |
-| IS61C5128 | 512K x 8 | 4Mb | 10ns, 12ns, 15ns | 44-TSOP II | 5V | High-speed variant |
+| Part Number | Organization | Density | Access Time            | Package Options          | Voltage     | Notes                  |
+| ----------- | ------------ | ------- | ---------------------- | ------------------------ | ----------- | ---------------------- |
+| IS62C256    | 32K x 8      | 256Kb   | 45ns, 70ns             | 28-SOP, 28-TSOP I        | 5V (+/-10%) | Active                 |
+| IS61C1024   | 128K x 8     | 1Mb     | 12ns, 15ns, 20ns, 25ns | 32-PDIP, 32-SOP, 32-TSOP | 5V (+/-10%) | Some variants obsolete |
+| IS61C5128   | 512K x 8     | 4Mb     | 10ns, 12ns, 15ns       | 44-TSOP II               | 5V          | High-speed variant     |
 
 **IS62C256 Specifications**:
 - Low active power: 200 mW (typical)
@@ -112,11 +112,11 @@ ISSI (Integrated Silicon Solution Inc.) offers a range of 5V-compatible SRAM par
 
 **STATUS: DISCONTINUED** - Cypress issued a product discontinuation notification with a last-time buy date of July 4, 2018.
 
-| Part Number | Organization | Density | Access Time | Status | Replacement |
-|-------------|--------------|---------|-------------|--------|-------------|
-| CY62256 | 32K x 8 | 256Kb | 55ns, 70ns | DISCONTINUED | AS6C62256 |
-| CY62256L | 32K x 8 | 256Kb | 70ns | Limited stock | AS6C62256 |
-| CY62256NLL | 32K x 8 | 256Kb | 55ns | Limited stock | AS6C62256 |
+| Part Number | Organization | Density | Access Time | Status        | Replacement |
+| ----------- | ------------ | ------- | ----------- | ------------- | ----------- |
+| CY62256     | 32K x 8      | 256Kb   | 55ns, 70ns  | DISCONTINUED  | AS6C62256   |
+| CY62256L    | 32K x 8      | 256Kb   | 70ns        | Limited stock | AS6C62256   |
+| CY62256NLL  | 32K x 8      | 256Kb   | 55ns        | Limited stock | AS6C62256   |
 
 **Important**: Alliance Memory has an agreement with Cypress Semiconductor to provide ongoing availability. The AS6C62256 family is the direct replacement and is in stock at DigiKey, Mouser, and Future Electronics.
 
@@ -130,11 +130,11 @@ ISSI (Integrated Silicon Solution Inc.) offers a range of 5V-compatible SRAM par
 
 Renesas (formerly IDT) offers legacy 5V SRAM products. Many are obsolete or NRND (Not Recommended for New Designs).
 
-| Part Number | Organization | Density | Access Time | Package | Status |
-|-------------|--------------|---------|-------------|---------|--------|
-| 71256 | 32K x 8 | 256Kb | 20-100ns | Various | Obsolete/NRND |
-| 71256SA | 32K x 8 | 256Kb | 12-25ns | TSOP | Obsolete/NRND |
-| R1LP0408D | 512K x 8 | 4Mb | 55ns | 32-SOP, 32-TSOP | Obsolete/NRND |
+| Part Number | Organization | Density | Access Time | Package         | Status        |
+| ----------- | ------------ | ------- | ----------- | --------------- | ------------- |
+| 71256       | 32K x 8      | 256Kb   | 20-100ns    | Various         | Obsolete/NRND |
+| 71256SA     | 32K x 8      | 256Kb   | 12-25ns     | TSOP            | Obsolete/NRND |
+| R1LP0408D   | 512K x 8     | 4Mb     | 55ns        | 32-SOP, 32-TSOP | Obsolete/NRND |
 
 **71256SA Specifications**:
 - 5.0V CMOS SRAM organized as 32K x 8
@@ -163,31 +163,31 @@ Renesas (formerly IDT) offers legacy 5V SRAM products. Many are obsolete or NRND
 
 **This is the primary SRAM target for RISCBOY**
 
-| Parameter | Specification |
-|-----------|---------------|
-| **Part Number** | R1RP0416D Series |
-| **Organization** | 256K x 16 |
-| **Density** | 4Mbit |
-| **Supply Voltage** | 5.0V +/- 10% (4.5V to 5.5V) |
-| **Access Time** | 10ns (max), 12ns (max) |
-| **Cycle Time** | Equal to access time |
-| **Operating Current** | 170mA (10ns), 160mA (12ns) max |
-| **TTL Standby Current** | 40mA max |
-| **CMOS Standby Current** | 5mA max (standard), 1mA max (L-version), 0.5mA max (S-version) |
-| **Data Retention Current** | 0.5mA max (L), 0.2mA max (S) |
-| **Data Retention Voltage** | 2V min (L, S versions) |
-| **Package Options** | 44-pin SOJ (400 mil), 44-pin TSOP II (400 mil) |
-| **Temperature Range** | 0C to 70C (R1RP0416D-R), -40C to 85C (R1RP0416D-I) |
+| Parameter                  | Specification                                                  |
+| -------------------------- | -------------------------------------------------------------- |
+| **Part Number**            | R1RP0416D Series                                               |
+| **Organization**           | 256K x 16                                                      |
+| **Density**                | 4Mbit                                                          |
+| **Supply Voltage**         | 5.0V +/- 10% (4.5V to 5.5V)                                    |
+| **Access Time**            | 10ns (max), 12ns (max)                                         |
+| **Cycle Time**             | Equal to access time                                           |
+| **Operating Current**      | 170mA (10ns), 160mA (12ns) max                                 |
+| **TTL Standby Current**    | 40mA max                                                       |
+| **CMOS Standby Current**   | 5mA max (standard), 1mA max (L-version), 0.5mA max (S-version) |
+| **Data Retention Current** | 0.5mA max (L), 0.2mA max (S)                                   |
+| **Data Retention Voltage** | 2V min (L, S versions)                                         |
+| **Package Options**        | 44-pin SOJ (400 mil), 44-pin TSOP II (400 mil)                 |
+| **Temperature Range**      | 0C to 70C (R1RP0416D-R), -40C to 85C (R1RP0416D-I)             |
 
 **Available Part Numbers**:
-| Part Number | Speed | Standby | Package | Temp |
-|-------------|-------|---------|---------|------|
-| R1RP0416DSB-2PR | 10ns | 5mA | SOJ | Commercial |
-| R1RP0416DSB-2LR | 10ns | 1mA | SOJ | Commercial |
-| R1RP0416DSB-2SR | 10ns | 0.5mA | SOJ | Commercial |
-| R1RP0416DGE-2PR | 12ns | 5mA | TSOP II | Commercial |
-| R1RP0416DGE-2LR | 12ns | 1mA | TSOP II | Commercial |
-| R1RP0416DGE-2SR | 12ns | 0.5mA | TSOP II | Commercial |
+| Part Number     | Speed | Standby | Package | Temp       |
+| --------------- | ----- | ------- | ------- | ---------- |
+| R1RP0416DSB-2PR | 10ns  | 5mA     | SOJ     | Commercial |
+| R1RP0416DSB-2LR | 10ns  | 1mA     | SOJ     | Commercial |
+| R1RP0416DSB-2SR | 10ns  | 0.5mA   | SOJ     | Commercial |
+| R1RP0416DGE-2PR | 12ns  | 5mA     | TSOP II | Commercial |
+| R1RP0416DGE-2LR | 12ns  | 1mA     | TSOP II | Commercial |
+| R1RP0416DGE-2SR | 12ns  | 0.5mA   | TSOP II | Commercial |
 
 **Key Features**:
 - Completely static memory - no clock or timing strobe required
@@ -212,16 +212,16 @@ Renesas (formerly IDT) offers legacy 5V SRAM products. Many are obsolete or NRND
 
 ### Alliance Memory AS6C8016
 
-| Parameter | Specification |
-|-----------|---------------|
-| **Part Number** | AS6C8016 |
-| **Organization** | 512K x 16 |
-| **Density** | 8Mbit |
-| **Supply Voltage** | 2.7V to 5.5V |
-| **Access Time** | 55ns |
-| **Package Options** | 44-pin TSOP II (400 mil), 48-ball TFBGA (6mm x 8mm) |
-| **Temperature Range** | -40C to +85C |
-| **Data Retention Voltage** | 1.5V (min) |
+| Parameter                  | Specification                                       |
+| -------------------------- | --------------------------------------------------- |
+| **Part Number**            | AS6C8016                                            |
+| **Organization**           | 512K x 16                                           |
+| **Density**                | 8Mbit                                               |
+| **Supply Voltage**         | 2.7V to 5.5V                                        |
+| **Access Time**            | 55ns                                                |
+| **Package Options**        | 44-pin TSOP II (400 mil), 48-ball TFBGA (6mm x 8mm) |
+| **Temperature Range**      | -40C to +85C                                        |
+| **Data Retention Voltage** | 1.5V (min)                                          |
 
 **Key Features**:
 - Super low power CMOS SRAM
@@ -245,11 +245,11 @@ Renesas (formerly IDT) offers legacy 5V SRAM products. Many are obsolete or NRND
 
 ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation, the IS61C25616 series is the primary option.
 
-| Part Number | Organization | Density | Access Time | Voltage | Package |
-|-------------|--------------|---------|-------------|---------|---------|
-| IS61C25616 | 256K x 16 | 4Mb | 8ns, 10ns, 12ns, 15ns | 5V | TSOP, SOJ |
-| IS61LV25616 | 256K x 16 | 4Mb | 7ns, 8ns, 10ns, 12ns, 15ns | 3.3V | TSOP, SOJ |
-| IS61WV102416 | 1M x 16 | 16Mb | 10ns | 2.5V/3.3V | TSOP |
+| Part Number  | Organization | Density | Access Time                | Voltage   | Package   |
+| ------------ | ------------ | ------- | -------------------------- | --------- | --------- |
+| IS61C25616   | 256K x 16    | 4Mb     | 8ns, 10ns, 12ns, 15ns      | 5V        | TSOP, SOJ |
+| IS61LV25616  | 256K x 16    | 4Mb     | 7ns, 8ns, 10ns, 12ns, 15ns | 3.3V      | TSOP, SOJ |
+| IS61WV102416 | 1M x 16      | 16Mb    | 10ns                       | 2.5V/3.3V | TSOP      |
 
 **Note**: The IS61LV25616 and IS61WV102416 are LOW VOLTAGE parts (indicated by "LV" and "WV" in part number). For true 5V operation, use the IS61C25616 series (without "LV" or "WV").
 
@@ -261,9 +261,9 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ### Lyontek 16-Bit Parts
 
-| Part Number | Organization | Density | Access Time | Voltage | Package |
-|-------------|--------------|---------|-------------|---------|---------|
-| LY62W51216ML-55LLI | 512K x 16 | 8Mb | 55ns | 2.7V - 5.5V | 44-TSOP II |
+| Part Number        | Organization | Density | Access Time | Voltage     | Package    |
+| ------------------ | ------------ | ------- | ----------- | ----------- | ---------- |
+| LY62W51216ML-55LLI | 512K x 16    | 8Mb     | 55ns        | 2.7V - 5.5V | 44-TSOP II |
 
 **Note**: This part operates across the full 2.7V-5.5V range, making it 5V compatible.
 
@@ -282,10 +282,10 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ### Mercury/White Electronic Designs Modules
 
-| Product | Organization | Access Time | Features |
-|---------|--------------|-------------|----------|
-| WSF256K32 | 256K x 32 | 20ns, 25ns, 35ns | SRAM module, user configurable as 512Kx16 |
-| WSF512K32 | 512K x 32 | Various | SRAM + NOR Flash module, 5V TTL compatible |
+| Product   | Organization | Access Time      | Features                                   |
+| --------- | ------------ | ---------------- | ------------------------------------------ |
+| WSF256K32 | 256K x 32    | 20ns, 25ns, 35ns | SRAM module, user configurable as 512Kx16  |
+| WSF512K32 | 512K x 32    | Various          | SRAM + NOR Flash module, 5V TTL compatible |
 
 **Features**:
 - Hermetic ceramic packaging available
@@ -303,10 +303,10 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ### EDI Multi-Chip Modules
 
-| Product | Organization | Access Time | Features |
-|---------|--------------|-------------|----------|
-| EDI8L32256C | 256K x 32 | 15ns, 17ns, 20ns, 25ns | 5V, 8Mbit MCM |
-| EDI x32 Family | 64K-512K x 32 | Various | MCM-L SRAM for DSPs |
+| Product        | Organization  | Access Time            | Features            |
+| -------------- | ------------- | ---------------------- | ------------------- |
+| EDI8L32256C    | 256K x 32     | 15ns, 17ns, 20ns, 25ns | 5V, 8Mbit MCM       |
+| EDI x32 Family | 64K-512K x 32 | Various                | MCM-L SRAM for DSPs |
 
 **Note**: These are specialty multi-chip modules primarily designed for Texas Instruments DSP platforms.
 
@@ -319,33 +319,33 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ### 8-Bit Parts Comparison (Actively Manufactured)
 
-| Manufacturer | Part Number | Size | Access Time | Voltage | DIP Avail? | Status |
-|--------------|-------------|------|-------------|---------|------------|--------|
-| Alliance Memory | AS6C62256 | 32Kx8 | 55ns | 2.7-5.5V | Yes (28-pin) | Active |
-| Alliance Memory | AS6C1008 | 128Kx8 | 55ns | 2.7-5.5V | Yes (32-pin) | Active |
-| Alliance Memory | AS6C2008 | 256Kx8 | 55ns | 2.7-5.5V | Yes (32-pin) | Active |
-| Alliance Memory | AS6C4008 | 512Kx8 | 55ns | 2.7-5.5V | Yes (32-pin) | Active |
-| ISSI | IS62C256 | 32Kx8 | 45-70ns | 5V | No (SOP/TSOP) | Active |
-| ISSI | IS61C1024 | 128Kx8 | 12-25ns | 5V | Yes (32-pin) | Limited |
-| Infineon (Cypress) | CY62256L | 32Kx8 | 70ns | 5V | Yes (28-pin) | EOL |
+| Manufacturer       | Part Number | Size   | Access Time | Voltage  | DIP Avail?    | Status  |
+| ------------------ | ----------- | ------ | ----------- | -------- | ------------- | ------- |
+| Alliance Memory    | AS6C62256   | 32Kx8  | 55ns        | 2.7-5.5V | Yes (28-pin)  | Active  |
+| Alliance Memory    | AS6C1008    | 128Kx8 | 55ns        | 2.7-5.5V | Yes (32-pin)  | Active  |
+| Alliance Memory    | AS6C2008    | 256Kx8 | 55ns        | 2.7-5.5V | Yes (32-pin)  | Active  |
+| Alliance Memory    | AS6C4008    | 512Kx8 | 55ns        | 2.7-5.5V | Yes (32-pin)  | Active  |
+| ISSI               | IS62C256    | 32Kx8  | 45-70ns     | 5V       | No (SOP/TSOP) | Active  |
+| ISSI               | IS61C1024   | 128Kx8 | 12-25ns     | 5V       | Yes (32-pin)  | Limited |
+| Infineon (Cypress) | CY62256L    | 32Kx8  | 70ns        | 5V       | Yes (28-pin)  | EOL     |
 
 ### 16-Bit Parts Comparison
 
-| Manufacturer | Part Number | Size | Access Time | Voltage | Package | Status |
-|--------------|-------------|------|-------------|---------|---------|--------|
-| Renesas | R1RP0416D | 256Kx16 | 10-12ns | 4.5-5.5V | SOJ, TSOP II | Active |
-| Alliance Memory | AS6C8016 | 512Kx16 | 55ns | 2.7-5.5V | TSOP II, TFBGA | Active |
-| ISSI | IS61C25616 | 256Kx16 | 8-15ns | 5V | TSOP, SOJ | Active |
-| Lyontek | LY62W51216ML | 512Kx16 | 55ns | 2.7-5.5V | TSOP II | Active |
+| Manufacturer    | Part Number  | Size    | Access Time | Voltage  | Package        | Status |
+| --------------- | ------------ | ------- | ----------- | -------- | -------------- | ------ |
+| Renesas         | R1RP0416D    | 256Kx16 | 10-12ns     | 4.5-5.5V | SOJ, TSOP II   | Active |
+| Alliance Memory | AS6C8016     | 512Kx16 | 55ns        | 2.7-5.5V | TSOP II, TFBGA | Active |
+| ISSI            | IS61C25616   | 256Kx16 | 8-15ns      | 5V       | TSOP, SOJ      | Active |
+| Lyontek         | LY62W51216ML | 512Kx16 | 55ns        | 2.7-5.5V | TSOP II        | Active |
 
 ### Speed vs Power Comparison (16-bit, 256Kx16)
 
-| Part | Access Time | Active Current | Standby (CMOS) |
-|------|-------------|----------------|----------------|
-| R1RP0416D (10ns) | 10ns | 170mA | 5mA (std), 0.5mA (S) |
-| R1RP0416D (12ns) | 12ns | 160mA | 5mA (std), 0.5mA (S) |
-| IS61C25616 (10ns) | 10ns | ~100mA | ~5mA |
-| AS6C8016 | 55ns | ~60mA | ~1mA |
+| Part              | Access Time | Active Current | Standby (CMOS)       |
+| ----------------- | ----------- | -------------- | -------------------- |
+| R1RP0416D (10ns)  | 10ns        | 170mA          | 5mA (std), 0.5mA (S) |
+| R1RP0416D (12ns)  | 12ns        | 160mA          | 5mA (std), 0.5mA (S) |
+| IS61C25616 (10ns) | 10ns        | ~100mA         | ~5mA                 |
+| AS6C8016          | 55ns        | ~60mA          | ~1mA                 |
 
 ---
 
@@ -353,23 +353,23 @@ ISSI offers 16-bit wide SRAMs, but most are low-voltage (3.3V). For 5V operation
 
 ### DigiKey Availability (as of December 2025)
 
-| Part Number | Status | Notes |
-|-------------|--------|-------|
-| AS6C62256-55PCN | In Stock | "Order today, ships today" |
-| AS6C1008-55PCN | In Stock | "Order today, ships today" |
-| AS6C4008-55PCN | In Stock | "Order today, ships today" |
-| IS62C256-70UI | In Stock | Available at Mouser |
-| CY62256L-70PC | Limited | Some remaining stock |
-| R1RP0416D variants | Verify | Check directly with distributor |
+| Part Number        | Status   | Notes                           |
+| ------------------ | -------- | ------------------------------- |
+| AS6C62256-55PCN    | In Stock | "Order today, ships today"      |
+| AS6C1008-55PCN     | In Stock | "Order today, ships today"      |
+| AS6C4008-55PCN     | In Stock | "Order today, ships today"      |
+| IS62C256-70UI      | In Stock | Available at Mouser             |
+| CY62256L-70PC      | Limited  | Some remaining stock            |
+| R1RP0416D variants | Verify   | Check directly with distributor |
 
 ### Pricing Guidance (approximate, varies by quantity)
 
-| Part | 1 pc | 10 pc | 100 pc |
-|------|------|-------|--------|
+| Part                  | 1 pc   | 10 pc  | 100 pc |
+| --------------------- | ------ | ------ | ------ |
 | AS6C62256-55PCN (DIP) | ~$2.50 | ~$2.20 | ~$1.80 |
-| AS6C1008-55PCN (DIP) | ~$4.00 | ~$3.50 | ~$3.00 |
-| AS6C4008-55PCN (DIP) | ~$5.00 | ~$4.50 | ~$3.80 |
-| IS62C256-70UI (SOP) | ~$2.00 | ~$1.80 | ~$1.50 |
+| AS6C1008-55PCN (DIP)  | ~$4.00 | ~$3.50 | ~$3.00 |
+| AS6C4008-55PCN (DIP)  | ~$5.00 | ~$4.50 | ~$3.80 |
+| IS62C256-70UI (SOP)   | ~$2.00 | ~$1.80 | ~$1.50 |
 
 **Note**: Prices are approximate and subject to change. Always verify current pricing at distributors.
 

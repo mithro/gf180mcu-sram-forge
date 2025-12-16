@@ -47,12 +47,12 @@ Alto, as well as arcade games like Defender and Missile Command.
 
 #### Specifications
 
-| Parameter | Value |
-|-----------|-------|
-| Organisation | 16,384 x 1 bit |
-| Package | 16-pin DIP |
-| Access Time | 150-250ns (varies by speed grade) |
-| Refresh | 128 rows / 2ms |
+| Parameter     | Value                                       |
+| ------------- | ------------------------------------------- |
+| Organisation  | 16,384 x 1 bit                              |
+| Package       | 16-pin DIP                                  |
+| Access Time   | 150-250ns (varies by speed grade)           |
+| Refresh       | 128 rows / 2ms                              |
 | Address Lines | 7-bit row, 7-bit column (A0-A6 multiplexed) |
 
 #### Pin Configuration
@@ -72,12 +72,12 @@ Alto, as well as arcade games like Defender and Missile Command.
 
 #### Power Requirements (The Notorious Triple-Voltage Problem)
 
-| Pin | Voltage | Function |
-|-----|---------|----------|
-| Pin 1 (VBB) | -5V | Substrate bias |
-| Pin 8 (VDD) | +12V | Main power for internal circuitry |
-| Pin 9 (VCC) | +5V | TTL-compatible I/O levels |
-| Pin 16 (VSS) | GND | Ground reference |
+| Pin          | Voltage | Function                          |
+| ------------ | ------- | --------------------------------- |
+| Pin 1 (VBB)  | -5V     | Substrate bias                    |
+| Pin 8 (VDD)  | +12V    | Main power for internal circuitry |
+| Pin 9 (VCC)  | +5V     | TTL-compatible I/O levels         |
+| Pin 16 (VSS) | GND     | Ground reference                  |
 
 The triple-voltage requirement is the primary reason 4116 chips are notoriously unreliable.
 Almost all the internal circuitry runs on 12 volts. The 5-volt supply is used only to provide
@@ -90,16 +90,16 @@ This makes the chips prone to destroy themselves if voltages fall outside tolera
 
 #### Systems Using 4116
 
-| System | Configuration | Notes |
-|--------|---------------|-------|
-| ZX Spectrum 16K/48K | 8 chips (lower 16K) | Issue 2-6A boards |
-| Apple II/II+ | 24 chips (48K) | 3 banks of 8 |
-| TRS-80 Model I | 8-24 chips (16K-48K) | 3 banks possible |
-| TRS-80 Color Computer | 8 chips (16K models) | Early CoCo only |
-| Commodore PET | 8 chips | Lower memory |
-| IBM PC 5150 | 36 chips (64K) | 4 banks |
-| Atari 400/800 | 24 chips (48K) | 3 banks |
-| Williams Arcade Games | 8-16 chips | Robotron, Defender, Joust, etc. |
+| System                | Configuration        | Notes                           |
+| --------------------- | -------------------- | ------------------------------- |
+| ZX Spectrum 16K/48K   | 8 chips (lower 16K)  | Issue 2-6A boards               |
+| Apple II/II+          | 24 chips (48K)       | 3 banks of 8                    |
+| TRS-80 Model I        | 8-24 chips (16K-48K) | 3 banks possible                |
+| TRS-80 Color Computer | 8 chips (16K models) | Early CoCo only                 |
+| Commodore PET         | 8 chips              | Lower memory                    |
+| IBM PC 5150           | 36 chips (64K)       | 4 banks                         |
+| Atari 400/800         | 24 chips (48K)       | 3 banks                         |
+| Williams Arcade Games | 8-16 chips           | Robotron, Defender, Joust, etc. |
 
 #### References
 
@@ -116,14 +116,14 @@ a single +5V power supply. This made it far more reliable and easier to use in s
 
 #### Specifications
 
-| Parameter | Value |
-|-----------|-------|
-| Organisation | 65,536 x 1 bit |
-| Package | 16-pin DIP |
-| Access Time | 100-200ns (varies by speed grade) |
-| Refresh | 256 rows / 4ms |
+| Parameter     | Value                                       |
+| ------------- | ------------------------------------------- |
+| Organisation  | 65,536 x 1 bit                              |
+| Package       | 16-pin DIP                                  |
+| Access Time   | 100-200ns (varies by speed grade)           |
+| Refresh       | 256 rows / 4ms                              |
 | Address Lines | 8-bit row, 8-bit column (A0-A7 multiplexed) |
-| Power | +5V only |
+| Power         | +5V only                                    |
 
 #### Pin Configuration
 
@@ -142,27 +142,27 @@ a single +5V power supply. This made it far more reliable and easier to use in s
 
 #### Key Differences from 4116
 
-| Pin | 4116 | 4164 |
-|-----|------|------|
-| 1 | -5V (VEE) | N/C (No Connection) |
-| 8 | +12V (VDD) | +5V (VCC) |
-| 9 | +5V (VCC) | A7 (Address Line) |
+| Pin | 4116       | 4164                |
+| --- | ---------- | ------------------- |
+| 1   | -5V (VEE)  | N/C (No Connection) |
+| 8   | +12V (VDD) | +5V (VCC)           |
+| 9   | +5V (VCC)  | A7 (Address Line)   |
 
 The addition of A7 on pin 9 enables addressing 256 rows instead of 128, providing 4x the
 memory capacity. The elimination of the -5V and +12V supplies dramatically improved reliability.
 
 #### Systems Using 4164
 
-| System | Configuration | Notes |
-|--------|---------------|-------|
-| Commodore 64 | 8 chips (64K) | Breadbin and early C64C |
-| Apple IIe | 8 chips (64K) | Main board |
-| Apple IIc | 16 chips (128K) | Main memory |
-| Atari 800XL | 8 chips (64K) | Can also use 4264 |
-| Amstrad CPC | 8 chips (64K) | CPC 464, 664, 6128 |
-| ZX Spectrum 48K | 8 chips (upper 32K) | Upper memory bank |
-| IBM PC 5150/5160 | 36 chips (256K) | Later configurations |
-| BBC Micro Model B | 8 chips (32K) | Main RAM |
+| System            | Configuration       | Notes                   |
+| ----------------- | ------------------- | ----------------------- |
+| Commodore 64      | 8 chips (64K)       | Breadbin and early C64C |
+| Apple IIe         | 8 chips (64K)       | Main board              |
+| Apple IIc         | 16 chips (128K)     | Main memory             |
+| Atari 800XL       | 8 chips (64K)       | Can also use 4264       |
+| Amstrad CPC       | 8 chips (64K)       | CPC 464, 664, 6128      |
+| ZX Spectrum 48K   | 8 chips (upper 32K) | Upper memory bank       |
+| IBM PC 5150/5160  | 36 chips (256K)     | Later configurations    |
+| BBC Micro Model B | 8 chips (32K)       | Main RAM                |
 
 #### References
 
@@ -179,14 +179,14 @@ a 9-bit multiplexed address bus while maintaining pin-compatibility with the 416
 
 #### Specifications
 
-| Parameter | Value |
-|-----------|-------|
-| Organisation | 262,144 x 1 bit |
-| Package | 16-pin DIP |
-| Access Time | 80-150ns |
-| Refresh | 256 rows / 4ms |
+| Parameter     | Value                                       |
+| ------------- | ------------------------------------------- |
+| Organisation  | 262,144 x 1 bit                             |
+| Package       | 16-pin DIP                                  |
+| Access Time   | 80-150ns                                    |
+| Refresh       | 256 rows / 4ms                              |
 | Address Lines | 9-bit row, 9-bit column (A0-A8 multiplexed) |
-| Power | +5V only |
+| Power         | +5V only                                    |
 
 #### Pin Configuration
 
@@ -213,13 +213,13 @@ upper 192K of capacity).
 
 #### Systems Using 41256
 
-| System | Configuration | Notes |
-|--------|---------------|-------|
-| IBM PC AT | 36 chips (1MB) | Main memory |
-| IBM 512KB/2MB Expansion | 72 chips | Memory expansion card |
-| Commodore 128 | 8 chips (256K) | Some configurations |
-| Amiga 1000 | 8 chips | Expansion memory |
-| Apple Macintosh 128K | 16 chips | Main memory |
+| System                  | Configuration  | Notes                 |
+| ----------------------- | -------------- | --------------------- |
+| IBM PC AT               | 36 chips (1MB) | Main memory           |
+| IBM 512KB/2MB Expansion | 72 chips       | Memory expansion card |
+| Commodore 128           | 8 chips (256K) | Some configurations   |
+| Amiga 1000              | 8 chips        | Expansion memory      |
+| Apple Macintosh 128K    | 16 chips       | Main memory           |
 
 #### References
 
@@ -237,44 +237,44 @@ needed for byte-wide memory from 8 to 2.
 
 #### Specifications
 
-| Parameter | Value |
-|-----------|-------|
-| Organisation | 262,144 x 4 bits (1 Mbit total) |
-| Package | 20-pin DIP |
-| Access Time | 70-100ns |
-| Refresh | 256 or 512 rows / 4ms or 8ms |
+| Parameter     | Value                                       |
+| ------------- | ------------------------------------------- |
+| Organisation  | 262,144 x 4 bits (1 Mbit total)             |
+| Package       | 20-pin DIP                                  |
+| Access Time   | 70-100ns                                    |
+| Refresh       | 256 or 512 rows / 4ms or 8ms                |
 | Address Lines | 9-bit row, 9-bit column (A0-A8 multiplexed) |
-| Power | +5V only |
+| Power         | +5V only                                    |
 
 #### Manufacturer Part Numbers
 
 The same basic chip was manufactured by many companies with different part numbers:
 
-| Manufacturer | Part Number |
-|--------------|-------------|
-| Toshiba | TC514256, TC514258 |
-| Sharp | LH64256, LH64258 |
-| Oki | MSM514256, MSM514258 |
-| Hitachi | HM514256, HM514258 |
-| NEC | uPD424256, uPD424258 |
-| Texas Instruments | TMS44C256 |
-| Fujitsu | MB81C4256 |
-| Panasonic | MN414256 |
-| Siemens | HYB514256 |
-| Samsung | KM44C256 |
-| Micron | MT4C4256 |
+| Manufacturer      | Part Number          |
+| ----------------- | -------------------- |
+| Toshiba           | TC514256, TC514258   |
+| Sharp             | LH64256, LH64258     |
+| Oki               | MSM514256, MSM514258 |
+| Hitachi           | HM514256, HM514258   |
+| NEC               | uPD424256, uPD424258 |
+| Texas Instruments | TMS44C256            |
+| Fujitsu           | MB81C4256            |
+| Panasonic         | MN414256             |
+| Siemens           | HYB514256            |
+| Samsung           | KM44C256             |
+| Micron            | MT4C4256             |
 
 #### Systems Using 44256 (256K x 4)
 
-| System | Configuration | Notes |
-|--------|---------------|-------|
-| Amiga 500 | 4 chips (512K) | Rev 5/6 boards |
-| Amiga 500+ | 2 chips (1MB Chip RAM) | A500+ |
-| Amiga 2000 | 4 chips | Chip RAM |
-| Atari ST | 4 chips | Later models |
-| Commodore REU 1750 | 4 chips | RAM Expansion Unit |
-| Mac Classic | 4 chips | System RAM |
-| PC VGA Cards | 2-8 chips | Video RAM |
+| System             | Configuration          | Notes              |
+| ------------------ | ---------------------- | ------------------ |
+| Amiga 500          | 4 chips (512K)         | Rev 5/6 boards     |
+| Amiga 500+         | 2 chips (1MB Chip RAM) | A500+              |
+| Amiga 2000         | 4 chips                | Chip RAM           |
+| Atari ST           | 4 chips                | Later models       |
+| Commodore REU 1750 | 4 chips                | RAM Expansion Unit |
+| Mac Classic        | 4 chips                | System RAM         |
+| PC VGA Cards       | 2-8 chips              | Video RAM          |
 
 #### References
 
@@ -331,13 +331,13 @@ Marginal cells that worked initially may fail as parameters drift with age.
 
 ### Symptoms of DRAM Failure
 
-| Symptom | Likely Cause |
-|---------|--------------|
-| No boot / black screen | Complete RAM failure in critical region |
-| Garbage on screen | Video RAM corruption |
-| Random crashes | Intermittent bit errors |
-| Specific address failures | Single chip or cell failure |
-| Works when cold, fails warm | Marginal timing or leakage |
+| Symptom                       | Likely Cause                                |
+| ----------------------------- | ------------------------------------------- |
+| No boot / black screen        | Complete RAM failure in critical region     |
+| Garbage on screen             | Video RAM corruption                        |
+| Random crashes                | Intermittent bit errors                     |
+| Specific address failures     | Single chip or cell failure                 |
+| Works when cold, fails warm   | Marginal timing or leakage                  |
 | Consistent bit pattern errors | Single chip failed in specific bit position |
 
 ---
@@ -374,10 +374,10 @@ SRAM maintains data as long as power is applied without any refresh cycles:
 #### 4. Faster Access Times
 
 | Memory Type | Typical Access Time |
-|-------------|---------------------|
-| 4116 DRAM | 150-250ns |
-| 4164 DRAM | 100-200ns |
-| Modern SRAM | 10-55ns |
+| ----------- | ------------------- |
+| 4116 DRAM   | 150-250ns           |
+| 4164 DRAM   | 100-200ns           |
+| Modern SRAM | 10-55ns             |
 
 Modern SRAM is vastly faster than vintage DRAM, providing comfortable timing margins.
 
@@ -391,13 +391,13 @@ to less than 5mA (single SRAM module).
 
 #### 6. Availability of New Parts
 
-| Memory Type | Availability Status |
-|-------------|---------------------|
-| 4116 DRAM | Scarce, often fake/recycled |
-| 4164 DRAM | Limited, quality uncertain |
-| 41256/44256 | Still available but declining |
-| 62256 SRAM (32Kx8) | Readily available, new production |
-| AS6C62256 | Current production, multiple sources |
+| Memory Type        | Availability Status                  |
+| ------------------ | ------------------------------------ |
+| 4116 DRAM          | Scarce, often fake/recycled          |
+| 4164 DRAM          | Limited, quality uncertain           |
+| 41256/44256        | Still available but declining        |
+| 62256 SRAM (32Kx8) | Readily available, new production    |
+| AS6C62256          | Current production, multiple sources |
 
 New old stock (NOS) DRAM is increasingly rare and often of questionable provenance.
 Modern SRAM chips are still manufactured and readily available.
@@ -491,48 +491,48 @@ This approach:
 Several commercial and open-source options exist for replacing the 8x 4116 chips
 in the ZX Spectrum's lower 16K:
 
-| Product | Features | Source |
-|---------|----------|--------|
+| Product                      | Features                         | Source                                                                                            |
+| ---------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------- |
 | ZX Spectrum Lower RAM Module | Single SRAM, plug-in replacement | [Retro-Spektro](https://www.retro-spektro.com/projects/zx-spectrum-lower-ram-replacement-module/) |
-| Lower RAM Replacement Module | Issue 2-6A compatible | [zx.zigg.net](http://zx.zigg.net/LRR/) |
-| 4116 Replacement Board | DIY project | [Evolutional](https://www.evolutional.co.uk/post/zxspectrum-4116-ram-board/) |
+| Lower RAM Replacement Module | Issue 2-6A compatible            | [zx.zigg.net](http://zx.zigg.net/LRR/)                                                            |
+| 4116 Replacement Board       | DIY project                      | [Evolutional](https://www.evolutional.co.uk/post/zxspectrum-4116-ram-board/)                      |
 
 **Compatible ZX Spectrum Issues**: 2, 3, 3B, 4A, 4B, 4S, 5, 6A (not compatible with 128K models)
 
 ### Commodore 64 SRAM Modules
 
-| Product | Boards Supported | Source |
-|---------|------------------|--------|
-| C64 SRAM Module | 250407, 250425 (8x 4164) | [DIY Chris](https://diychris.com/index.php/product/commodore-64-sram-module/) |
-| SaRuMan-64 | 250466, 250469 (2x 4464) | [AmiBay](https://www.amibay.com/threads/saruman-64k-static-ram-for-dram-replacement-board.109657/) |
-| 64K SRAM Replacement | C64C shortboards | [Retro 8bit Shop](https://www.retro8bitshop.com/product/64k-sram-for-c64/) |
+| Product              | Boards Supported         | Source                                                                                             |
+| -------------------- | ------------------------ | -------------------------------------------------------------------------------------------------- |
+| C64 SRAM Module      | 250407, 250425 (8x 4164) | [DIY Chris](https://diychris.com/index.php/product/commodore-64-sram-module/)                      |
+| SaRuMan-64           | 250466, 250469 (2x 4464) | [AmiBay](https://www.amibay.com/threads/saruman-64k-static-ram-for-dram-replacement-board.109657/) |
+| 64K SRAM Replacement | C64C shortboards         | [Retro 8bit Shop](https://www.retro8bitshop.com/product/64k-sram-for-c64/)                         |
 
 **Benefits**: Reduces power consumption from ~240mA to <5mA, fixes VSP bug on some versions.
 
 ### Amiga 500/500+ Modules
 
-| Product | Configuration | Source |
-|---------|---------------|--------|
-| A500-SRAM-Board | Replaces 44256 DRAM with single SRAM | [GitHub - kr239](https://github.com/kr239/A500-SRAM-Board) |
-| A500-DRAM-Board | Replaces 44256 with EDO memory | [GitHub - kr239](https://github.com/kr239/A500-DRAM-Board) |
-| A500+ DRAM Replacement | PCBWay shared project | [PCBWay](https://www.pcbway.com/project/shareproject/Amiga_500__DRAM_Replacement_Board.html) |
+| Product                | Configuration                        | Source                                                                                       |
+| ---------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| A500-SRAM-Board        | Replaces 44256 DRAM with single SRAM | [GitHub - kr239](https://github.com/kr239/A500-SRAM-Board)                                   |
+| A500-DRAM-Board        | Replaces 44256 with EDO memory       | [GitHub - kr239](https://github.com/kr239/A500-DRAM-Board)                                   |
+| A500+ DRAM Replacement | PCBWay shared project                | [PCBWay](https://www.pcbway.com/project/shareproject/Amiga_500__DRAM_Replacement_Board.html) |
 
 ### Williams Arcade Adapters
 
-| Product | Function | Source |
-|---------|----------|--------|
-| Williams 4116 to 4164 Adapter | Power pinout conversion | [Arcadeshop](https://www.arcadeshop.com/i/894/williams-4116-to-4164-power-adapter.htm) |
-| 4116-to-4164 Adapter PCBs | Individual chip adapters | [Etsy](https://www.etsy.com/listing/805900742/4116-ram-socket-to-4164-ram-adapter-8) |
+| Product                       | Function                 | Source                                                                                 |
+| ----------------------------- | ------------------------ | -------------------------------------------------------------------------------------- |
+| Williams 4116 to 4164 Adapter | Power pinout conversion  | [Arcadeshop](https://www.arcadeshop.com/i/894/williams-4116-to-4164-power-adapter.htm) |
+| 4116-to-4164 Adapter PCBs     | Individual chip adapters | [Etsy](https://www.etsy.com/listing/805900742/4116-ram-socket-to-4164-ram-adapter-8)   |
 
 **Compatible Games**: Defender, Robotron, Joust, Stargate, Bubbles, Blaster, Moon Patrol, and more.
 
 ### Apple II Products
 
-| Product | Function | Source |
-|---------|----------|--------|
-| RAM128 (GW4208B) | 128KB SRAM-based Language Card | [Tindie - Garrett's Workshop](https://www.tindie.com/products/garrettswrkshp/ram128-gw4208b-128kb-ram-for-apple-ii/) |
-| RamFactor 8M | 8MB SRAM expansion | [a2heaven](https://a2heaven.com/webshop/index.php?manufacturer_id=21&rt=product/manufacturer) |
-| RAM2GS II | 8MB SDRAM for IIgs | [Tindie - Garrett's Workshop](https://www.tindie.com/products/garrettswrkshp/ram2gs-ii-gw4201d-8mb-ram-for-apple-iigs/) |
+| Product          | Function                       | Source                                                                                                                  |
+| ---------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| RAM128 (GW4208B) | 128KB SRAM-based Language Card | [Tindie - Garrett's Workshop](https://www.tindie.com/products/garrettswrkshp/ram128-gw4208b-128kb-ram-for-apple-ii/)    |
+| RamFactor 8M     | 8MB SRAM expansion             | [a2heaven](https://a2heaven.com/webshop/index.php?manufacturer_id=21&rt=product/manufacturer)                           |
+| RAM2GS II        | 8MB SDRAM for IIgs             | [Tindie - Garrett's Workshop](https://www.tindie.com/products/garrettswrkshp/ram2gs-ii-gw4201d-8mb-ram-for-apple-iigs/) |
 
 ---
 
@@ -637,23 +637,23 @@ The SRAM's 25ns access time provides enormous margin over the original
 
 ### When SRAM Replacement Makes Sense
 
-| Scenario | Recommendation |
-|----------|----------------|
-| Multiple failed 4116 chips | Strongly recommended - eliminates triple-voltage problems |
-| Single failed 4164/41256 | Consider - depends on availability of replacements |
-| Preventive maintenance | Worth considering for heavily-used systems |
-| Increased reliability needed | Recommended - SRAM is inherently more reliable |
-| Reduced power consumption | Recommended - significant reduction possible |
-| Historical preservation | Debatable - changes originality |
+| Scenario                     | Recommendation                                            |
+| ---------------------------- | --------------------------------------------------------- |
+| Multiple failed 4116 chips   | Strongly recommended - eliminates triple-voltage problems |
+| Single failed 4164/41256     | Consider - depends on availability of replacements        |
+| Preventive maintenance       | Worth considering for heavily-used systems                |
+| Increased reliability needed | Recommended - SRAM is inherently more reliable            |
+| Reduced power consumption    | Recommended - significant reduction possible              |
+| Historical preservation      | Debatable - changes originality                           |
 
 ### When to Keep Original DRAM
 
-| Scenario | Recommendation |
-|----------|----------------|
-| Working system, collector value | Keep original - maintain authenticity |
-| Minor repair needed | Stock 4164/41256 replacements still available |
-| Learning experience | DRAM repair teaches valuable troubleshooting |
-| Cost-sensitive | DRAM chips cheaper if available |
+| Scenario                        | Recommendation                                |
+| ------------------------------- | --------------------------------------------- |
+| Working system, collector value | Keep original - maintain authenticity         |
+| Minor repair needed             | Stock 4164/41256 replacements still available |
+| Learning experience             | DRAM repair teaches valuable troubleshooting  |
+| Cost-sensitive                  | DRAM chips cheaper if available               |
 
 ### Physical Considerations
 
@@ -675,24 +675,24 @@ The SRAM's 25ns access time provides enormous margin over the original
 
 ### 16-Pin DRAM Family (4116, 4164, 41256)
 
-| Pin | 4116 | 4164 | 41256 |
-|-----|------|------|-------|
-| 1 | VBB (-5V) | N/C | A8 |
-| 2 | DIN | D | D |
-| 3 | WE* | WE* | WE* |
-| 4 | RAS* | RAS* | RAS* |
-| 5 | A0 | A0 | A0 |
-| 6 | A2 | A2 | A2 |
-| 7 | A1 | A1 | A1 |
-| 8 | VDD (+12V) | VCC (+5V) | VCC (+5V) |
-| 9 | VCC (+5V) | A7 | A7 |
-| 10 | A5 | A5 | A5 |
-| 11 | A4 | A4 | A4 |
-| 12 | A3 | A3 | A3 |
-| 13 | A6 | A6 | A6 |
-| 14 | DOUT | Q | Q |
-| 15 | CAS* | CAS* | CAS* |
-| 16 | VSS (GND) | VSS (GND) | VSS (GND) |
+| Pin | 4116       | 4164      | 41256     |
+| --- | ---------- | --------- | --------- |
+| 1   | VBB (-5V)  | N/C       | A8        |
+| 2   | DIN        | D         | D         |
+| 3   | WE*        | WE*       | WE*       |
+| 4   | RAS*       | RAS*      | RAS*      |
+| 5   | A0         | A0        | A0        |
+| 6   | A2         | A2        | A2        |
+| 7   | A1         | A1        | A1        |
+| 8   | VDD (+12V) | VCC (+5V) | VCC (+5V) |
+| 9   | VCC (+5V)  | A7        | A7        |
+| 10  | A5         | A5        | A5        |
+| 11  | A4         | A4        | A4        |
+| 12  | A3         | A3        | A3        |
+| 13  | A6         | A6        | A6        |
+| 14  | DOUT       | Q         | Q         |
+| 15  | CAS*       | CAS*      | CAS*      |
+| 16  | VSS (GND)  | VSS (GND) | VSS (GND) |
 
 ### 20-Pin DRAM (44256 / 256Kx4)
 
