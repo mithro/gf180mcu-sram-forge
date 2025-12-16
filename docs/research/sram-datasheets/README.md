@@ -2,6 +2,16 @@
 
 This directory contains references to key datasheets for SRAM parts relevant to sram-forge compatibility research (Issue #34).
 
+## Archived Datasheets
+
+The following datasheets have been downloaded and archived locally:
+
+| Part      | Organization | Local Path              | Status    |
+| --------- | ------------ | ----------------------- | --------- |
+| R1RP0416D | 256K x 16    | `renesas/R1RP0416D.pdf` | ✓ Archived |
+
+**Note**: Most manufacturer websites (Alliance Memory, ISSI) use bot protection that prevents automated downloads. See [Manual Download Instructions](#manual-download-instructions) below for how to obtain additional datasheets.
+
 ## 8-bit SRAMs (x8)
 
 ### Alliance Memory AS6C Series (Modern Replacements)
@@ -164,9 +174,46 @@ All standard SRAMs use active-low control signals:
 
 **Exception:** Some parts have a secondary CE2 that is active-high.
 
-## Downloading Datasheets
+## Manual Download Instructions
 
-Most datasheets can be downloaded directly from manufacturer websites:
+Most manufacturer websites use bot protection that blocks automated downloads. To manually download datasheets:
+
+### Alliance Memory AS6C Series
+
+1. Visit the product page (e.g., https://www.alliancememory.com/as6c62256/)
+2. Click the "Datasheet" link on the product page
+3. Save to `alliance-memory/` subdirectory
+
+Alternative source (if manufacturer site is unavailable):
+- Mouser product pages have datasheet links under "Technical Datasheet"
+- DigiKey product pages have datasheet links under "Documents & Media"
+
+### ISSI IS61/IS62 Series
+
+1. Visit https://www.issi.com/products/sram.shtml
+2. Search for the part number (e.g., IS62C256)
+3. Click the PDF link on the product page
+4. Save to `issi/` subdirectory
+
+### Renesas R1RP Series
+
+The R1RP0416D datasheet downloads directly without bot protection:
+```text
+curl -L -o renesas/R1RP0416D.pdf "https://www.renesas.com/en/document/dst/r1rp0416d-series-datasheet"
+```
+
+### Directory Structure
+
+```text
+sram-datasheets/
+├── README.md           # This file
+├── alliance-memory/    # Alliance Memory datasheets (AS6C series)
+├── issi/               # ISSI datasheets (IS61/IS62 series)
+└── renesas/            # Renesas datasheets
+    └── R1RP0416D.pdf   # ✓ Archived
+```
+
+### Manufacturer Websites
 
 1. **Alliance Memory**: https://www.alliancememory.com/products/sram/
 2. **ISSI**: https://www.issi.com/products/sram.shtml
