@@ -335,9 +335,7 @@ class PackageEngine:
         """Copy infrastructure files from template."""
         # Use the shared copy_infrastructure function
         # exclude_makefile=False because package creates fresh directories
-        copy_infrastructure(
-            package_dir, self.template_dir, exclude_makefile=False
-        )
+        copy_infrastructure(package_dir, self.template_dir, exclude_makefile=False)
 
     def _generate_verilog(
         self,
